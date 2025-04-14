@@ -19,8 +19,6 @@ export function Dashboard() {
           items={pinnedProjects}
           icon={Folders}
           baseUrl="/projects"
-          onCreateNew={() => null}
-          createButtonText="Create Project"
           CreateButton={() => <CreateProjectDialog />}
           className="animate-fade-in"
         />
