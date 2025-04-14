@@ -1,48 +1,23 @@
 
 import { ItemsSection } from "@/components/ItemsSection";
 import { Folder, MessageSquare, Bot } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { dashboardData } from "./data";
+import { toast } from "@/hooks/use-toast";
 
 export function Dashboard() {
-  // Sample data for projects, rooms, and agents
-  const projects = [
-    { 
-      id: "ai-assistant", 
-      title: "AI Assistant", 
-      description: "Natural language processing AI assistant", 
-      isPinned: true 
-    },
-    { 
-      id: "data-visualization", 
-      title: "Data Visualization", 
-      description: "Interactive data visualization tool", 
-      isPinned: true 
-    }
-  ];
+  const handleCreateProject = () => {
+    toast({
+      title: "Create Project",
+      description: "Project creation functionality coming soon!",
+    });
+  };
 
-  const rooms = [
-    { 
-      id: "development-team", 
-      title: "Development Team", 
-      description: "Discuss development tasks and issues", 
-      isPinned: true 
-    }
-  ];
-
-  const agents = [
-    { 
-      id: "code-assistant", 
-      title: "Code Assistant", 
-      description: "Helps with code generation and reviews", 
-      isPinned: true 
-    },
-    { 
-      id: "research-agent", 
-      title: "Research Agent", 
-      description: "Conducts research and summarizes findings", 
-      isPinned: true 
-    }
-  ];
+  const handleCreateRoom = () => {
+    toast({
+      title: "Create Room",
+      description: "Room creation functionality coming soon!",
+    });
+  };
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl space-y-6 py-6">
@@ -53,25 +28,25 @@ export function Dashboard() {
 
       <ItemsSection 
         title="Pinned Projects" 
-        items={projects} 
+        items={dashboardData.projects} 
         icon={Folder} 
         baseUrl="/projects"
-        onCreateNew={() => {/* Add create project logic */}}
+        onCreateNew={handleCreateProject}
         createButtonText="Create Project"
       />
 
       <ItemsSection 
         title="Pinned Rooms" 
-        items={rooms} 
+        items={dashboardData.rooms} 
         icon={MessageSquare} 
         baseUrl="/rooms"
-        onCreateNew={() => {/* Add create room logic */}}
+        onCreateNew={handleCreateRoom}
         createButtonText="Create Room"
       />
 
       <ItemsSection 
         title="Pinned Agents" 
-        items={agents} 
+        items={dashboardData.agents} 
         icon={Bot} 
         baseUrl="/agents"
       />
