@@ -112,7 +112,7 @@ export function Sidebar({ className, isCollapsed = false, toggleSidebar }: Sideb
       variant="ghost" 
       size="icon" 
       onClick={handleToggleSidebar}
-      className="fixed top-3 left-3 z-50 rounded-full hover:bg-accent/50 transition-all duration-200 active:scale-95"
+      className="fixed top-3 left-2 z-50 rounded-full hover:bg-accent/50 transition-all duration-200 active:scale-95"
     >
       <Menu className="h-5 w-5" />
       <span className="sr-only">Toggle sidebar</span>
