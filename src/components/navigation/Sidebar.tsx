@@ -3,7 +3,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SidebarNavItem } from "@/components/navigation/SidebarNavItem";
-import { ChevronLeft, ChevronRight, FolderOpen, User } from "lucide-react";
+import { ChevronLeft, ChevronRight, FolderOpen } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { sidebarNavItems } from "@/config/navigation";
@@ -66,21 +66,6 @@ export function Sidebar({ className, isCollapsed = false, toggleSidebar }: Sideb
       </div>
       <div className="mt-auto p-4 border-t border-sidebar-border flex justify-between items-center">
         <ThemeToggle />
-        
-        {isMobile && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-full hover:bg-sidebar-accent/50 transition-all duration-200 active:scale-95"
-          >
-            <Avatar className="h-8 w-8 border border-sidebar-border">
-              <AvatarFallback className="bg-sidebar-primary/10 text-sidebar-primary text-sm">
-                UV
-              </AvatarFallback>
-            </Avatar>
-            <span className="sr-only">User profile</span>
-          </Button>
-        )}
         
         {!isMobile && (
           <Button
