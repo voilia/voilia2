@@ -7,7 +7,6 @@ import { ChevronLeft, ChevronRight, FolderOpen } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { sidebarNavItems } from "@/config/navigation";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface SidebarProps {
   className?: string;
@@ -67,7 +66,7 @@ export function Sidebar({ className, isCollapsed = false, toggleSidebar }: Sideb
       <div className="mt-auto p-4 border-t border-sidebar-border flex justify-between items-center">
         <ThemeToggle />
         
-        {!isMobile && (
+        {!isMobile && toggleSidebar && (
           <Button
             variant="ghost"
             size="icon"
