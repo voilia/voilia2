@@ -11,8 +11,8 @@ interface MainLayoutProps {
 
 export function MainLayout({ children }: MainLayoutProps) {
   const isMobile = useIsMobile();
-  // Set default to false to ensure sidebar loads fully expanded
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  // Set default to true to ensure sidebar loads fully collapsed
+  const [isCollapsed, setIsCollapsed] = useState(true);
   
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
@@ -36,7 +36,7 @@ export function MainLayout({ children }: MainLayoutProps) {
       <main 
         className="flex-1 transition-all duration-300 ease-in-out overflow-x-hidden"
         style={{ 
-          marginLeft: isMobile ? '0' : (isCollapsed ? '70px' : '240px'),
+          marginLeft: isMobile ? '0' : (isCollapsed ? '0' : '240px'),
           paddingTop: '56px', // Same padding for both mobile and desktop headers
         }}
       >

@@ -9,7 +9,7 @@ interface MobileHeaderProps {
 
 export function MobileHeader({ onToggleSidebar }: MobileHeaderProps) {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-14 px-4 border-b border-border/40 backdrop-blur-md bg-background/80 md:hidden">
+    <header className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between h-14 px-4 border-b border-border/40 backdrop-blur-md bg-background/80 md:hidden">
       <Button
         variant="ghost" 
         size="icon" 
