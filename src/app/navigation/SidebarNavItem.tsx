@@ -16,6 +16,7 @@ interface SidebarNavItemProps {
     path: string;
   }[];
   isCollapsed?: boolean;
+  onItemClick?: () => void;
 }
 
 export function SidebarNavItem({
@@ -24,6 +25,7 @@ export function SidebarNavItem({
   icon: Icon,
   children,
   isCollapsed,
+  onItemClick,
 }: SidebarNavItemProps) {
   // Start with items expanded by default
   const [isOpen, setIsOpen] = useState(true);
@@ -40,6 +42,7 @@ export function SidebarNavItem({
         size="icon"
         asChild={!!path}
         className="h-9 w-9 my-1"
+        onClick={onItemClick}
       >
         {path ? (
           <NavLink
@@ -97,6 +100,7 @@ export function SidebarNavItem({
                   variant="ghost"
                   asChild
                   className="w-full justify-start px-3 py-1.5 text-base"
+                  onClick={onItemClick}
                 >
                   <NavLink
                     to={child.path}
@@ -148,6 +152,7 @@ export function SidebarNavItem({
           "flex w-full justify-start px-3 py-2 text-base font-medium",
           "animate-fade-in"
         )}
+        onClick={onItemClick}
       >
         {path ? (
           <NavLink
