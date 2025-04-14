@@ -4,6 +4,8 @@ import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SidebarContent } from "./components/SidebarContent";
 import { MobileSidebarFooter } from "./components/MobileSidebarFooter";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 
 interface SidebarProps {
   className?: string;
@@ -54,12 +56,22 @@ export function Sidebar({ className, isCollapsed = true, toggleSidebar }: Sideba
         className
       )}
     >
+      {isMobile && sidebarVisible && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute top-2 right-2 rounded-full hover:bg-accent/50 transition-all duration-200 active:scale-95 z-50 md:hidden"
+          onClick={handleToggleSidebar}
+        >
+          <X className="h-5 w-5" />
+          <span className="sr-only">Close sidebar</span>
+        </Button>
+      )}
       <SidebarContent 
         isCollapsed={false} 
         onNavItemClick={handleNavItemClick}
       />
       
-      {/* Footer for mobile - contains theme toggle and profile */}
       {isMobile && (
         <MobileSidebarFooter 
           isCollapsed={false} 
