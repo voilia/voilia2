@@ -40,7 +40,7 @@ export function ItemsSection({
         {onCreateNew && createButtonText && (
           <Button 
             onClick={onCreateNew}
-            className="gap-2 hover-effect"
+            className="gap-2 hover-effect btn-neumorphism"
           >
             <Plus className="h-4 w-4" />
             {createButtonText}
@@ -71,7 +71,7 @@ export function ItemsSection({
           {onCreateNew && (
             <Button 
               onClick={onCreateNew} 
-              className="mt-4 gap-2 hover-effect"
+              className="mt-4 gap-2 hover-effect btn-neumorphism"
             >
               <Plus className="h-4 w-4" />
               {createButtonText}
