@@ -29,7 +29,7 @@ export function MainLayout({ children }: MainLayoutProps) {
       <main 
         className="flex-1 transition-all duration-300 ease-in-out"
         style={{ 
-          marginLeft: isMobile ? '0' : (isCollapsed ? '70px' : '240px'),
+          marginLeft: isMobile ? '0' : (isCollapsed ? '0' : '240px'),
           paddingTop: isMobile ? '0' : '56px'
         }}
       >

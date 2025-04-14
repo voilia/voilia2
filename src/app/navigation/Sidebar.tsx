@@ -38,7 +38,7 @@ export function Sidebar({ className, isCollapsed = false, toggleSidebar }: Sideb
     <div
       className={cn(
         "fixed inset-y-0 z-50 flex flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border backdrop-blur-md bg-sidebar/90",
-        isCollapsed ? "w-[70px]" : "w-[240px]",
+        isCollapsed ? "w-0 opacity-0 overflow-hidden" : "w-[240px]",
         isMobile ? (isMobileSidebarOpen ? "left-0" : "-left-full") : "left-0",
         "transition-all duration-300 ease-in-out",
         className
@@ -46,7 +46,7 @@ export function Sidebar({ className, isCollapsed = false, toggleSidebar }: Sideb
     >
       <div className={cn(
         "flex h-14 items-center border-b border-sidebar-border px-4 justify-center",
-        isCollapsed ? "opacity-0 h-0 border-none overflow-hidden" : "opacity-100"
+        isCollapsed ? "opacity-0 hidden" : "opacity-100"
       )}>
         <div className="flex items-center gap-2">
           <img 
