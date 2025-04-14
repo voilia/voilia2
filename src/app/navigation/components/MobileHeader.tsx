@@ -1,7 +1,6 @@
 
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface MobileHeaderProps {
   onToggleSidebar: () => void;
@@ -21,7 +20,7 @@ export function MobileHeader({ onToggleSidebar }: MobileHeaderProps) {
       </Button>
       
       <div className="flex items-center">
-        {/* Theme toggle is now only shown in desktop header */}
+        {/* Theme toggle is now only shown in mobile sidebar footer */}
       </div>
     </header>
   );

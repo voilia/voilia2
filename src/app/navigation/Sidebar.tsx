@@ -1,10 +1,9 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SidebarContent } from "./components/SidebarContent";
 import { MobileSidebarFooter } from "./components/MobileSidebarFooter";
-import { MobileSidebarToggle } from "./components/MobileSidebarToggle";
 
 interface SidebarProps {
   className?: string;
@@ -15,22 +14,14 @@ interface SidebarProps {
 export function Sidebar({ className, isCollapsed = true, toggleSidebar }: SidebarProps) {
   const isMobile = useIsMobile();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-
-  // Update mobile sidebar state when toggleSidebar is called from parent
-  useEffect(() => {
-    if (isMobile && toggleSidebar) {
-      const originalToggleSidebar = toggleSidebar;
-      toggleSidebar = () => {
-        setIsMobileSidebarOpen(!isMobileSidebarOpen);
-        originalToggleSidebar();
-      };
-    }
-  }, [isMobile, isMobileSidebarOpen, toggleSidebar]);
   
+  // Simple function to handle toggling for both mobile and desktop
   const handleToggleSidebar = () => {
     if (isMobile) {
       setIsMobileSidebarOpen(!isMobileSidebarOpen);
-    } else if (toggleSidebar) {
+    }
+    
+    if (toggleSidebar) {
       toggleSidebar();
     }
   };
@@ -38,14 +29,19 @@ export function Sidebar({ className, isCollapsed = true, toggleSidebar }: Sideba
   const handleNavItemClick = () => {
     if (isMobile) {
       setIsMobileSidebarOpen(false);
+      if (toggleSidebar) toggleSidebar();
     }
   };
+
+  // On mobile, we use isMobileSidebarOpen to determine visibility
+  // On desktop, we use isCollapsed (passed from parent)
+  const sidebarVisible = isMobile ? isMobileSidebarOpen : !isCollapsed;
 
   const sidebarContent = (
     <div
       className={cn(
         "fixed inset-y-0 z-50 flex flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border backdrop-blur-md bg-sidebar/90",
-        isCollapsed && !isMobile ? "w-0 opacity-0 overflow-hidden" : "w-[240px]",
+        sidebarVisible ? "w-[240px]" : "w-0 opacity-0 overflow-hidden",
         isMobile ? (isMobileSidebarOpen ? "left-0" : "-left-full") : "left-0",
         "transition-all duration-300 ease-in-out",
         className
@@ -72,7 +68,10 @@ export function Sidebar({ className, isCollapsed = true, toggleSidebar }: Sideba
       {isMobile && isMobileSidebarOpen && (
         <div 
           className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
-          onClick={() => setIsMobileSidebarOpen(false)}
+          onClick={() => {
+            setIsMobileSidebarOpen(false);
+            if (toggleSidebar) toggleSidebar();
+          }}
         />
       )}
     </>

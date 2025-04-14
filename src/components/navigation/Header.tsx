@@ -25,17 +25,15 @@ export function Header({ toggleSidebar, isCollapsed }: HeaderProps) {
         marginLeft: isCollapsed ? '0' : '240px'
       }}>
       <div>
-        {!isCollapsed && (
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={toggleSidebar}
-            className="rounded-full hover:bg-accent/50 transition-all duration-200 active:scale-95"
-          >
-            <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle sidebar</span>
-          </Button>
-        )}
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={toggleSidebar}
+          className="rounded-full hover:bg-accent/50 transition-all duration-200 active:scale-95"
+        >
+          <Menu className="h-5 w-5" />
+          <span className="sr-only">Toggle sidebar</span>
+        </Button>
       </div>
       
       <div className="flex items-center space-x-2">
