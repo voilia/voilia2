@@ -11,12 +11,12 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Eye, EyeOff } from "lucide-react";
 import GoogleSignIn from "./GoogleSignIn";
+import { Separator } from "@/components/ui/separator";
 
 const authSchema = z.object({
   email: z.string().email("Please enter a valid email"),
@@ -28,6 +28,7 @@ type AuthFormValues = z.infer<typeof authSchema>;
 const AuthForm = () => {
   const [isPasswordMode, setIsPasswordMode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<AuthFormValues>({
     resolver: zodResolver(authSchema),
@@ -60,6 +61,8 @@ const AuthForm = () => {
 
           if (signUpError) {
             toast.error(signUpError.message);
+          } else {
+            toast.success("Check your email to confirm your account");
           }
         } else if (signInError) {
           toast.error(signInError.message);
@@ -87,10 +90,31 @@ const AuthForm = () => {
     }
   }
 
+  const handleForgotPassword = async () => {
+    const email = form.getValues("email");
+    if (!email) {
+      toast.error("Please enter your email address");
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/home`,
+      });
+
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Check your email for password reset instructions");
+      }
+    } catch (error) {
+      toast.error("Failed to send password reset email");
+    }
+  };
+
   const togglePasswordMode = () => {
     setIsPasswordMode(!isPasswordMode);
     if (!isPasswordMode) {
-      // Add validation for password when switching to password mode
       form.register("password", { required: "Password is required" });
     }
   };
@@ -99,10 +123,10 @@ const AuthForm = () => {
     <div className="space-y-6 animate-fade-in">
       <GoogleSignIn />
       
-      <div className="relative flex items-center py-2">
-        <div className="flex-grow border-t border-border/40"></div>
-        <span className="flex-shrink mx-4 text-xs text-muted-foreground">or continue with email</span>
-        <div className="flex-grow border-t border-border/40"></div>
+      <div className="relative flex items-center gap-3">
+        <div className="flex-grow border-t border-border/40" />
+        <span className="flex-shrink-0 text-xs text-muted-foreground px-2">or continue with email</span>
+        <div className="flex-grow border-t border-border/40" />
       </div>
 
       <Form {...form}>
@@ -112,7 +136,6 @@ const AuthForm = () => {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input 
                     placeholder="name@example.com" 
@@ -130,17 +153,36 @@ const AuthForm = () => {
               control={form.control}
               name="password"
               render={({ field }) => (
-                <FormItem className="animate-fade-in">
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="password" 
-                      placeholder="••••••••" 
-                      {...field} 
-                      className="transition-all duration-200"
-                    />
-                  </FormControl>
+                <FormItem className="animate-fade-in space-y-2">
+                  <div className="relative">
+                    <FormControl>
+                      <Input 
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••" 
+                        {...field} 
+                        className="pr-10 transition-all duration-200"
+                      />
+                    </FormControl>
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
                   <FormMessage className="animate-fade-in" />
+                  <button
+                    type="button"
+                    onClick={handleForgotPassword}
+                    className="text-sm text-primary hover:underline focus:outline-none"
+                  >
+                    Forgot your password?
+                  </button>
                 </FormItem>
               )}
             />
@@ -153,7 +195,7 @@ const AuthForm = () => {
                 onClick={togglePasswordMode}
                 className="text-primary hover:underline focus:outline-none"
               >
-                Switch to magic link
+                Use magic link instead
               </button>
             ) : (
               <button 

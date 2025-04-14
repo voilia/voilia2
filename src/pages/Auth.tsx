@@ -52,17 +52,17 @@ const Auth = () => {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4 md:p-8">
+    <div className="flex min-h-screen flex-col items-center justify-center p-4 md:p-8 bg-gradient-to-b from-background to-secondary/20">
       <div className="absolute top-4 right-4">
         <ThemeToggle />
       </div>
       
       <div className="w-full max-w-md animate-fade-in">
-        <Card className="border-border/40">
+        <Card className="border-border/40 shadow-lg backdrop-blur-sm bg-background/80">
           <CardContent className="pt-6">
-            <div className="mb-6 text-center">
+            <div className="mb-6 text-center space-y-1">
               <h1 className="text-2xl font-semibold tracking-tight">Welcome to VOILIA</h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-muted-foreground">
                 Your collaborative AI workspace
               </p>
             </div>
