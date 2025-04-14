@@ -58,7 +58,6 @@ export function Sidebar({ className, isCollapsed = false, toggleSidebar }: Sideb
           <SidebarNavItem
             key={index}
             title={item.title}
-            path={item.path}
             icon={item.icon}
             children={item.children}
             isCollapsed={isCollapsed}
