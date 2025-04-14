@@ -34,14 +34,13 @@ export function MainLayout({ children }: MainLayoutProps) {
       )}
       
       <main 
-        className="flex-1 transition-all duration-300 ease-in-out"
+        className="flex-1 transition-all duration-300 ease-in-out overflow-x-hidden"
         style={{ 
           marginLeft: isMobile ? '0' : (isCollapsed ? '70px' : '240px'),
-          paddingTop: isMobile ? '56px' : '56px', // Ensure we have padding for both mobile header and desktop header
-          paddingLeft: isMobile ? '16px' : '24px' // Adding left padding for better spacing
+          paddingTop: '56px', // Same padding for both mobile and desktop headers
         }}
       >
-        <div className="p-6 lg:p-8 transition-all duration-300">
+        <div className="p-4 md:p-6 lg:p-8">
           {children}
         </div>
       </main>

@@ -7,8 +7,8 @@ interface MobileSidebarToggleProps {
 }
 
 export function MobileSidebarToggle({ onClick }: MobileSidebarToggleProps) {
-  // Removed the fixed positioning since we now have the header with hamburger
-  // This component is kept for backward compatibility but can be considered for removal
+  // This component is kept for backward compatibility but is no longer used directly
+  // The mobile header now contains the hamburger menu
   return (
     <Button
       variant="ghost" 

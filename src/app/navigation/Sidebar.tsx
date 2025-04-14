@@ -34,35 +34,36 @@ export function Sidebar({ className, isCollapsed = false, toggleSidebar }: Sideb
     <div
       className={cn(
         "fixed inset-y-0 z-50 flex flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border backdrop-blur-md bg-sidebar/90",
-        isCollapsed ? "w-0 opacity-0 overflow-hidden" : "w-[240px]",
+        isCollapsed && !isMobile ? "w-[70px]" : "w-[240px]",
         isMobile ? (isMobileSidebarOpen ? "left-0" : "-left-full") : "left-0",
         "transition-all duration-300 ease-in-out",
         className
       )}
     >
       <SidebarContent 
-        isCollapsed={isCollapsed} 
+        isCollapsed={isCollapsed && !isMobile} 
         onNavItemClick={handleNavItemClick}
       />
       
       {/* Footer for mobile - contains theme toggle and profile */}
       {isMobile && (
         <MobileSidebarFooter 
-          isCollapsed={isCollapsed} 
+          isCollapsed={false} 
           onToggleSidebar={handleToggleSidebar}
         />
       )}
     </div>
   );
 
-  const mobileToggle = isMobile && (
-    <MobileSidebarToggle onClick={handleToggleSidebar} />
-  );
+  // We don't need the mobile toggle anymore since we have the header
+  // const mobileToggle = isMobile && (
+  //   <MobileSidebarToggle onClick={handleToggleSidebar} />
+  // );
 
   return (
     <>
       {sidebarContent}
-      {mobileToggle}
+      {/* {mobileToggle} */}
       {isMobile && isMobileSidebarOpen && (
         <div 
           className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
