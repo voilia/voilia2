@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SidebarContent } from "./components/SidebarContent";
@@ -16,6 +16,17 @@ export function Sidebar({ className, isCollapsed = true, toggleSidebar }: Sideba
   const isMobile = useIsMobile();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
+  // Update mobile sidebar state when toggleSidebar is called from parent
+  useEffect(() => {
+    if (isMobile && toggleSidebar) {
+      const originalToggleSidebar = toggleSidebar;
+      toggleSidebar = () => {
+        setIsMobileSidebarOpen(!isMobileSidebarOpen);
+        originalToggleSidebar();
+      };
+    }
+  }, [isMobile, isMobileSidebarOpen, toggleSidebar]);
+  
   const handleToggleSidebar = () => {
     if (isMobile) {
       setIsMobileSidebarOpen(!isMobileSidebarOpen);

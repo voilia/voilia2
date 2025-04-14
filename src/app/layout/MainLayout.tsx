@@ -1,5 +1,5 @@
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useCallback } from "react";
 import { Sidebar } from "@/app/navigation/Sidebar";
 import { Header } from "@/app/navigation/Header";
 import { MobileHeader } from "@/app/navigation/components/MobileHeader";
@@ -14,9 +14,9 @@ export function MainLayout({ children }: MainLayoutProps) {
   // Set default to true to ensure sidebar loads fully collapsed
   const [isCollapsed, setIsCollapsed] = useState(true);
   
-  const toggleSidebar = () => {
+  const toggleSidebar = useCallback(() => {
     setIsCollapsed(!isCollapsed);
-  };
+  }, [isCollapsed]);
   
   return (
     <div className="min-h-screen flex bg-background text-foreground">

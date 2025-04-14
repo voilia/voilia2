@@ -21,7 +21,7 @@ export function MobileHeader({ onToggleSidebar }: MobileHeaderProps) {
       </Button>
       
       <div className="flex items-center">
-        <ThemeToggle />
+        {/* Theme toggle is now only shown in desktop header */}
       </div>
     </header>
   );
