@@ -1,14 +1,9 @@
-
 import { Bot, Folders, MessageSquare } from "lucide-react";
 import { ItemsSection } from "@/components/dashboard/ItemsSection";
 import { pinnedProjects, pinnedRooms, pinnedAgents } from "@/data/dashboard";
+import { CreateProjectDialog } from "@/components/projects/CreateProjectDialog";
 
-interface DashboardProps {
-  onCreateProject: () => void;
-  onCreateRoom: () => void;
-}
-
-export function Dashboard({ onCreateProject, onCreateRoom }: DashboardProps) {
+export function Dashboard() {
   return (
     <div>
       <div className="mb-8 animate-fade-in">
@@ -24,8 +19,9 @@ export function Dashboard({ onCreateProject, onCreateRoom }: DashboardProps) {
           items={pinnedProjects}
           icon={Folders}
           baseUrl="/projects"
-          onCreateNew={onCreateProject}
+          onCreateNew={() => null}
           createButtonText="Create Project"
+          CreateButton={() => <CreateProjectDialog />}
           className="animate-fade-in"
         />
 
@@ -34,7 +30,7 @@ export function Dashboard({ onCreateProject, onCreateRoom }: DashboardProps) {
           items={pinnedRooms}
           icon={MessageSquare}
           baseUrl="/rooms"
-          onCreateNew={onCreateRoom}
+          onCreateNew={() => null}
           createButtonText="Create Room"
           className="animate-fade-in [animation-delay:100ms]"
         />

@@ -1,8 +1,6 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "react-router-dom";
-import { Plus } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -11,9 +9,9 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { toast } from "@/hooks/use-toast";
 import { NavItemLabel } from "./NavItemLabel";
 import { NavItemChildrenToggle } from "./NavItemChildrenToggle";
+import { CreateProjectDialog } from "@/components/projects/CreateProjectDialog";
 
 interface SidebarNavItemWithChildrenProps {
   title: string;
@@ -40,23 +38,13 @@ export function SidebarNavItemWithChildren({
     return "Coming Soon";
   };
 
-  const handleAddClick = (e: React.MouseEvent, title: string) => {
-    e.stopPropagation();
+  const renderAction = (title: string) => {
     if (title === "All Projects") {
-      toast({
-        title: "Create Project",
-        description: "Project creation functionality coming soon!",
-      });
+      return <CreateProjectDialog variant="icon" />;
     } else if (title === "All Rooms") {
-      toast({
-        title: "Create Room",
-        description: "Room creation functionality coming soon!",
-      });
+      return null;
     } else {
-      toast({
-        title: "Coming Soon",
-        description: "This feature is not available yet.",
-      });
+      return null;
     }
   };
   
@@ -101,19 +89,7 @@ export function SidebarNavItemWithChildren({
               {(isMobile || child.title.startsWith("All")) && child.title.startsWith("All") && (
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className={cn(
-                        "absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0",
-                        isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100",
-                        "transition-opacity duration-200 hover:bg-accent/50"
-                      )}
-                      onClick={(e) => handleAddClick(e, child.title)}
-                    >
-                      <Plus className="h-4 w-4" />
-                      <span className="sr-only">Add new {child.title.replace('All ', '')}</span>
-                    </Button>
+                    {renderAction(child.title)}
                   </TooltipTrigger>
                   <TooltipContent 
                     side="right"

@@ -18,6 +18,7 @@ interface ItemsSectionProps {
   baseUrl: string;
   onCreateNew?: () => void;
   createButtonText?: string;
+  CreateButton?: React.ComponentType;
   className?: string;
 }
 
@@ -28,6 +29,7 @@ export function ItemsSection({
   baseUrl,
   onCreateNew,
   createButtonText,
+  CreateButton,
   className,
 }: ItemsSectionProps) {
   return (
@@ -37,7 +39,9 @@ export function ItemsSection({
           <Icon className="h-5 w-5 text-primary" />
           <h2 className="text-xl font-semibold">{title.replace('Pinned ', '')}</h2>
         </div>
-        {onCreateNew && createButtonText && (
+        {CreateButton ? (
+          <CreateButton />
+        ) : onCreateNew && createButtonText && (
           <Button 
             onClick={onCreateNew}
             className="gap-2 hover-effect min-w-[140px] justify-center"
@@ -68,7 +72,11 @@ export function ItemsSection({
           <p className="text-sm text-muted-foreground mt-1">
             Create your first {title.toLowerCase().replace('pinned ', '').slice(0, -1)} to get started
           </p>
-          {onCreateNew && (
+          {CreateButton ? (
+            <div className="mt-4">
+              <CreateButton />
+            </div>
+          ) : onCreateNew && (
             <Button 
               onClick={onCreateNew} 
               className="mt-4 gap-2 hover-effect"
