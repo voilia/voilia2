@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,52 +6,47 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Session } from "@supabase/supabase-js";
 import { toast } from "sonner";
-
 const Auth = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
     // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({
+      data: {
+        session
+      }
+    }) => {
       setSession(session);
       setIsLoading(false);
-      
       if (session) {
         navigate("/home");
       }
     });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        
-        if (event === "SIGNED_IN") {
-          toast.success("Successfully signed in");
-          navigate("/home");
-        }
+    const {
+      data: {
+        subscription
       }
-    );
-
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      setSession(session);
+      if (event === "SIGNED_IN") {
+        toast.success("Successfully signed in");
+        navigate("/home");
+      }
+    });
     return () => subscription.unsubscribe();
   }, [navigate]);
-
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
+    return <div className="flex items-center justify-center min-h-screen">
         <div className="animate-pulse">Loading...</div>
-      </div>
-    );
+      </div>;
   }
-
   if (session) {
     return null; // Will redirect in useEffect
   }
-
-  return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4 md:p-8 bg-gradient-to-b from-background via-background to-secondary/20">
+  return <div className="flex min-h-screen flex-col items-center justify-center p-4 md:p-8 bg-gradient-to-b from-background via-background to-secondary/20">
       <div className="absolute top-4 right-4">
         <ThemeToggle />
       </div>
@@ -71,12 +65,9 @@ const Auth = () => {
           </CardContent>
         </Card>
 
-        <p className="text-center text-sm text-muted-foreground mt-4">
-          By continuing, you agree to VOILIA's Terms of Service and Privacy Policy.
-        </p>
+        <p className="text-center text-sm text-muted-foreground mt-4">By continuing,
+you agree to VOILIA's Terms of Service and Privacy Policy.</p>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Auth;
