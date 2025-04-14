@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { MainLayout } from "@/app/layout/MainLayout";
-import { Dashboard } from "@/app/dashboard/Dashboard";
+import Dashboard from "@/app/dashboard/Dashboard";
 import { toast } from "@/hooks/use-toast";
 
 const Index = () => {
@@ -21,10 +21,7 @@ const Index = () => {
 
   return (
     <MainLayout>
-      <Dashboard 
-        onCreateProject={handleCreateProject}
-        onCreateRoom={handleCreateRoom}
-      />
+      <Dashboard />
     </MainLayout>
   );
 };

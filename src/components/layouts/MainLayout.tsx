@@ -1,6 +1,6 @@
 
 import { ReactNode, useState } from "react";
-import { Sidebar } from "@/components/navigation/Sidebar";
+import { Sidebar } from "@/app/navigation/Sidebar";
 import { Header } from "@/components/navigation/Header";
 import { useIsMobile } from "@/hooks/use-mobile";
 
