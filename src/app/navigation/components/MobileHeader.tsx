@@ -1,14 +1,20 @@
 
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface MobileHeaderProps {
   onToggleSidebar: () => void;
+  isSidebarOpen?: boolean;
 }
 
-export function MobileHeader({ onToggleSidebar }: MobileHeaderProps) {
-  const [isOpen, setIsOpen] = useState(false);
+export function MobileHeader({ onToggleSidebar, isSidebarOpen = false }: MobileHeaderProps) {
+  const [isOpen, setIsOpen] = useState(isSidebarOpen);
+  
+  // Update local state when isSidebarOpen prop changes
+  useEffect(() => {
+    setIsOpen(isSidebarOpen);
+  }, [isSidebarOpen]);
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
