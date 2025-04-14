@@ -1,17 +1,8 @@
-
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SidebarNavItem } from "@/components/navigation/SidebarNavItem";
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  Folders, 
-  MessageSquare, 
-  User, 
-  Bot,
-  FolderOpen
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, FolderOpen } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { sidebarNavItems } from "@/config/navigation";
