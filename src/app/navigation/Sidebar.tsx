@@ -57,23 +57,22 @@ export function Sidebar({ className, isCollapsed = false, toggleSidebar }: Sideb
           />
         ))}
       </div>
-      <div className="mt-auto p-4 border-t border-sidebar-border flex justify-center items-center">
-        {isMobile && (
-          <>
-            <ThemeToggle />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full hover:bg-sidebar-accent/50 transition-all duration-200 active:scale-95 ml-2"
-            >
-              <Avatar className="h-8 w-8 border border-sidebar-border">
-                <AvatarFallback className="bg-sidebar-primary/10 text-sidebar-primary text-sm">
-                  UV
-                </AvatarFallback>
-              </Avatar>
-              <span className="sr-only">User profile</span>
-            </Button>
-          </>
+      <div className="mt-auto p-4 border-t border-sidebar-border flex justify-between items-center">
+        <ThemeToggle />
+        
+        {!isMobile && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleToggleSidebar}
+            className="rounded-full hover:bg-sidebar-accent/50 transition-all duration-200 active:scale-95"
+          >
+            {isCollapsed ? (
+              <ChevronRight className="h-4 w-4" />
+            ) : (
+              <ChevronLeft className="h-4 w-4" />
+            )}
+          </Button>
         )}
       </div>
     </div>

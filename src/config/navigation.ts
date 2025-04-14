@@ -2,7 +2,6 @@
 import { 
   Folders, 
   MessageSquare, 
-  User, 
   Bot
 } from "lucide-react";
 
@@ -30,10 +29,5 @@ export const sidebarNavItems = [
     children: [
       { title: "All Agents", path: "/agents" },
     ],
-  },
-  {
-    title: "Profile",
-    icon: User,
-    path: "/profile",
   },
 ];
