@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -43,19 +44,23 @@ export function Sidebar({ className, isCollapsed = false, toggleSidebar }: Sideb
         className
       )}
     >
-      <div className="flex h-14 items-center border-b border-sidebar-border px-4 justify-center">
+      <div className={cn(
+        "flex h-14 items-center border-b border-sidebar-border px-4 justify-center",
+        isCollapsed ? "opacity-0 h-0 border-none overflow-hidden" : "opacity-100"
+      )}>
         <div className="flex items-center gap-2">
           <img 
             src="/lovable-uploads/f8cf0e0e-b715-4873-9611-ac7f615574be.png" 
             alt="Voilia Logo" 
-            className={cn(
-              "transition-all duration-300",
-              isCollapsed ? "w-8 h-8" : "w-24 h-8"
-            )}
+            className="w-24 h-8"
           />
         </div>
       </div>
-      <div className="flex flex-col gap-1 overflow-y-auto p-3 flex-grow">
+      
+      <div className={cn(
+        "flex flex-col gap-1 overflow-y-auto p-3 flex-grow",
+        isCollapsed ? "opacity-0 hidden" : "opacity-100"
+      )}>
         {sidebarNavItems.map((item, index) => (
           <SidebarNavItem
             key={index}
@@ -70,7 +75,10 @@ export function Sidebar({ className, isCollapsed = false, toggleSidebar }: Sideb
       
       {/* Footer for mobile - contains theme toggle and profile */}
       {isMobile && (
-        <div className="mt-auto p-4 border-t border-sidebar-border flex justify-between items-center">
+        <div className={cn(
+          "mt-auto p-4 border-t border-sidebar-border flex justify-between items-center",
+          isCollapsed ? "opacity-0 hidden" : "opacity-100"
+        )}>
           <ThemeToggle />
           
           <Button
