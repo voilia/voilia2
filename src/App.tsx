@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import { MainLayout } from "@/components/layouts/MainLayout";
 
 // Create the query client instance outside of the component
 const queryClient = new QueryClient();
@@ -21,22 +20,9 @@ const App = () => {
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route 
-                path="/" 
-                element={
-                  <MainLayout>
-                    <Index />
-                  </MainLayout>
-                } 
-              />
-              <Route 
-                path="*" 
-                element={
-                  <MainLayout>
-                    <NotFound />
-                  </MainLayout>
-                } 
-              />
+              <Route path="/" element={<Index />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>

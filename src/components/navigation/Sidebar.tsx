@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SidebarNavItem } from "@/components/navigation/SidebarNavItem";
@@ -13,28 +13,16 @@ interface SidebarProps {
   className?: string;
   isCollapsed?: boolean;
   toggleSidebar?: () => void;
-  isMobileSidebarOpen?: boolean;
-  setIsMobileSidebarOpen?: (open: boolean) => void;
 }
 
-export function Sidebar({ 
-  className, 
-  isCollapsed = false, 
-  toggleSidebar,
-  isMobileSidebarOpen = false,
-  setIsMobileSidebarOpen 
-}: SidebarProps) {
+export function Sidebar({ className, isCollapsed = false, toggleSidebar }: SidebarProps) {
   const isMobile = useIsMobile();
-
-  // Handle clicks on navigation items to close sidebar on mobile
-  const handleNavItemClick = () => {
-    if (isMobile && setIsMobileSidebarOpen) {
-      setIsMobileSidebarOpen(false);
-    }
-  };
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   const handleToggleSidebar = () => {
-    if (toggleSidebar) {
+    if (isMobile) {
+      setIsMobileSidebarOpen(!isMobileSidebarOpen);
+    } else if (toggleSidebar) {
       toggleSidebar();
     }
   };
@@ -43,7 +31,7 @@ export function Sidebar({
     <div
       className={cn(
         "fixed inset-y-0 z-50 flex flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border backdrop-blur-md bg-sidebar/90",
-        isCollapsed ? "w-[0px]" : "w-[240px]",
+        isCollapsed ? "w-[70px]" : "w-[240px]",
         isMobile ? (isMobileSidebarOpen ? "left-0" : "-left-full") : "left-0",
         "transition-all duration-300 ease-in-out",
         className
@@ -73,7 +61,6 @@ export function Sidebar({
             icon={item.icon}
             children={item.children}
             isCollapsed={isCollapsed}
-            onClick={handleNavItemClick}
           />
         ))}
       </div>
@@ -120,7 +107,7 @@ export function Sidebar({
       {isMobile && isMobileSidebarOpen && (
         <div 
           className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
-          onClick={() => setIsMobileSidebarOpen?.(false)}
+          onClick={() => setIsMobileSidebarOpen(false)}
         />
       )}
     </>

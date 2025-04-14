@@ -1,70 +1,137 @@
 
-import { ReactNode, useState } from "react";
-import { ChevronDown, LucideIcon } from "lucide-react";
+import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "react-router-dom";
+import { LucideIcon } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SidebarNavItemProps {
   title: string;
-  icon: LucideIcon;
   path?: string;
-  children?: { title: string; path: string }[];
+  icon?: LucideIcon;
+  children?: {
+    title: string;
+    path: string;
+  }[];
   isCollapsed?: boolean;
-  onClick?: () => void;
 }
 
 export function SidebarNavItem({
   title,
-  icon: Icon,
   path,
+  icon: Icon,
   children,
-  isCollapsed = false,
-  onClick
+  isCollapsed,
 }: SidebarNavItemProps) {
-  const [expanded, setExpanded] = useState(false);
+  // Start with items expanded by default
+  const [isOpen, setIsOpen] = useState(true);
+  const hasChildren = children && children.length > 0;
+  const isMobile = useIsMobile();
+  
+  // Check if this is one of the special sections that need a "+" button
+  const isSpecialSection = title === "All Projects" || title === "All Rooms" || title === "All Agents";
 
-  const handleNavClick = () => {
-    // Execute the onClick handler if provided (for mobile close)
-    if (onClick) {
-      onClick();
-    }
-  };
-
-  // If has child items
-  if (children && children.length > 0) {
+  if (isCollapsed) {
     return (
-      <div className="w-full">
+      <Button
+        variant="ghost"
+        size="icon"
+        asChild={!!path}
+        className="h-9 w-9 my-1"
+      >
+        {path ? (
+          <NavLink
+            to={path}
+            className={({ isActive }) =>
+              cn(
+                "flex items-center justify-center rounded-md",
+                isActive
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                  : "hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+              )
+            }
+          >
+            {Icon && <Icon className="h-5 w-5" />}
+            <span className="sr-only">{title}</span>
+          </NavLink>
+        ) : (
+          <div className="flex items-center justify-center">
+            {Icon && <Icon className="h-5 w-5" />}
+            <span className="sr-only">{title}</span>
+          </div>
+        )}
+      </Button>
+    );
+  }
+
+  if (hasChildren) {
+    return (
+      <div className="animate-fade-in">
         <Button
           variant="ghost"
           className={cn(
-            "w-full justify-start font-normal",
-            isCollapsed ? "px-2" : "px-3",
+            "flex w-full items-center justify-between px-3 py-2 text-base font-medium",
+            "hover:bg-sidebar-accent/50"
           )}
-          onClick={() => setExpanded(!expanded)}
+          onClick={() => setIsOpen(!isOpen)}
         >
-          <Icon className={cn("h-5 w-5 mr-2", isCollapsed && "mr-0")} />
-          {!isCollapsed && <span>{title}</span>}
-          {!isCollapsed && <ChevronDown className={cn("h-4 w-4 ml-auto transition-transform", expanded && "rotate-180")} />}
+          <div className="flex items-center gap-3">
+            {Icon && <Icon className="h-5 w-5" />}
+            <span>{title}</span>
+          </div>
+          <div className="flex items-center">
+            {isOpen ? (
+              <ChevronDown className="h-5 w-5 shrink-0 text-muted-foreground/50" />
+            ) : (
+              <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground/50" />
+            )}
+          </div>
         </Button>
-        
-        {expanded && !isCollapsed && (
-          <div className="pl-8 mt-1 space-y-1">
-            {children.map((child, i) => (
-              <NavLink
-                key={i}
-                to={child.path}
-                className={({ isActive }) => 
-                  cn(
-                    "block w-full px-3 py-2 rounded-md text-sm",
-                    "transition-colors hover:bg-accent hover:text-accent-foreground",
-                    isActive && "bg-accent text-accent-foreground"
-                  )
-                }
-                onClick={handleNavClick}
-              >
-                {child.title}
-              </NavLink>
+        {isOpen && (
+          <div className="ml-4 mt-1 space-y-1 pl-2 pt-1">
+            {children.map((child) => (
+              <div key={child.path} className="relative group">
+                <Button
+                  variant="ghost"
+                  asChild
+                  className="w-full justify-start px-3 py-1.5 text-base"
+                >
+                  <NavLink
+                    to={child.path}
+                    className={({ isActive }) =>
+                      cn(
+                        "flex items-center justify-start gap-2 rounded-md transition-colors",
+                        isActive
+                          ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                          : "hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+                      )
+                    }
+                  >
+                    <span>{child.title}</span>
+                  </NavLink>
+                </Button>
+                
+                {isSpecialSection && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn(
+                      "absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0",
+                      isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+                      "transition-opacity duration-200"
+                    )}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      console.log(`Create new ${title.replace('All ', '')}`);
+                    }}
+                  >
+                    <Plus className="h-4 w-4" />
+                    <span className="sr-only">Add new {title.replace('All ', '')}</span>
+                  </Button>
+                )}
+              </div>
             ))}
           </div>
         )}
@@ -72,35 +139,57 @@ export function SidebarNavItem({
     );
   }
 
-  // If it's a single item with a path
-  if (path) {
-    return (
-      <NavLink
-        to={path}
-        className={({ isActive }) => 
-          cn(
-            "flex items-center px-3 py-2 rounded-md",
-            "transition-colors hover:bg-accent hover:text-accent-foreground",
-            isCollapsed && "justify-center px-2",
-            isActive && "bg-accent text-accent-foreground"
-          )
-        }
-        onClick={handleNavClick}
-      >
-        <Icon className={cn("h-5 w-5", !isCollapsed && "mr-2")} />
-        {!isCollapsed && <span>{title}</span>}
-      </NavLink>
-    );
-  }
-
-  // If it's just a label or placeholder
   return (
-    <div className={cn(
-      "flex items-center px-3 py-2", 
-      isCollapsed && "justify-center px-2"
-    )}>
-      <Icon className={cn("h-5 w-5", !isCollapsed && "mr-2")} />
-      {!isCollapsed && <span>{title}</span>}
+    <div className="relative group">
+      <Button
+        variant="ghost"
+        asChild={!!path}
+        className={cn(
+          "flex w-full justify-start px-3 py-2 text-base font-medium",
+          "animate-fade-in"
+        )}
+      >
+        {path ? (
+          <NavLink
+            to={path}
+            className={({ isActive }) =>
+              cn(
+                "flex w-full items-center gap-3 rounded-md",
+                isActive
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                  : "hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+              )
+            }
+          >
+            {Icon && <Icon className="h-5 w-5" />}
+            <span>{title}</span>
+          </NavLink>
+        ) : (
+          <div className="flex items-center gap-3">
+            {Icon && <Icon className="h-5 w-5" />}
+            <span>{title}</span>
+          </div>
+        )}
+      </Button>
+      
+      {isSpecialSection && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className={cn(
+            "absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0",
+            isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+            "transition-opacity duration-200"
+          )}
+          onClick={(e) => {
+            e.stopPropagation();
+            console.log(`Create new ${title.replace('All ', '')}`);
+          }}
+        >
+          <Plus className="h-4 w-4" />
+          <span className="sr-only">Add new {title.replace('All ', '')}</span>
+        </Button>
+      )}
     </div>
   );
 }
