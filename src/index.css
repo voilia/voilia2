@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -105,23 +106,6 @@
   }
   
   .glass-card {
-    @apply bg-white/10 dark:bg-black/20 backdrop-blur-md border border-white/20 dark:border-white/5 shadow-lg;
-  }
-  
-  .futuristic-blur {
-    @apply backdrop-blur-xl bg-black/10 dark:bg-black/30 border border-white/10 dark:border-white/5;
-  }
-  
-  .glow-effect {
-    box-shadow: 0 0 15px rgba(149, 128, 255, 0.2), 0 0 30px rgba(149, 128, 255, 0.1);
-  }
-  
-  .glow-text {
-    text-shadow: 0 0 8px rgba(149, 128, 255, 0.3);
-  }
-  
-  .glow-border {
-    @apply border border-primary/30 dark:border-primary/20;
-    box-shadow: 0 0 10px rgba(149, 128, 255, 0.1);
+    @apply bg-white/30 dark:bg-white/5 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-lg;
   }
 }
