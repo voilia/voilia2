@@ -21,15 +21,15 @@ export function MainLayout({ children }: MainLayoutProps) {
     <div className="min-h-screen flex bg-background text-foreground">
       <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
       
-      {/* Restore hamburger toggle for non-mobile view when sidebar is collapsed */}
-      {!isMobile && isCollapsed && (
+      {/* Show header for non-mobile view at all times */}
+      {!isMobile && (
         <Header toggleSidebar={toggleSidebar} isCollapsed={isCollapsed} />
       )}
       
       <main 
         className="flex-1 transition-all duration-300 ease-in-out"
         style={{ 
-          marginLeft: isMobile ? '0' : (isCollapsed ? '0' : '240px'),
+          marginLeft: isMobile ? '0' : (isCollapsed ? '70px' : '240px'),
           paddingTop: isMobile ? '0' : '56px'
         }}
       >
