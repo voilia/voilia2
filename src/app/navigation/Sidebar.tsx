@@ -1,12 +1,13 @@
-
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SidebarNavItem } from "@/app/navigation/SidebarNavItem";
-import { ChevronLeft, ChevronRight, Menu } from "lucide-react";
+import { ChevronLeft, FolderOpen, Menu } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { sidebarNavItems } from "@/config/navigation";
-import { HeaderControls } from "./HeaderControls";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { HeaderControls } from "@/app/navigation/HeaderControls";
 
 interface SidebarProps {
   className?: string;
@@ -14,11 +15,7 @@ interface SidebarProps {
   toggleSidebar?: () => void;
 }
 
-export function Sidebar({
-  className,
-  isCollapsed = false,
-  toggleSidebar
-}: SidebarProps) {
+export function Sidebar({ className, isCollapsed = false, toggleSidebar }: SidebarProps) {
   const isMobile = useIsMobile();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
@@ -29,22 +26,36 @@ export function Sidebar({
       toggleSidebar();
     }
   };
+  
+  const handleNavItemClick = () => {
+    if (isMobile) {
+      setIsMobileSidebarOpen(false);
+    }
+  };
 
   const sidebarContent = (
-    <div className={cn(
-      "fixed inset-y-0 z-50 flex flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border backdrop-blur-md bg-sidebar/90",
-      isCollapsed ? "w-[70px]" : "w-[240px]",
-      isMobile ? (isMobileSidebarOpen ? "left-0" : "-left-full") : "left-0",
-      "transition-all duration-300 ease-in-out",
-      className
-    )}>
-      <div className="flex h-14 items-center border-b border-sidebar-border px-4">
-        {/* Empty header space - we'll put the toggle in Header.tsx */}
+    <div
+      className={cn(
+        "fixed inset-y-0 z-50 flex flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border backdrop-blur-md bg-sidebar/90",
+        isCollapsed ? "w-[70px]" : "w-[240px]",
+        isMobile ? (isMobileSidebarOpen ? "left-0" : "-left-full") : "left-0",
+        "transition-all duration-300 ease-in-out",
+        className
+      )}
+    >
+      <div className="flex h-14 items-center border-b border-sidebar-border px-4 justify-center">
+        <div className="flex items-center gap-2">
+          <img 
+            src="/lovable-uploads/f8cf0e0e-b715-4873-9611-ac7f615574be.png" 
+            alt="Voilia Logo" 
+            className={cn(
+              "transition-all duration-300",
+              isCollapsed ? "w-8 h-8" : "w-24 h-8"
+            )}
+          />
+        </div>
       </div>
-      <div className={cn(
-        "flex flex-col gap-1 overflow-y-auto p-3 flex-grow",
-        isCollapsed ? "items-center" : ""
-      )}>
+      <div className="flex flex-col gap-1 overflow-y-auto p-3 flex-grow">
         {sidebarNavItems.map((item, index) => (
           <SidebarNavItem
             key={index}
@@ -52,14 +63,28 @@ export function Sidebar({
             icon={item.icon}
             children={item.children}
             isCollapsed={isCollapsed}
+            onItemClick={handleNavItemClick}
           />
         ))}
       </div>
-
-      {/* Add HeaderControls to mobile sidebar footer */}
+      
+      {/* Footer for mobile - contains theme toggle and profile */}
       {isMobile && (
         <div className="mt-auto p-4 border-t border-sidebar-border flex justify-between items-center">
-          <HeaderControls />
+          <ThemeToggle />
+          
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full hover:bg-accent/50 transition-all duration-200 active:scale-95"
+          >
+            <Avatar className="h-8 w-8 border border-border">
+              <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                UV
+              </AvatarFallback>
+            </Avatar>
+            <span className="sr-only">User profile</span>
+          </Button>
           
           <Button
             variant="ghost"
@@ -91,7 +116,7 @@ export function Sidebar({
       {sidebarContent}
       {mobileToggle}
       {isMobile && isMobileSidebarOpen && (
-        <div
+        <div 
           className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
           onClick={() => setIsMobileSidebarOpen(false)}
         />
