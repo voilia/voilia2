@@ -1,6 +1,6 @@
 
 import { Bot, Folders, MessageSquare } from "lucide-react";
-import { ItemsSection } from "@/components/ItemsSection";
+import { ItemsSection } from "@/components/dashboard/ItemsSection";
 import { dashboardData } from "./data";
 import { CreateProjectDialog } from "@/components/projects/CreateProjectDialog";
 
