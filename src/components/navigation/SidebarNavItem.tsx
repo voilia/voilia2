@@ -16,6 +16,7 @@ interface SidebarNavItemProps {
     path: string;
   }[];
   isCollapsed?: boolean;
+  onItemClick?: () => void;
 }
 
 export function SidebarNavItem({
@@ -24,6 +25,7 @@ export function SidebarNavItem({
   icon: Icon,
   children,
   isCollapsed,
+  onItemClick
 }: SidebarNavItemProps) {
   // Start with items expanded by default
   const [isOpen, setIsOpen] = useState(true);
@@ -31,40 +33,20 @@ export function SidebarNavItem({
   const isMobile = useIsMobile();
   
   // Check if this is one of the special sections that need a "+" button
-  const isSpecialSection = title === "All Projects" || title === "All Rooms" || title === "All Agents";
+  const isSpecialSection = title === "Projects" || title === "Rooms" || title === "Agents";
+  const showAddButton = isSpecialSection || (children && children.some(child => 
+    child.title === "All Projects" || child.title === "All Rooms" || child.title === "All Agents"));
 
+  // If sidebar is collapsed, we don't show anything
   if (isCollapsed) {
-    return (
-      <Button
-        variant="ghost"
-        size="icon"
-        asChild={!!path}
-        className="h-9 w-9 my-1"
-      >
-        {path ? (
-          <NavLink
-            to={path}
-            className={({ isActive }) =>
-              cn(
-                "flex items-center justify-center rounded-md",
-                isActive
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                  : "hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
-              )
-            }
-          >
-            {Icon && <Icon className="h-5 w-5" />}
-            <span className="sr-only">{title}</span>
-          </NavLink>
-        ) : (
-          <div className="flex items-center justify-center">
-            {Icon && <Icon className="h-5 w-5" />}
-            <span className="sr-only">{title}</span>
-          </div>
-        )}
-      </Button>
-    );
+    return null;
   }
+
+  const handleLinkClick = () => {
+    if (onItemClick) {
+      onItemClick();
+    }
+  };
 
   if (hasChildren) {
     return (
@@ -97,6 +79,7 @@ export function SidebarNavItem({
                   variant="ghost"
                   asChild
                   className="w-full justify-start px-3 py-1.5 text-base"
+                  onClick={handleLinkClick}
                 >
                   <NavLink
                     to={child.path}
@@ -113,7 +96,7 @@ export function SidebarNavItem({
                   </NavLink>
                 </Button>
                 
-                {isSpecialSection && (
+                {(child.title === "All Projects" || child.title === "All Rooms" || child.title === "All Agents") && (
                   <Button
                     variant="ghost"
                     size="icon"
@@ -124,11 +107,11 @@ export function SidebarNavItem({
                     )}
                     onClick={(e) => {
                       e.stopPropagation();
-                      console.log(`Create new ${title.replace('All ', '')}`);
+                      console.log(`Create new ${child.title.replace('All ', '')}`);
                     }}
                   >
                     <Plus className="h-4 w-4" />
-                    <span className="sr-only">Add new {title.replace('All ', '')}</span>
+                    <span className="sr-only">Add new {child.title.replace('All ', '')}</span>
                   </Button>
                 )}
               </div>
@@ -148,6 +131,7 @@ export function SidebarNavItem({
           "flex w-full justify-start px-3 py-2 text-base font-medium",
           "animate-fade-in"
         )}
+        onClick={handleLinkClick}
       >
         {path ? (
           <NavLink
@@ -172,7 +156,7 @@ export function SidebarNavItem({
         )}
       </Button>
       
-      {isSpecialSection && (
+      {showAddButton && (
         <Button
           variant="ghost"
           size="icon"
@@ -183,11 +167,11 @@ export function SidebarNavItem({
           )}
           onClick={(e) => {
             e.stopPropagation();
-            console.log(`Create new ${title.replace('All ', '')}`);
+            console.log(`Create new ${title}`);
           }}
         >
           <Plus className="h-4 w-4" />
-          <span className="sr-only">Add new {title.replace('All ', '')}</span>
+          <span className="sr-only">Add new {title}</span>
         </Button>
       )}
     </div>

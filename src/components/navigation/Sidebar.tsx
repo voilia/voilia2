@@ -3,10 +3,11 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SidebarNavItem } from "@/components/navigation/SidebarNavItem";
-import { ChevronLeft, ChevronRight, FolderOpen } from "lucide-react";
+import { ChevronLeft, FolderOpen, Menu } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { sidebarNavItems } from "@/config/navigation";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface SidebarProps {
   className?: string;
@@ -25,12 +26,18 @@ export function Sidebar({ className, isCollapsed = false, toggleSidebar }: Sideb
       toggleSidebar();
     }
   };
+  
+  const handleNavItemClick = () => {
+    if (isMobile) {
+      setIsMobileSidebarOpen(false);
+    }
+  };
 
   const sidebarContent = (
     <div
       className={cn(
         "fixed inset-y-0 z-50 flex flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border backdrop-blur-md bg-sidebar/90",
-        isCollapsed ? "w-[70px]" : "w-[240px]",
+        isCollapsed ? "w-0" : "w-[240px]",
         isMobile ? (isMobileSidebarOpen ? "left-0" : "-left-full") : "left-0",
         "transition-all duration-300 ease-in-out",
         className
@@ -38,21 +45,11 @@ export function Sidebar({ className, isCollapsed = false, toggleSidebar }: Sideb
     >
       <div className="flex h-14 items-center border-b border-sidebar-border px-4">
         <div className="flex items-center gap-2">
-          {!isCollapsed && (
-            <div className="flex items-center space-x-2">
-              <FolderOpen className="h-6 w-6 text-primary" />
-              <span className="font-semibold text-lg">VOILIA</span>
-            </div>
-          )}
-          {isCollapsed && <FolderOpen className="h-6 w-6 mx-auto text-primary" />}
+          <FolderOpen className="h-6 w-6 text-primary" />
+          <span className="font-semibold text-lg">VOILIA</span>
         </div>
       </div>
-      <div
-        className={cn(
-          "flex flex-col gap-1 overflow-y-auto p-3",
-          isCollapsed ? "items-center" : ""
-        )}
-      >
+      <div className="flex flex-col gap-1 overflow-y-auto p-3 flex-grow">
         {sidebarNavItems.map((item, index) => (
           <SidebarNavItem
             key={index}
@@ -60,42 +57,51 @@ export function Sidebar({ className, isCollapsed = false, toggleSidebar }: Sideb
             icon={item.icon}
             children={item.children}
             isCollapsed={isCollapsed}
+            onItemClick={handleNavItemClick}
           />
         ))}
       </div>
-      <div className="mt-auto p-4 border-t border-sidebar-border flex justify-between items-center">
-        <ThemeToggle />
-        
-        {!isMobile && toggleSidebar && (
+      
+      {/* Footer for mobile - contains theme toggle and profile */}
+      {isMobile && (
+        <div className="mt-auto p-4 border-t border-sidebar-border flex justify-between items-center">
+          <ThemeToggle />
+          
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full hover:bg-accent/50 transition-all duration-200 active:scale-95"
+          >
+            <Avatar className="h-8 w-8 border border-border">
+              <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                UV
+              </AvatarFallback>
+            </Avatar>
+            <span className="sr-only">User profile</span>
+          </Button>
+          
           <Button
             variant="ghost"
             size="icon"
             onClick={handleToggleSidebar}
             className="rounded-full hover:bg-sidebar-accent/50 transition-all duration-200 active:scale-95"
           >
-            {isCollapsed ? (
-              <ChevronRight className="h-4 w-4" />
-            ) : (
-              <ChevronLeft className="h-4 w-4" />
-            )}
+            <ChevronLeft className="h-4 w-4" />
           </Button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 
   const mobileToggle = isMobile && (
     <Button
-      variant="outline"
-      size="icon"
+      variant="ghost" 
+      size="icon" 
       onClick={handleToggleSidebar}
-      className="fixed top-4 left-4 z-50 rounded-full shadow-md hover:bg-accent/50 transition-all duration-200 active:scale-95"
+      className="fixed top-3 left-3 z-50 rounded-full hover:bg-accent/50 transition-all duration-200 active:scale-95"
     >
-      {isMobileSidebarOpen ? (
-        <ChevronLeft className="h-4 w-4" />
-      ) : (
-        <ChevronRight className="h-4 w-4" />
-      )}
+      <Menu className="h-5 w-5" />
+      <span className="sr-only">Toggle sidebar</span>
     </Button>
   );
 
