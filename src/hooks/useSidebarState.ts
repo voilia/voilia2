@@ -2,7 +2,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-export function useSidebarState(isCollapsed?: boolean, toggleSidebar?: () => void) {
+export function useSidebarState(isCollapsed: boolean, toggleSidebar?: () => void) {
   const isMobile = useIsMobile();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   
@@ -23,13 +23,13 @@ export function useSidebarState(isCollapsed?: boolean, toggleSidebar?: () => voi
   }, [isMobile, isMobileSidebarOpen, toggleSidebar]);
   
   const handleNavItemClick = () => {
-    if (isMobile && toggleSidebar) {
+    if (isMobile) {
       setIsMobileSidebarOpen(false);
-      toggleSidebar();
+      if (toggleSidebar) toggleSidebar();
     }
   };
 
-  const sidebarVisible = isMobile ? isMobileSidebarOpen : true; // Always expanded by default on desktop
+  const sidebarVisible = isMobile ? isMobileSidebarOpen : !isCollapsed;
 
   return {
     isMobile,
