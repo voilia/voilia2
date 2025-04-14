@@ -2,6 +2,7 @@
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
+import { HeaderControls } from "@/app/navigation/HeaderControls";
 
 interface MobileHeaderProps {
   onToggleSidebar: () => void;
@@ -39,6 +40,8 @@ export function MobileHeader({ onToggleSidebar, isSidebarOpen = false }: MobileH
         </div>
         <span className="sr-only">Toggle sidebar</span>
       </Button>
+      
+      <HeaderControls />
     </header>
   );
 }
