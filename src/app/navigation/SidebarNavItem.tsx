@@ -38,23 +38,30 @@ export function SidebarNavItem({
       <Button
         variant="ghost"
         size="icon"
-        asChild
+        asChild={!!path}
         className="h-9 w-9 my-1"
       >
-        <NavLink
-          to={path || "#"}
-          className={({ isActive }) =>
-            cn(
-              "flex items-center justify-center rounded-md",
-              isActive
-                ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                : "hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
-            )
-          }
-        >
-          {Icon && <Icon className="h-5 w-5" />}
-          <span className="sr-only">{title}</span>
-        </NavLink>
+        {path ? (
+          <NavLink
+            to={path}
+            className={({ isActive }) =>
+              cn(
+                "flex items-center justify-center rounded-md",
+                isActive
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                  : "hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+              )
+            }
+          >
+            {Icon && <Icon className="h-5 w-5" />}
+            <span className="sr-only">{title}</span>
+          </NavLink>
+        ) : (
+          <div className="flex items-center justify-center">
+            {Icon && <Icon className="h-5 w-5" />}
+            <span className="sr-only">{title}</span>
+          </div>
+        )}
       </Button>
     );
   }
@@ -136,26 +143,33 @@ export function SidebarNavItem({
     <div className="relative group">
       <Button
         variant="ghost"
-        asChild
+        asChild={!!path}
         className={cn(
           "flex w-full justify-start px-3 py-2 text-base font-medium",
           "animate-fade-in"
         )}
       >
-        <NavLink
-          to={path || "#"}
-          className={({ isActive }) =>
-            cn(
-              "flex w-full items-center gap-3 rounded-md",
-              isActive
-                ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                : "hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
-            )
-          }
-        >
-          {Icon && <Icon className="h-5 w-5" />}
-          <span>{title}</span>
-        </NavLink>
+        {path ? (
+          <NavLink
+            to={path}
+            className={({ isActive }) =>
+              cn(
+                "flex w-full items-center gap-3 rounded-md",
+                isActive
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                  : "hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+              )
+            }
+          >
+            {Icon && <Icon className="h-5 w-5" />}
+            <span>{title}</span>
+          </NavLink>
+        ) : (
+          <div className="flex items-center gap-3">
+            {Icon && <Icon className="h-5 w-5" />}
+            <span>{title}</span>
+          </div>
+        )}
       </Button>
       
       {isSpecialSection && (
