@@ -1,9 +1,10 @@
 
-import { Menu } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useState } from "react";
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -12,6 +13,12 @@ interface HeaderProps {
 
 export function Header({ toggleSidebar, isCollapsed }: HeaderProps) {
   const isMobile = useIsMobile();
+  const [isOpen, setIsOpen] = useState(!isCollapsed);
+  
+  const handleToggle = () => {
+    setIsOpen(!isOpen);
+    toggleSidebar();
+  };
   
   // Don't render header on mobile
   if (isMobile) {
@@ -28,10 +35,17 @@ export function Header({ toggleSidebar, isCollapsed }: HeaderProps) {
         <Button 
           variant="ghost" 
           size="icon" 
-          onClick={toggleSidebar}
+          onClick={handleToggle}
           className="rounded-full hover:bg-accent/50 transition-all duration-200 active:scale-95"
         >
-          <Menu className="h-5 w-5" />
+          <div className="relative w-5 h-5">
+            <Menu className={`absolute h-5 w-5 transition-all duration-300 ${
+              isOpen ? "opacity-0 rotate-90 scale-0" : "opacity-100 rotate-0 scale-100"
+            }`} />
+            <X className={`absolute h-5 w-5 transition-all duration-300 ${
+              isOpen ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-0"
+            }`} />
+          </div>
           <span className="sr-only">Toggle sidebar</span>
         </Button>
       </div>
