@@ -48,7 +48,7 @@ const pinnedAgents = [
 
 const Index = () => {
   const isMobile = useIsMobile();
-  const [sidebarWidth, setSidebarWidth] = useState(isMobile ? 0 : 240);
+  const [sidebarWidth] = useState(isMobile ? 0 : 240);
   
   const handleCreateProject = () => {
     toast({
