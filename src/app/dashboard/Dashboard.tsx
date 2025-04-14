@@ -27,7 +27,7 @@ export function Dashboard() {
       </div>
 
       <ItemsSection 
-        title="Pinned Projects" 
+        title="Projects" 
         items={dashboardData.projects} 
         icon={Folder} 
         baseUrl="/projects"
@@ -36,7 +36,7 @@ export function Dashboard() {
       />
 
       <ItemsSection 
-        title="Pinned Rooms" 
+        title="Rooms" 
         items={dashboardData.rooms} 
         icon={MessageSquare} 
         baseUrl="/rooms"
@@ -45,7 +45,7 @@ export function Dashboard() {
       />
 
       <ItemsSection 
-        title="Pinned Agents" 
+        title="Agents" 
         items={dashboardData.agents} 
         icon={Bot} 
         baseUrl="/agents"

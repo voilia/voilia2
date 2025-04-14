@@ -64,9 +64,9 @@ export function ItemsSection({
       ) : (
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <Icon className="h-12 w-12 text-muted-foreground/50 mb-4" />
-          <h3 className="text-lg font-medium">No {title} Found</h3>
+          <h3 className="text-lg font-medium">No {title.replace('Pinned ', '')} Found</h3>
           <p className="text-sm text-muted-foreground mt-1">
-            Create your first {title.toLowerCase().slice(0, -1)} to get started
+            Create your first {title.toLowerCase().replace('pinned ', '').slice(0, -1)} to get started
           </p>
           {onCreateNew && (
             <Button 
