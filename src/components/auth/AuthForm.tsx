@@ -121,109 +121,111 @@ const AuthForm = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <GoogleSignIn />
-      
-      <div className="relative flex items-center gap-3">
-        <div className="flex-grow border-t border-border/40" />
-        <span className="flex-shrink-0 text-xs text-muted-foreground px-2">or continue with email</span>
-        <div className="flex-grow border-t border-border/40" />
-      </div>
+      <div className="glass-card p-6 transition-all duration-300 hover:shadow-lg">
+        <GoogleSignIn />
+        
+        <div className="flex items-center justify-center text-muted-foreground text-sm my-4">
+          <span className="flex-grow border-t border-border/40" />
+          <span className="mx-2">or continue with email</span>
+          <span className="flex-grow border-t border-border/40" />
+        </div>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input 
-                    placeholder="name@example.com" 
-                    {...field} 
-                    className="transition-all duration-200"
-                  />
-                </FormControl>
-                <FormMessage className="animate-fade-in" />
-              </FormItem>
-            )}
-          />
-
-          {isPasswordMode && (
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
-              name="password"
+              name="email"
               render={({ field }) => (
-                <FormItem className="animate-fade-in space-y-2">
-                  <div className="relative">
-                    <FormControl>
-                      <Input 
-                        type={showPassword ? "text" : "password"}
-                        placeholder="••••••••" 
-                        {...field} 
-                        className="pr-10 transition-all duration-200"
-                      />
-                    </FormControl>
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </button>
-                  </div>
+                <FormItem>
+                  <FormControl>
+                    <Input 
+                      placeholder="name@example.com" 
+                      {...field} 
+                      className="transition-all duration-200 focus:ring-2 ring-primary/40"
+                    />
+                  </FormControl>
                   <FormMessage className="animate-fade-in" />
-                  <button
-                    type="button"
-                    onClick={handleForgotPassword}
-                    className="text-sm text-primary hover:underline focus:outline-none"
-                  >
-                    Forgot your password?
-                  </button>
                 </FormItem>
               )}
             />
-          )}
 
-          <div className="text-sm text-center">
-            {isPasswordMode ? (
-              <button 
-                type="button" 
-                onClick={togglePasswordMode}
-                className="text-primary hover:underline focus:outline-none"
-              >
-                Use magic link instead
-              </button>
-            ) : (
-              <button 
-                type="button" 
-                onClick={togglePasswordMode}
-                className="text-primary hover:underline focus:outline-none"
-              >
-                Prefer using a password?
-              </button>
+            {isPasswordMode && (
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem className="animate-fade-in space-y-2">
+                    <div className="relative">
+                      <FormControl>
+                        <Input 
+                          type={showPassword ? "text" : "password"}
+                          placeholder="••••••••" 
+                          {...field} 
+                          className="pr-10 transition-all duration-200 focus:ring-2 ring-primary/40"
+                        />
+                      </FormControl>
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
+                    <FormMessage className="animate-fade-in" />
+                    <button
+                      type="button"
+                      onClick={handleForgotPassword}
+                      className="text-sm text-primary hover:underline focus:outline-none transition-colors"
+                    >
+                      Forgot your password?
+                    </button>
+                  </FormItem>
+                )}
+              />
             )}
-          </div>
 
-          <Button 
-            type="submit" 
-            className="w-full"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                <span>{isPasswordMode ? "Signing in..." : "Sending link..."}</span>
-              </>
-            ) : (
-              <span>{isPasswordMode ? "Sign in with password" : "Send magic link"}</span>
-            )}
-          </Button>
-        </form>
-      </Form>
+            <div className="text-sm text-center">
+              {isPasswordMode ? (
+                <button 
+                  type="button" 
+                  onClick={togglePasswordMode}
+                  className="text-primary hover:underline focus:outline-none transition-colors"
+                >
+                  Use magic link instead
+                </button>
+              ) : (
+                <button 
+                  type="button" 
+                  onClick={togglePasswordMode}
+                  className="text-primary hover:underline focus:outline-none transition-colors"
+                >
+                  Prefer using a password?
+                </button>
+              )}
+            </div>
+
+            <Button 
+              type="submit" 
+              className="w-full transition-all duration-200 hover:shadow-md"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <span>{isPasswordMode ? "Signing in..." : "Sending link..."}</span>
+                </>
+              ) : (
+                <span>{isPasswordMode ? "Sign in with password" : "Send magic link"}</span>
+              )}
+            </Button>
+          </form>
+        </Form>
+      </div>
     </div>
   );
 };

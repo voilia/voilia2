@@ -52,13 +52,13 @@ const Auth = () => {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4 md:p-8 bg-gradient-to-b from-background to-secondary/20">
+    <div className="flex min-h-screen flex-col items-center justify-center p-4 md:p-8 bg-gradient-to-b from-background via-background to-secondary/20">
       <div className="absolute top-4 right-4">
         <ThemeToggle />
       </div>
       
       <div className="w-full max-w-md animate-fade-in">
-        <Card className="border-border/40 shadow-lg backdrop-blur-sm bg-background/80">
+        <Card className="backdrop-blur-xl bg-card/80 border-border/40 shadow-xl rounded-2xl transition-all duration-300 hover:shadow-2xl">
           <CardContent className="pt-6">
             <div className="mb-6 text-center space-y-1">
               <h1 className="text-2xl font-semibold tracking-tight">Welcome to VOILIA</h1>
