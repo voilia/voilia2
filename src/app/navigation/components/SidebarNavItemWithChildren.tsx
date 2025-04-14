@@ -1,9 +1,11 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "react-router-dom";
-import { LucideIcon } from "lucide-react";
+import { LucideIcon, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useToast } from "@/hooks/use-toast";
 import {
   Tooltip,
   TooltipContent,
@@ -31,21 +33,62 @@ export function SidebarNavItemWithChildren({
 }: SidebarNavItemWithChildrenProps) {
   const [isOpen, setIsOpen] = useState(true);
   const isMobile = useIsMobile();
+  const { toast } = useToast();
 
-  const getActionText = (title: string) => {
-    if (title === "All Projects") return "New Project";
-    if (title === "All Rooms") return "New Room";
-    return "Coming Soon";
-  };
+  const getActionButton = (childTitle: string) => {
+    const showToast = (title: string) => {
+      toast({
+        title,
+        description: "This feature is coming soon!",
+      });
+    };
 
-  const renderAction = (title: string) => {
-    if (title === "All Projects") {
-      return <CreateProjectDialog variant="icon" />;
-    } else if (title === "All Rooms") {
-      return null;
-    } else {
-      return null;
+    if (childTitle === "All Projects") {
+      return (
+        <CreateProjectDialog 
+          variant="icon"
+          className={cn(
+            isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+            "absolute right-2 top-1/2 -translate-y-1/2 transition-opacity duration-200"
+          )}
+        />
+      );
     }
+
+    const tooltipText = childTitle === "All Rooms" ? "New Room" : "Coming Soon";
+    const ToastButton = () => (
+      <Button
+        variant="ghost"
+        size="icon"
+        className={cn(
+          isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+          "absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 transition-opacity duration-200"
+        )}
+        onClick={(e) => {
+          e.stopPropagation();
+          showToast(tooltipText);
+        }}
+      >
+        <Plus className="h-4 w-4" />
+        <span className="sr-only">{tooltipText}</span>
+      </Button>
+    );
+
+    return !isMobile ? (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <ToastButton />
+        </TooltipTrigger>
+        <TooltipContent 
+          side="right"
+          className="bg-secondary text-secondary-foreground"
+        >
+          {tooltipText}
+        </TooltipContent>
+      </Tooltip>
+    ) : (
+      <ToastButton />
+    );
   };
   
   return (
@@ -86,19 +129,7 @@ export function SidebarNavItemWithChildren({
                 </NavLink>
               </Button>
               
-              {(isMobile || child.title.startsWith("All")) && child.title.startsWith("All") && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    {renderAction(child.title)}
-                  </TooltipTrigger>
-                  <TooltipContent 
-                    side="right"
-                    className="bg-accent text-accent-foreground border-accent-foreground/20"
-                  >
-                    {getActionText(child.title)}
-                  </TooltipContent>
-                </Tooltip>
-              )}
+              {child.title.startsWith("All") && getActionButton(child.title)}
             </div>
           ))}
         </div>
