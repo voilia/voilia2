@@ -1,3 +1,4 @@
+
 import { Sheet, SheetContent } from "@/components/ui/sheet"
 import * as React from "react"
 import { cn } from "@/lib/utils"
@@ -15,10 +16,6 @@ import {
   SidebarGroupAction,
   SidebarGroupContent,
   SidebarTrigger,
-} from "./sidebar-components"
-import {
-  SidebarMenu,
-  SidebarMenuItem,
   SidebarMenuButton,
   SidebarMenuAction,
   SidebarMenuBadge,
@@ -26,6 +23,10 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+} from "./sidebar-components"
+import {
+  SidebarMenu,
+  SidebarMenuItem,
 } from "./sidebar-menu"
 
 const SIDEBAR_WIDTH = "16rem"
