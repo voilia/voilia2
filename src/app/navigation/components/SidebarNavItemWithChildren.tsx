@@ -6,6 +6,12 @@ import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { toast } from "@/hooks/use-toast";
 
 interface SidebarNavItemWithChildrenProps {
   title: string;
@@ -25,10 +31,33 @@ export function SidebarNavItemWithChildren({
 }: SidebarNavItemWithChildrenProps) {
   const [isOpen, setIsOpen] = useState(true);
   const isMobile = useIsMobile();
-  
-  // Check if this is one of the special sections that need a "+" button
-  const isSpecialSection = title === "All Projects" || title === "All Rooms" || title === "All Agents";
 
+  const getActionText = (title: string) => {
+    if (title === "All Projects") return "New Project";
+    if (title === "All Rooms") return "New Room";
+    return "Coming Soon";
+  };
+
+  const handleAddClick = (e: React.MouseEvent, title: string) => {
+    e.stopPropagation();
+    if (title === "All Projects") {
+      toast({
+        title: "Create Project",
+        description: "Project creation functionality coming soon!",
+      });
+    } else if (title === "All Rooms") {
+      toast({
+        title: "Create Room",
+        description: "Room creation functionality coming soon!",
+      });
+    } else {
+      toast({
+        title: "Coming Soon",
+        description: "This feature is not available yet.",
+      });
+    }
+  };
+  
   return (
     <div className="animate-fade-in">
       <Button
@@ -76,23 +105,30 @@ export function SidebarNavItemWithChildren({
                 </NavLink>
               </Button>
               
-              {isSpecialSection && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={cn(
-                    "absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0",
-                    isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100",
-                    "transition-opacity duration-200"
-                  )}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    console.log(`Create new ${child.title.replace('All ', '')}`);
-                  }}
-                >
-                  <Plus className="h-4 w-4" />
-                  <span className="sr-only">Add new {child.title.replace('All ', '')}</span>
-                </Button>
+              {(isMobile || child.title.startsWith("All")) && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className={cn(
+                        "absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0",
+                        isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+                        "transition-opacity duration-200 hover:bg-accent/50"
+                      )}
+                      onClick={(e) => handleAddClick(e, child.title)}
+                    >
+                      <Plus className="h-4 w-4" />
+                      <span className="sr-only">Add new {child.title.replace('All ', '')}</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent 
+                    side="right"
+                    className="bg-accent text-accent-foreground border-accent-foreground/20"
+                  >
+                    {getActionText(child.title)}
+                  </TooltipContent>
+                </Tooltip>
               )}
             </div>
           ))}
