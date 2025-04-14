@@ -1,24 +1,10 @@
 
+import { Bot, Folders, MessageSquare } from "lucide-react";
 import { ItemsSection } from "@/components/ItemsSection";
-import { Folder, MessageSquare, Bot } from "lucide-react";
 import { dashboardData } from "./data";
-import { toast } from "@/hooks/use-toast";
+import { CreateProjectDialog } from "@/components/projects/CreateProjectDialog";
 
 export function Dashboard() {
-  const handleCreateProject = () => {
-    toast({
-      title: "Create Project",
-      description: "Project creation functionality coming soon!",
-    });
-  };
-
-  const handleCreateRoom = () => {
-    toast({
-      title: "Create Room",
-      description: "Room creation functionality coming soon!",
-    });
-  };
-
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl space-y-6 py-6">
       <div>
@@ -29,10 +15,9 @@ export function Dashboard() {
       <ItemsSection 
         title="Projects" 
         items={dashboardData.projects} 
-        icon={Folder} 
+        icon={Folders} 
         baseUrl="/projects"
-        onCreateNew={handleCreateProject}
-        createButtonText="Create Project"
+        CreateButton={() => <CreateProjectDialog />}
       />
 
       <ItemsSection 
@@ -40,7 +25,7 @@ export function Dashboard() {
         items={dashboardData.rooms} 
         icon={MessageSquare} 
         baseUrl="/rooms"
-        onCreateNew={handleCreateRoom}
+        onCreateNew={() => null}
         createButtonText="Create Room"
       />
 
