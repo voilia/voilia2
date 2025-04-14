@@ -6,7 +6,7 @@ import { SidebarItemGroup } from "../components/sidebar/SidebarItemGroup";
 import { SidebarMenu } from "../components/sidebar/SidebarMenu";
 import { SidebarMenuItem } from "../components/sidebar/SidebarMenuItem";
 
-// Re-export our new components for easier access
+// Re-export sidebar menu components
 export {
   SidebarSection,
   SidebarItem,
@@ -14,3 +14,4 @@ export {
   SidebarMenu,
   SidebarMenuItem,
 };
+
