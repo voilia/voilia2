@@ -10,6 +10,7 @@ interface MainLayoutProps {
 
 export function MainLayout({ children }: MainLayoutProps) {
   const isMobile = useIsMobile();
+  // Set default to false to ensure sidebar loads fully expanded
   const [isCollapsed, setIsCollapsed] = useState(false);
   
   const toggleSidebar = () => {
@@ -21,9 +22,11 @@ export function MainLayout({ children }: MainLayoutProps) {
       <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
       <Header toggleSidebar={toggleSidebar} isCollapsed={isCollapsed} />
       <main 
-        className={`flex-1 transition-all duration-300 ease-in-out ${
-          isMobile ? 'pl-0 pt-0' : `ml-[${isCollapsed ? '70px' : '240px'}] pt-14`
-        }`}
+        className="flex-1 transition-all duration-300 ease-in-out"
+        style={{ 
+          marginLeft: isMobile ? '0' : (isCollapsed ? '70px' : '240px'),
+          paddingTop: isMobile ? '0' : '56px'
+        }}
       >
         <div className="p-6 lg:p-8 transition-all duration-300">
           {children}

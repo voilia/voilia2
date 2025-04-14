@@ -3,7 +3,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SidebarNavItem } from "@/app/navigation/SidebarNavItem";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, FolderOpen } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { sidebarNavItems } from "@/config/navigation";
@@ -38,18 +38,13 @@ export function Sidebar({ className, isCollapsed = false, toggleSidebar }: Sideb
       )}
     >
       <div className="flex h-14 items-center border-b border-sidebar-border px-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleToggleSidebar}
-          className="rounded-full hover:bg-sidebar-accent/50 transition-all duration-200 active:scale-95"
-        >
-          {isCollapsed ? (
-            <ChevronRight className="h-5 w-5" />
-          ) : (
-            <ChevronLeft className="h-5 w-5" />
+        <div className="flex items-center gap-2">
+          {!isCollapsed && (
+            <div className="flex items-center space-x-2">
+              <span className="font-semibold text-lg">VOILIA</span>
+            </div>
           )}
-        </Button>
+        </div>
       </div>
       <div
         className={cn(
@@ -68,25 +63,25 @@ export function Sidebar({ className, isCollapsed = false, toggleSidebar }: Sideb
           />
         ))}
       </div>
-      
-      {isMobile && (
-        <div className="mt-auto p-4 border-t border-sidebar-border flex justify-between items-center">
-          <ThemeToggle />
-          
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-full hover:bg-sidebar-accent/50 transition-all duration-200 active:scale-95"
-          >
-            <Avatar className="h-8 w-8 border border-sidebar-border">
-              <AvatarFallback className="bg-sidebar-primary/10 text-sidebar-primary text-sm">
-                UV
-              </AvatarFallback>
-            </Avatar>
-            <span className="sr-only">User profile</span>
-          </Button>
-        </div>
-      )}
+      <div className="mt-auto p-4 border-t border-sidebar-border flex justify-center items-center">
+        {isMobile && (
+          <>
+            <ThemeToggle />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full hover:bg-sidebar-accent/50 transition-all duration-200 active:scale-95 ml-2"
+            >
+              <Avatar className="h-8 w-8 border border-sidebar-border">
+                <AvatarFallback className="bg-sidebar-primary/10 text-sidebar-primary text-sm">
+                  UV
+                </AvatarFallback>
+              </Avatar>
+              <span className="sr-only">User profile</span>
+            </Button>
+          </>
+        )}
+      </div>
     </div>
   );
 
