@@ -98,7 +98,7 @@ export function SidebarNavItemWithChildren({
                 </NavLink>
               </Button>
               
-              {(isMobile || child.title.startsWith("All")) && (
+              {(isMobile || child.title.startsWith("All")) && child.title.startsWith("All") && (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
