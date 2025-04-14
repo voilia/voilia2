@@ -7,12 +7,14 @@ interface MobileSidebarToggleProps {
 }
 
 export function MobileSidebarToggle({ onClick }: MobileSidebarToggleProps) {
+  // Removed the fixed positioning since we now have the header with hamburger
+  // This component is kept for backward compatibility but can be considered for removal
   return (
     <Button
       variant="ghost" 
       size="icon" 
       onClick={onClick}
-      className="fixed top-3 left-1 z-50 rounded-full hover:bg-accent/50 transition-all duration-200 active:scale-95"
+      className="h-9 w-9 rounded-full hover:bg-accent/50 transition-all duration-200 active:scale-95 md:hidden"
     >
       <Menu className="h-5 w-5" />
       <span className="sr-only">Toggle sidebar</span>
