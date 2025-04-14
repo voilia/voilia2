@@ -23,12 +23,21 @@ export function useCreateProject() {
   const onSubmit = async (values: CreateProjectFormValues) => {
     setIsSubmitting(true);
     try {
+      // Get the current user
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
+
+      // Insert project with the current user as owner
       const { data: project, error: projectError } = await supabase
         .from("projects")
         .insert({
           name: values.name,
           description: values.description || null,
-          color: values.color
+          color: values.color,
+          owner_id: user.id // Add the owner_id field
         })
         .select()
         .single();
