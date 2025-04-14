@@ -46,7 +46,7 @@ export function SidebarNavItem({
             )
           }
         >
-          {Icon && <Icon className="h-4 w-4" />}
+          {Icon && <Icon className="h-5 w-5" />}
           <span className="sr-only">{title}</span>
         </NavLink>
       </Button>
@@ -59,29 +59,29 @@ export function SidebarNavItem({
         <Button
           variant="ghost"
           className={cn(
-            "flex w-full items-center justify-between px-3 py-2 text-sm font-medium",
+            "flex w-full items-center justify-between px-3 py-2 text-base font-medium",
             "hover:bg-sidebar-accent/50"
           )}
           onClick={() => setIsOpen(!isOpen)}
         >
           <div className="flex items-center gap-3">
-            {Icon && <Icon className="h-4 w-4" />}
+            {Icon && <Icon className="h-5 w-5" />}
             <span>{title}</span>
           </div>
           {isOpen ? (
-            <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground/50" />
+            <ChevronDown className="h-5 w-5 shrink-0 text-muted-foreground/50" />
           ) : (
-            <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground/50" />
+            <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground/50" />
           )}
         </Button>
         {isOpen && (
-          <div className="ml-4 mt-1 space-y-1 border-l pl-2 pt-1">
+          <div className="ml-4 mt-1 space-y-1 pl-2 pt-1">
             {children.map((child) => (
               <Button
                 key={child.path}
                 variant="ghost"
                 asChild
-                className="w-full justify-start px-3 py-1.5 text-sm"
+                className="w-full justify-start px-3 py-1.5 text-base"
               >
                 <NavLink
                   to={child.path}
@@ -109,7 +109,7 @@ export function SidebarNavItem({
       variant="ghost"
       asChild
       className={cn(
-        "flex w-full justify-start px-3 py-2 text-sm font-medium",
+        "flex w-full justify-start px-3 py-2 text-base font-medium",
         "animate-fade-in"
       )}
     >
@@ -124,7 +124,7 @@ export function SidebarNavItem({
           )
         }
       >
-        {Icon && <Icon className="h-4 w-4" />}
+        {Icon && <Icon className="h-5 w-5" />}
         <span>{title}</span>
       </NavLink>
     </Button>

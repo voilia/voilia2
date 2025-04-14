@@ -3,7 +3,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { SidebarNavItem } from "@/app/navigation/SidebarNavItem";
-import { ChevronLeft, ChevronRight, FolderOpen, User } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { sidebarNavItems } from "@/config/navigation";
@@ -38,15 +38,18 @@ export function Sidebar({ className, isCollapsed = false, toggleSidebar }: Sideb
       )}
     >
       <div className="flex h-14 items-center border-b border-sidebar-border px-4">
-        <div className="flex items-center gap-2">
-          {!isCollapsed && (
-            <div className="flex items-center space-x-2">
-              <FolderOpen className="h-6 w-6 text-primary" />
-              <span className="font-semibold text-lg">VOILIA</span>
-            </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleToggleSidebar}
+          className="rounded-full hover:bg-sidebar-accent/50 transition-all duration-200 active:scale-95"
+        >
+          {isCollapsed ? (
+            <ChevronRight className="h-5 w-5" />
+          ) : (
+            <ChevronLeft className="h-5 w-5" />
           )}
-          {isCollapsed && <FolderOpen className="h-6 w-6 mx-auto text-primary" />}
-        </div>
+        </Button>
       </div>
       <div
         className={cn(
@@ -65,10 +68,11 @@ export function Sidebar({ className, isCollapsed = false, toggleSidebar }: Sideb
           />
         ))}
       </div>
-      <div className="mt-auto p-4 border-t border-sidebar-border flex justify-between items-center">
-        <ThemeToggle />
-        
-        {isMobile && (
+      
+      {isMobile && (
+        <div className="mt-auto p-4 border-t border-sidebar-border flex justify-between items-center">
+          <ThemeToggle />
+          
           <Button
             variant="ghost"
             size="icon"
@@ -81,23 +85,8 @@ export function Sidebar({ className, isCollapsed = false, toggleSidebar }: Sideb
             </Avatar>
             <span className="sr-only">User profile</span>
           </Button>
-        )}
-        
-        {!isMobile && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleToggleSidebar}
-            className="rounded-full hover:bg-sidebar-accent/50 transition-all duration-200 active:scale-95"
-          >
-            {isCollapsed ? (
-              <ChevronRight className="h-4 w-4" />
-            ) : (
-              <ChevronLeft className="h-4 w-4" />
-            )}
-          </Button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 
