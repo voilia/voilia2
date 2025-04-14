@@ -19,15 +19,12 @@ export function MainLayout({ children }: MainLayoutProps) {
   
   return (
     <div className="min-h-screen flex bg-background text-foreground">
-      {/* Main sidebar that handles both mobile and desktop */}
       <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
       
-      {/* Show header for non-mobile view at all times */}
       {!isMobile && (
         <Header toggleSidebar={toggleSidebar} isCollapsed={isCollapsed} />
       )}
       
-      {/* Show mobile header only on mobile */}
       {isMobile && (
         <MobileHeader 
           onToggleSidebar={toggleSidebar} 
@@ -39,10 +36,10 @@ export function MainLayout({ children }: MainLayoutProps) {
         className="flex-1 transition-all duration-300 ease-in-out overflow-x-hidden"
         style={{ 
           marginLeft: isMobile ? '0' : (isCollapsed ? '0' : '240px'),
-          paddingTop: '56px', // Same padding for both mobile and desktop headers
+          paddingTop: isMobile ? '56px' : '14px', // Reduced top padding
         }}
       >
-        <div className="p-4 md:p-6 lg:p-8">
+        <div className="p-4 md:p-6 lg:p-4"> {/* Reduced padding */}
           {children}
         </div>
       </main>

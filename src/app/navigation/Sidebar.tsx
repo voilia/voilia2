@@ -17,14 +17,12 @@ export function Sidebar({ className, isCollapsed = true, toggleSidebar }: Sideba
   const isMobile = useIsMobile();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   
-  // Update local state when isCollapsed prop changes
   useEffect(() => {
     if (isMobile) {
       setIsMobileSidebarOpen(!isCollapsed);
     }
   }, [isCollapsed, isMobile]);
   
-  // Simple function to handle toggling for both mobile and desktop
   const handleToggleSidebar = useCallback(() => {
     if (isMobile) {
       setIsMobileSidebarOpen(!isMobileSidebarOpen);
@@ -42,8 +40,6 @@ export function Sidebar({ className, isCollapsed = true, toggleSidebar }: Sideba
     }
   };
 
-  // On mobile, we use isMobileSidebarOpen to determine visibility
-  // On desktop, we use isCollapsed (passed from parent)
   const sidebarVisible = isMobile ? isMobileSidebarOpen : !isCollapsed;
 
   const sidebarContent = (
