@@ -30,7 +30,8 @@ export function MainLayout({ children }: MainLayoutProps) {
         className="flex-1 transition-all duration-300 ease-in-out"
         style={{ 
           marginLeft: isMobile ? '0' : (isCollapsed ? '0' : '240px'),
-          paddingTop: isMobile ? '0' : '56px'
+          paddingTop: isMobile ? '0' : '56px',
+          paddingLeft: isMobile ? '16px' : '24px' // Adding left padding for better spacing
         }}
       >
         <div className="p-6 lg:p-8 transition-all duration-300">
