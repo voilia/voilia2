@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "react-router-dom";
-import { ChevronDown, ChevronRight, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -12,6 +12,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { toast } from "@/hooks/use-toast";
+import { NavItemLabel } from "./NavItemLabel";
+import { NavItemChildrenToggle } from "./NavItemChildrenToggle";
 
 interface SidebarNavItemWithChildrenProps {
   title: string;
@@ -25,7 +27,7 @@ interface SidebarNavItemWithChildrenProps {
 
 export function SidebarNavItemWithChildren({
   title,
-  icon: Icon,
+  icon,
   children,
   onItemClick
 }: SidebarNavItemWithChildrenProps) {
@@ -68,17 +70,8 @@ export function SidebarNavItemWithChildren({
         )}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <div className="flex items-center gap-3">
-          {Icon && <Icon className="h-5 w-5" />}
-          <span>{title}</span>
-        </div>
-        <div className="flex items-center">
-          {isOpen ? (
-            <ChevronDown className="h-5 w-5 shrink-0 text-muted-foreground/50" />
-          ) : (
-            <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground/50" />
-          )}
-        </div>
+        <NavItemLabel title={title} icon={icon} />
+        <NavItemChildrenToggle isOpen={isOpen} />
       </Button>
       {isOpen && (
         <div className="ml-4 mt-1 space-y-1 pl-2 pt-1">
