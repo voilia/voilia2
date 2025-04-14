@@ -1,5 +1,5 @@
 
-import { Menu, User } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -25,15 +25,7 @@ export function Header({ toggleSidebar, isCollapsed }: HeaderProps) {
         marginLeft: isCollapsed ? '70px' : '240px'
       }}>
       <div>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={toggleSidebar}
-          className="rounded-full hover:bg-accent/50 transition-all duration-200 active:scale-95"
-        >
-          <Menu className="h-5 w-5" />
-          <span className="sr-only">Toggle sidebar</span>
-        </Button>
+        {/* Empty div - the toggle is now in the sidebar */}
       </div>
       
       <div className="flex items-center space-x-3">
