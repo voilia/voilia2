@@ -18,16 +18,6 @@ const AnimatedBackground: React.FC = () => {
     let particles: Particle[] = [];
     const particleCount = 50;
     
-    // Full size canvas
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      createParticles();
-    };
-
-    window.addEventListener("resize", resizeCanvas);
-    resizeCanvas();
-
     class Particle {
       x: number;
       y: number;
@@ -81,12 +71,23 @@ const AnimatedBackground: React.FC = () => {
       }
     }
 
+    // Define createParticles function BEFORE it's used in resizeCanvas
     const createParticles = () => {
       particles = [];
       for (let i = 0; i < particleCount; i++) {
         particles.push(new Particle());
       }
     };
+    
+    // Full size canvas
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      createParticles();
+    };
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
 
     const drawGradientBackground = () => {
       const colors = isDark 
