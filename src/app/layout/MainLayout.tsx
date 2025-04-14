@@ -1,4 +1,5 @@
-import { ReactNode, useState, useCallback, useEffect } from "react";
+
+import { ReactNode, useState, useCallback } from "react";
 import { Sidebar } from "@/app/navigation/Sidebar";
 import { Header } from "@/app/navigation/Header";
 import { MobileHeader } from "@/app/navigation/components/MobileHeader";
@@ -10,7 +11,8 @@ interface MainLayoutProps {
 
 export function MainLayout({ children }: MainLayoutProps) {
   const isMobile = useIsMobile();
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  // Changed default state to false (expanded)
+  const [isCollapsed, setIsCollapsed] = useState(false);
   
   const toggleSidebar = useCallback(() => {
     setIsCollapsed(!isCollapsed);

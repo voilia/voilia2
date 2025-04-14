@@ -1,3 +1,4 @@
+
 import { Bot, Folders, MessageSquare } from "lucide-react";
 import { ItemsSection } from "@/components/dashboard/ItemsSection";
 import { pinnedProjects, pinnedRooms, pinnedAgents } from "@/data/dashboard";
@@ -19,8 +20,6 @@ export function Dashboard() {
           items={pinnedProjects}
           icon={Folders}
           baseUrl="/projects"
-          onCreateNew={() => null}
-          createButtonText="Create Project"
           CreateButton={() => <CreateProjectDialog />}
           className="animate-fade-in"
         />
