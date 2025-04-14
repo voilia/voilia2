@@ -34,9 +34,10 @@ export function Header({ toggleSidebar, isCollapsed }: HeaderProps) {
         </Button>
       </div>
       
-      <div className="flex items-center gap-4">
-        <ThemeToggle />
-        
+      <div className="flex items-center">
+        <div className="mr-6">
+          <ThemeToggle />
+        </div>
         <Button
           variant="ghost"
           size="icon"
