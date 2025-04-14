@@ -1,4 +1,3 @@
-
 import { ReactNode, useState, useCallback, useEffect } from "react";
 import { Sidebar } from "@/app/navigation/Sidebar";
 import { Header } from "@/app/navigation/Header";
@@ -36,10 +35,10 @@ export function MainLayout({ children }: MainLayoutProps) {
         className="flex-1 transition-all duration-300 ease-in-out overflow-x-hidden"
         style={{ 
           marginLeft: isMobile ? '0' : (isCollapsed ? '0' : '240px'),
-          paddingTop: isMobile ? '56px' : '14px', // Reduced top padding
+          paddingTop: isMobile ? '56px' : '3.5rem',
         }}
       >
-        <div className="p-4 md:p-6 lg:p-4"> {/* Reduced padding */}
+        <div className="p-4 md:p-6 lg:p-4">
           {children}
         </div>
       </main>

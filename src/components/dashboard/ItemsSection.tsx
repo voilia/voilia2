@@ -35,12 +35,12 @@ export function ItemsSection({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Icon className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-semibold">{title}</h2>
+          <h2 className="text-xl font-semibold">{title.replace('Pinned ', '')}</h2>
         </div>
         {onCreateNew && createButtonText && (
           <Button 
             onClick={onCreateNew}
-            className="gap-2 hover-effect"
+            className="gap-2 hover-effect min-w-[140px] justify-center" // Added min-width and center alignment
           >
             <Plus className="h-4 w-4" />
             {createButtonText}

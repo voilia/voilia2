@@ -1,4 +1,3 @@
-
 import { Menu } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,6 @@ interface HeaderProps {
 export function Header({ toggleSidebar, isCollapsed }: HeaderProps) {
   const isMobile = useIsMobile();
   
-  // Don't render header on mobile, as controls will be in the sidebar
   if (isMobile) {
     return null;
   }
@@ -36,7 +34,7 @@ export function Header({ toggleSidebar, isCollapsed }: HeaderProps) {
         </Button>
       </div>
       
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center gap-4">
         <ThemeToggle />
         
         <Button
