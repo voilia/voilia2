@@ -20,7 +20,7 @@ const Auth = () => {
       setIsLoading(false);
       
       if (session) {
-        navigate("/");
+        navigate("/home");
       }
     });
 
@@ -31,7 +31,7 @@ const Auth = () => {
         
         if (event === "SIGNED_IN") {
           toast.success("Successfully signed in");
-          navigate("/");
+          navigate("/home");
         }
       }
     );

@@ -46,12 +46,17 @@ const App = () => {
                 <Route 
                   path="/" 
                   element={
+                    <Navigate to="/home" replace />
+                  } 
+                />
+                <Route 
+                  path="/home" 
+                  element={
                     <ProtectedRoute>
                       <Index />
                     </ProtectedRoute>
                   } 
                 />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

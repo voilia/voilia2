@@ -53,6 +53,9 @@ const AuthForm = () => {
           const { error: signUpError } = await supabase.auth.signUp({
             email: data.email,
             password: data.password,
+            options: {
+              emailRedirectTo: `${window.location.origin}/home`,
+            },
           });
 
           if (signUpError) {
@@ -66,7 +69,7 @@ const AuthForm = () => {
         const { error } = await supabase.auth.signInWithOtp({
           email: data.email,
           options: {
-            emailRedirectTo: window.location.origin,
+            emailRedirectTo: `${window.location.origin}/home`,
           },
         });
 
