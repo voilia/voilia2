@@ -1,4 +1,4 @@
 
-export * from './SidebarLink'
-export * from './SidebarGroup'
-export * from './SidebarMenu'
+export * from './SidebarMenu';
+export * from './SidebarLink';
+export * from './SidebarGroup';
