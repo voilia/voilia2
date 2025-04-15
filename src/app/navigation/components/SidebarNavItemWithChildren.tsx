@@ -56,8 +56,7 @@ export function SidebarNavItemWithChildren({
 
     const tooltipText = childTitle === "All Rooms" ? "New Room" : "Coming Soon";
     
-    // Define the ToastButton component separately to avoid prop forwarding issues
-    const ToastButton = () => (
+    const ButtonComponent = () => (
       <Button
         variant="ghost"
         size="icon"
@@ -78,7 +77,9 @@ export function SidebarNavItemWithChildren({
     return !isMobile ? (
       <Tooltip>
         <TooltipTrigger asChild>
-          <ToastButton />
+          <div>
+            <ButtonComponent />
+          </div>
         </TooltipTrigger>
         <TooltipContent 
           side="right"
@@ -88,7 +89,7 @@ export function SidebarNavItemWithChildren({
         </TooltipContent>
       </Tooltip>
     ) : (
-      <ToastButton />
+      <ButtonComponent />
     );
   };
   
