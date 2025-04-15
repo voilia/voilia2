@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogDescription, // Add this import
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -126,8 +126,8 @@ export function CreateProjectDialog({ variant = "default", className }: CreatePr
               control={form.control}
               name="color"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor="project-color" className="text-base sm:text-sm">Project Color</FormLabel>
+                <FormItem className="space-y-3">
+                  <FormLabel htmlFor="project-color-violet" className="text-base sm:text-sm">Project Color</FormLabel>
                   <FormControl>
                     <ColorSwatch 
                       id="project-color"

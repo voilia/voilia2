@@ -11,6 +11,9 @@ interface ColorSwatchProps {
 }
 
 export function ColorSwatch({ value, onChange, id, name }: ColorSwatchProps) {
+  // Get the first color for initial ID connection with label
+  const firstColor = Object.keys(projectColors)[0];
+  
   return (
     <RadioGroup
       value={value}
@@ -19,14 +22,15 @@ export function ColorSwatch({ value, onChange, id, name }: ColorSwatchProps) {
       id={id}
       name={name}
     >
-      {Object.entries(projectColors).map(([color, hex]) => (
+      {Object.entries(projectColors).map(([color, hex], index) => (
         <div 
           key={color}
           className="relative flex items-center justify-center"
         >
           <RadioGroupItem
             value={color}
-            id={`${id}-${color}`}
+            // Use the first color's ID to match with the FormLabel's htmlFor
+            id={index === 0 ? `${id}-${firstColor}` : `${id}-${color}`}
             className={cn(
               "w-9 h-9 rounded-full cursor-pointer transition hover:scale-105",
               "data-[state=checked]:ring-2 data-[state=checked]:ring-offset-2",
