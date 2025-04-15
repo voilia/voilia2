@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import Projects from "./pages/Projects";
 import AuthProvider, { useAuth } from "./components/auth/AuthProvider";
 
 // Create the query client instance outside of the component
@@ -56,6 +57,14 @@ const App = () => {
                       <Index />
                     </ProtectedRoute>
                   } 
+                />
+                <Route
+                  path="/projects"
+                  element={
+                    <ProtectedRoute>
+                      <Projects />
+                    </ProtectedRoute>
+                  }
                 />
                 <Route path="*" element={<NotFound />} />
               </Routes>

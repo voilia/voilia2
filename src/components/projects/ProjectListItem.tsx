@@ -1,0 +1,77 @@
+
+import { NavLink } from "react-router-dom";
+import { Folder, MoreHorizontal } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Project } from "./types";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+
+interface ProjectListItemProps {
+  project: Project;
+}
+
+export function ProjectListItem({ project }: ProjectListItemProps) {
+  const darkMode = document.documentElement.classList.contains("dark");
+  const iconColorClass = darkMode 
+    ? `bg-[${project.color}]/30 text-[${project.color}]/400` 
+    : `bg-[${project.color}]/20 text-[${project.color}]/700`;
+
+  return (
+    <NavLink
+      to={`/projects/${project.id}`}
+      className={({ isActive }) =>
+        cn(
+          "group relative flex items-center justify-between gap-4 rounded-lg border p-4 transition-all",
+          "bg-white dark:bg-[#342a52] dark:border-white/5",
+          "hover:scale-[1.005] hover:shadow-sm dark:hover:border-[#9b87f5]/30",
+          isActive && "border-l-4 border-l-primary",
+        )
+      }
+    >
+      <div className="flex items-center gap-4">
+        <div className={cn("rounded-full p-2", iconColorClass)}>
+          <Folder className="h-5 w-5" />
+        </div>
+        <div>
+          <h3 className="font-medium line-clamp-1">{project.name}</h3>
+          {project.description && (
+            <p className="text-sm text-muted-foreground line-clamp-1">
+              {project.description}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-4">
+        <span className="text-xs text-muted-foreground">
+          Updated {format(new Date(project.updated_at), "MMM d, yyyy")}
+        </span>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="h-8 w-8 text-muted-foreground hover:bg-accent/80"
+            >
+              <MoreHorizontal className="h-4 w-4" />
+              <span className="sr-only">Open menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>Edit Project</DropdownMenuItem>
+            <DropdownMenuItem className="text-destructive">
+              Delete Project
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </NavLink>
+  );
+}
