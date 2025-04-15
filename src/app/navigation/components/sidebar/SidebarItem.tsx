@@ -3,6 +3,7 @@ import { LucideIcon } from "lucide-react";
 import { NavItemLabel } from "../NavItemLabel";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
+import { ReactNode } from "react";
 
 interface SidebarItemProps {
   title: string;
@@ -11,6 +12,7 @@ interface SidebarItemProps {
   isActive?: boolean;
   className?: string;
   onClick?: () => void;
+  children?: ReactNode; // Add children prop
 }
 
 export function SidebarItem({ 
@@ -20,6 +22,7 @@ export function SidebarItem({
   isActive,
   className,
   onClick,
+  children,
   ...props 
 }: SidebarItemProps) {
   const Comp = asChild ? Slot : "button";
@@ -38,7 +41,7 @@ export function SidebarItem({
       onClick={onClick}
       {...props}
     >
-      <NavItemLabel title={title} icon={icon} />
+      {children || <NavItemLabel title={title} icon={icon} />}
     </Comp>
   );
 }
