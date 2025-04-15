@@ -86,10 +86,13 @@ export function CreateProjectDialog({ variant = "default", className }: CreatePr
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base sm:text-sm">Project Name</FormLabel>
+                  <FormLabel htmlFor="project-name" className="text-base sm:text-sm">Project Name</FormLabel>
                   <FormControl>
                     <Input 
                       {...field}
+                      id="project-name"
+                      name="project-name"
+                      autoComplete="off"
                       placeholder="My Awesome Project"
                       className="px-4 py-2 rounded-md text-base sm:text-sm dark:bg-muted/950 dark:border-white/10"
                       autoFocus
@@ -104,10 +107,13 @@ export function CreateProjectDialog({ variant = "default", className }: CreatePr
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base sm:text-sm">Description (Optional)</FormLabel>
+                  <FormLabel htmlFor="project-description" className="text-base sm:text-sm">Description (Optional)</FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
+                      id="project-description"
+                      name="project-description"
+                      autoComplete="off"
                       placeholder="Describe your project..."
                       className="min-h-[100px] px-4 py-2 rounded-md resize-y text-base sm:text-sm dark:bg-muted/950 dark:border-white/10"
                     />
@@ -121,9 +127,11 @@ export function CreateProjectDialog({ variant = "default", className }: CreatePr
               name="color"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base sm:text-sm">Project Color</FormLabel>
+                  <FormLabel htmlFor="project-color" className="text-base sm:text-sm">Project Color</FormLabel>
                   <FormControl>
                     <ColorSwatch 
+                      id="project-color"
+                      name="project-color"
                       value={field.value}
                       onChange={field.onChange}
                     />
