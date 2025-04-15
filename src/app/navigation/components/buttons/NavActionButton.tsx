@@ -34,11 +34,10 @@ export function NavActionButton({ type, isMobile, tooltipText }: NavActionButton
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Show toast with the tooltip text instead of trying to set title property on a ReactNode
+    // Fixed toast notification by correctly using the toast function from sonner
     if (tooltipText) {
-      toast({
-        title: tooltipText,
-        description: "This feature is coming soon!"
+      toast("This feature is coming soon!", {
+        description: tooltipText
       });
     }
   };
