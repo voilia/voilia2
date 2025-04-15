@@ -55,13 +55,13 @@ export function AgentCard({ agent }: AgentCardProps) {
     <div 
       className={cn(
         "group relative flex flex-col justify-between",
-        "h-[280px] w-full max-w-[280px]", // Fixed dimensions
+        "w-full max-w-[300px] h-[280px]",
         "rounded-xl border p-5",
-        "transition-all duration-200",
-        "bg-card dark:bg-[#1a1a1a]", // Matching projects card background
-        "hover:shadow-md hover:scale-[1.01]",
+        "transition-all duration-300",
+        "bg-card dark:bg-[#1a1a1a]",
+        "hover:shadow-lg hover:-translate-y-1",
         "dark:border-white/5 dark:hover:border-primary/30",
-        "dark:hover:bg-white/[0.02]"
+        "dark:hover:bg-gradient-to-b dark:hover:from-white/[0.02] dark:hover:to-transparent"
       )}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
@@ -79,9 +79,9 @@ export function AgentCard({ agent }: AgentCardProps) {
           </div>
           
           {agent.badges && agent.badges.length > 0 && (
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap justify-end">
               {agent.badges.map((badge) => (
-                <Badge key={badge} variant={getBadgeVariant(badge)} className="text-xs">
+                <Badge key={badge} variant={getBadgeVariant(badge)} className="text-xs whitespace-nowrap">
                   {getBadgeLabel(badge)}
                 </Badge>
               ))}
@@ -94,7 +94,7 @@ export function AgentCard({ agent }: AgentCardProps) {
           <p 
             className={cn(
               "text-sm text-muted-foreground",
-              "line-clamp-3 min-h-[3.6em]",
+              "line-clamp-3 min-h-[4.2em]",
               "display-webkit-box webkit-line-clamp-3 webkit-box-orient-vertical"
             )}
           >
@@ -103,12 +103,16 @@ export function AgentCard({ agent }: AgentCardProps) {
         </div>
       </div>
       
-      <div className="pt-3 pb-1"> {/* Added padding above and below button */}
+      <div className="pt-4 pb-1">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button 
-                className="w-full"
+                className={cn(
+                  "w-full transition-all duration-300",
+                  "hover:scale-[1.02] active:scale-[0.98]",
+                  "shadow-sm hover:shadow-md"
+                )}
                 variant={isHovering ? "default" : "outline"}
                 aria-label={`Activate ${agent.name}`}
               >
@@ -117,8 +121,8 @@ export function AgentCard({ agent }: AgentCardProps) {
             </TooltipTrigger>
             <TooltipContent 
               side="top" 
-              className="z-50"
-              sideOffset={4}
+              className="z-[60]"
+              sideOffset={8}
             >
               <p>Activate {agent.name}</p>
               <p className="text-xs text-muted-foreground">

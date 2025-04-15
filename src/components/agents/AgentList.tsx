@@ -3,7 +3,7 @@ import { AgentCard } from "./AgentCard";
 import { Agent } from "./types";
 import { ViewMode } from "@/components/projects/types";
 import { AgentListItem } from "./AgentListItem";
-import { Bot } from "lucide-react"; // Added this import for the Bot icon
+import { Bot } from "lucide-react";
 
 interface AgentListProps {
   agents: Agent[];
@@ -14,11 +14,11 @@ interface AgentListProps {
 export function AgentList({ agents, isLoading, viewMode }: AgentListProps) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 place-items-center">
         {[...Array(6)].map((_, i) => (
           <div 
             key={i}
-            className="h-[200px] rounded-xl border bg-muted/10 animate-pulse"
+            className="w-full max-w-[300px] h-[280px] rounded-xl border bg-muted/10 animate-pulse"
           />
         ))}
       </div>
@@ -41,7 +41,7 @@ export function AgentList({ agents, isLoading, viewMode }: AgentListProps) {
 
   if (viewMode === "grid") {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 place-items-center">
         {agents.map((agent) => (
           <AgentCard key={agent.id} agent={agent} />
         ))}
