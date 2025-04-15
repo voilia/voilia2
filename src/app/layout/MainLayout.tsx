@@ -33,14 +33,13 @@ export function MainLayout({ children }: MainLayoutProps) {
       )}
       
       <main 
-        className="flex-1 transition-all duration-200 ease-out overflow-x-hidden pr-6 md:pr-8 lg:pr-10"
+        className="flex-1 transition-all duration-200 ease-out overflow-x-hidden"
         style={{ 
           marginLeft: isMobile ? '0' : (isCollapsed ? '0' : '240px'),
-          paddingTop: isMobile ? '56px' : '3.5rem',
-          paddingRight: isMobile ? '16px' : '24px',
+          paddingTop: isMobile ? '56px' : '2rem',
         }}
       >
-        <div className="p-4 md:p-6 lg:p-8">
+        <div className="px-4 py-4 md:px-6 md:py-5 lg:px-8 lg:py-6 max-w-[1400px] mx-auto">
           {children}
         </div>
       </main>

@@ -1,9 +1,11 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { MainLayout } from "@/app/layout/MainLayout";
+import { ContentContainer } from "@/components/ui/ContentContainer";
 import { ProjectDetailHeader } from "@/components/projects/detail/ProjectDetailHeader";
 import { ProjectDetailTabs } from "@/components/projects/detail/ProjectDetailTabs";
 import { ProjectRoomsTab } from "@/components/projects/detail/ProjectRoomsTab";
@@ -47,8 +49,8 @@ const ProjectDetail = () => {
 
   return (
     <MainLayout>
-      <div className="max-w-[1200px] mx-auto">
-        <div className="flex flex-col gap-6">
+      <ContentContainer>
+        <div className="flex flex-col gap-4 md:gap-6">
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
@@ -78,24 +80,24 @@ const ProjectDetail = () => {
             onTabChange={handleTabChange} 
           />
 
-          <div className="px-2 md:px-4 lg:px-6 mt-2">
+          <div className="mt-2 md:mt-4">
             {activeTab === "rooms" && <ProjectRoomsTab projectId={projectId!} />}
             {activeTab === "members" && <ProjectMembersTab projectId={projectId!} />}
             {activeTab === "settings" && (
-              <div className="flex flex-col items-center justify-center py-20 px-4 text-center max-w-3xl mx-auto">
+              <div className="flex flex-col items-center justify-center py-12 md:py-16 text-center">
                 <h3 className="text-xl font-medium mb-2">Settings coming soon...</h3>
-                <p className="text-muted-foreground">Project settings functionality will be available in a future update.</p>
+                <p className="text-muted-foreground max-w-md">Project settings functionality will be available in a future update.</p>
               </div>
             )}
             {activeTab === "analytics" && (
-              <div className="flex flex-col items-center justify-center py-20 px-4 text-center max-w-3xl mx-auto">
+              <div className="flex flex-col items-center justify-center py-12 md:py-16 text-center">
                 <h3 className="text-xl font-medium mb-2">Analytics coming soon...</h3>
-                <p className="text-muted-foreground">Project analytics functionality will be available in a future update.</p>
+                <p className="text-muted-foreground max-w-md">Project analytics functionality will be available in a future update.</p>
               </div>
             )}
           </div>
         </div>
-      </div>
+      </ContentContainer>
     </MainLayout>
   );
 };
