@@ -57,9 +57,11 @@ const ProjectDetail = () => {
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link to="/projects" className="flex items-center gap-1">
-                  <Folder className="h-4 w-4" />
-                  <span>Projects</span>
+                <Link to="/projects">
+                  <div className="flex items-center gap-1">
+                    <Folder className="h-4 w-4" />
+                    <span>Projects</span>
+                  </div>
                 </Link>
               </BreadcrumbLink>
             </BreadcrumbItem>

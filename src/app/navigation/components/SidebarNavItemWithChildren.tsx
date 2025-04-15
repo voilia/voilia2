@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "react-router-dom";
@@ -18,7 +17,7 @@ import { CreateProjectDialog } from "@/components/projects/CreateProjectDialog";
 interface SidebarNavItemWithChildrenProps {
   title: string;
   icon?: LucideIcon;
-  children: {
+  childItems: {
     title: string;
     path: string;
   }[];
@@ -28,7 +27,7 @@ interface SidebarNavItemWithChildrenProps {
 export function SidebarNavItemWithChildren({
   title,
   icon,
-  children,
+  childItems,
   onItemClick
 }: SidebarNavItemWithChildrenProps) {
   const [isOpen, setIsOpen] = useState(true);
@@ -105,7 +104,7 @@ export function SidebarNavItemWithChildren({
       </Button>
       {isOpen && (
         <div className="ml-4 mt-1 space-y-1 pl-2 pt-1">
-          {children.map((child, index) => (
+          {childItems.map((child, index) => (
             <div key={`${child.path}-${index}`} className="relative group">
               <Button
                 variant="ghost"

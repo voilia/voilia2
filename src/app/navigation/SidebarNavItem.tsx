@@ -36,7 +36,7 @@ export function SidebarNavItem({
         <SidebarNavItemWithChildren
           title={title}
           icon={icon}
-          children={children}
+          childItems={children}
           onItemClick={onItemClick}
         />
       )}

@@ -15,20 +15,28 @@ export function ProjectDetailTabs({ activeTab, onTabChange }: ProjectDetailTabsP
       <Tabs value={activeTab} onValueChange={(value) => onTabChange(value as TabType)} className="w-full">
         <TabsList className="grid grid-cols-4 max-w-md">
           <TabsTrigger value="rooms" className="flex items-center gap-2">
-            <Home className="h-4 w-4" />
-            <span className="text-sm">Rooms</span>
+            <div className="flex items-center gap-2">
+              <Home className="h-4 w-4" />
+              <span className="text-sm">Rooms</span>
+            </div>
           </TabsTrigger>
           <TabsTrigger value="members" className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            <span className="text-sm">Members</span>
+            <div className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              <span className="text-sm">Members</span>
+            </div>
           </TabsTrigger>
           <TabsTrigger value="settings" className="flex items-center gap-2">
-            <Settings className="h-4 w-4" />
-            <span className="text-sm">Settings</span>
+            <div className="flex items-center gap-2">
+              <Settings className="h-4 w-4" />
+              <span className="text-sm">Settings</span>
+            </div>
           </TabsTrigger>
           <TabsTrigger value="analytics" className="flex items-center gap-2">
-            <BarChart3 className="h-4 w-4" />
-            <span className="text-sm">Analytics</span>
+            <div className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              <span className="text-sm">Analytics</span>
+            </div>
           </TabsTrigger>
         </TabsList>
       </Tabs>
