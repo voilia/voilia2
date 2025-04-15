@@ -1,10 +1,11 @@
 
 import { cn } from "@/lib/utils";
 import { SidebarNavItem } from "@/app/navigation/SidebarNavItem";
+import { LucideIcon } from "lucide-react";
 
 interface NavItem {
   title: string;
-  icon: React.ComponentType<any>;
+  icon: LucideIcon;
   children: {
     title: string;
     path: string;

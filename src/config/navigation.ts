@@ -2,7 +2,8 @@
 import { 
   Folders, 
   MessageSquare, 
-  Bot
+  Bot,
+  LucideIcon
 } from "lucide-react";
 
 import { useProjectSidebar } from "@/hooks/useProjectSidebar";
