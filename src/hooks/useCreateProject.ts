@@ -61,9 +61,16 @@ export function useCreateProject(onSuccess?: () => void) {
           role: "owner"
         });
 
-      if (memberError) {
+      // Check for duplicate key violation (error code 23505)
+      // If it's a duplicate key violation, the user is already a member of the project
+      // This is not a critical error and we can continue with the success flow
+      if (memberError && memberError.code !== '23505') {
         console.error("Project member creation error:", memberError);
-        // Continue anyway - project exists
+        // Only throw errors that are not duplicate key violations
+        throw memberError;
+      } else if (memberError) {
+        // Just log the duplicate key error but continue with success flow
+        console.log("User is already a member of this project:", memberError);
       }
 
       toast.success("Project created successfully!");
