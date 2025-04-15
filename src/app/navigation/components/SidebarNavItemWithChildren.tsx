@@ -55,6 +55,8 @@ export function SidebarNavItemWithChildren({
     }
 
     const tooltipText = childTitle === "All Rooms" ? "New Room" : "Coming Soon";
+    
+    // Define the ToastButton component separately to avoid prop forwarding issues
     const ToastButton = () => (
       <Button
         variant="ghost"

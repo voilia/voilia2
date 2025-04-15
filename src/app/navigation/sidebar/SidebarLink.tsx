@@ -40,6 +40,11 @@ export const SidebarLink = React.forwardRef<HTMLButtonElement, SidebarLinkProps>
       return button
     }
 
+    // Create a clean TooltipContent props object
+    const tooltipContentProps = typeof tooltip === "string" 
+      ? { children: tooltip } 
+      : tooltip
+
     return (
       <Tooltip>
         <TooltipTrigger asChild>{button}</TooltipTrigger>
@@ -47,7 +52,7 @@ export const SidebarLink = React.forwardRef<HTMLButtonElement, SidebarLinkProps>
           side="right"
           align="center"
           hidden={state !== "collapsed" || isMobile}
-          {...(typeof tooltip === "string" ? { children: tooltip } : tooltip)}
+          {...tooltipContentProps}
         />
       </Tooltip>
     )
