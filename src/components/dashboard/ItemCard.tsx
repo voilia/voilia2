@@ -39,7 +39,7 @@ export function ItemCard({
       to={path}
       className={({ isActive }) =>
         cn(
-          "relative block h-[160px] rounded-2xl border bg-white p-5 transition-all dark:bg-muted/950 dark:border-white/5",
+          "relative block h-[160px] rounded-2xl border bg-white p-6 transition-all dark:bg-muted/950 dark:border-white/5",
           "hover:scale-[1.01] hover:shadow-md",
           isActive && "border-l-4 border-l-primary",
           className
