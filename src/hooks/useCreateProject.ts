@@ -52,34 +52,21 @@ export function useCreateProject(onSuccess?: () => void) {
         throw projectError;
       }
 
-      // Check if a membership record for this user and project already exists
-      const { data: existingMember, error: checkError } = await supabase
+      // Using upsert with onConflict to handle duplicate memberships
+      const { error: memberError } = await supabase
         .from("project_members")
-        .select()
-        .eq("project_id", project.id)
-        .eq("user_id", user.id)
-        .single();
-        
-      if (checkError && checkError.code !== 'PGRST116') { // PGRST116 is "no rows returned" error
-        console.log("Error checking existing membership:", checkError);
-        // Continue with creation if error is just "no rows returned"
-      } else if (existingMember) {
-        console.log("User is already a member of this project:", existingMember);
-        // Skip creation of member record as it already exists
-      } else {
-        // Create project member record only if it doesn't exist
-        const { error: memberError } = await supabase
-          .from("project_members")
-          .insert({
-            project_id: project.id,
-            user_id: user.id,
-            role: "owner"
-          });
+        .upsert({
+          project_id: project.id,
+          user_id: user.id,
+          role: "owner"
+        }, {
+          onConflict: 'project_id,user_id',
+          ignoreDuplicates: false // Update if exists
+        });
 
-        if (memberError) {
-          console.error("Project member creation error:", memberError);
-          // Only log the error but continue with success flow since project was created
-        }
+      if (memberError && memberError.code !== 'PGRST116') { // Ignore "no rows returned" error
+        console.error("Project member creation error:", memberError);
+        // Log the error but continue with success flow
       }
 
       toast.success("Project created successfully!");

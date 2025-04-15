@@ -46,7 +46,7 @@ export function InviteMemberDialog({ isOpen, onClose, onInvite, projectId }: Inv
       const mockUserId = `mock-${inviteEmail.replace(/[^a-z0-9]/gi, "")}`;
       
       // Use upsert method with onConflict option
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("project_members")
         .upsert({
           project_id: projectId,
@@ -58,15 +58,10 @@ export function InviteMemberDialog({ isOpen, onClose, onInvite, projectId }: Inv
         });
 
       if (error) {
-        if (error.code === '23505') { // Postgres duplicate key error
-          toast.info(`User is already a member of this project`);
-        } else {
-          throw error;
-        }
-      } else {
-        toast.success(`Invitation sent to ${inviteEmail}`);
+        throw error;
       }
       
+      toast.success(`Invitation sent to ${inviteEmail}`);
       onInvite();
       setInviteEmail("");
       setInviteRole("member");
