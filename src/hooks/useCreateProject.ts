@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { CreateProjectFormValues, createProjectSchema, projectColors, ProjectColor } from "@/components/projects/types";
 
-export function useCreateProject() {
+export function useCreateProject(onSuccess?: () => void) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
@@ -21,6 +21,8 @@ export function useCreateProject() {
   });
 
   const onSubmit = async (values: CreateProjectFormValues) => {
+    if (isSubmitting) return; // Prevent multiple submissions
+    
     setIsSubmitting(true);
     try {
       // Get the current user
@@ -65,7 +67,14 @@ export function useCreateProject() {
       }
 
       toast.success("Project created successfully!");
-      navigate("/projects");
+      
+      // Call the onSuccess callback to close the modal
+      if (onSuccess) {
+        onSuccess();
+      }
+      
+      // Reload projects
+      navigate("/projects", { replace: true });
     } catch (error) {
       console.error("Error creating project:", error);
       toast.error("Failed to create project. Please try again.");

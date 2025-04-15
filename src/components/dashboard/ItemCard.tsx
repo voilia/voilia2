@@ -29,6 +29,16 @@ export function ItemCard({
   color = "#9b87f5",
   className,
 }: ItemCardProps) {
+  // Safely use inline styles for dynamic colors
+  const iconStyles = {
+    backgroundColor: `${color}20`, // 20 = 12% opacity
+    color: color,
+  };
+  
+  const iconHoverStyles = {
+    '--hover-bg': `${color}33`, // 33 = 20% opacity
+  } as React.CSSProperties;
+
   return (
     <NavLink
       to={path}
@@ -46,10 +56,8 @@ export function ItemCard({
         <div className="flex items-center gap-3">
           {Icon && (
             <div
-              className={cn(
-                "rounded-full p-2 transition-colors",
-                `bg-[${color}]/10 hover:bg-[${color}]/20 text-[${color}]`
-              )}
+              className="rounded-full p-2 transition-colors hover:bg-[var(--hover-bg)]"
+              style={{...iconStyles, ...iconHoverStyles}}
             >
               <Icon className="h-5 w-5" />
             </div>

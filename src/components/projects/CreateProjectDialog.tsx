@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -28,22 +28,31 @@ interface CreateProjectDialogProps {
 }
 
 export function CreateProjectDialog({ variant = "default", className }: CreateProjectDialogProps) {
-  const { form, isSubmitting, onSubmit } = useCreateProject();
+  const [open, setOpen] = useState(false);
+  const { form, isSubmitting, onSubmit } = useCreateProject(() => setOpen(false));
 
   // Handle Enter key press
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Enter' && !e.shiftKey && form.getValues('name')) {
+      if (e.key === 'Enter' && !e.shiftKey && open && form.getValues('name')) {
         e.preventDefault();
         form.handleSubmit(onSubmit)();
       }
     };
+    
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [form, onSubmit]);
+  }, [form, onSubmit, open]);
+
+  // Reset form when dialog is closed
+  useEffect(() => {
+    if (!open) {
+      form.reset();
+    }
+  }, [open, form]);
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {variant === "icon" ? (
           <Button

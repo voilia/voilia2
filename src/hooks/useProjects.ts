@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Project } from "@/components/projects/types";
+import { useLocation } from "react-router-dom";
 
 export function useProjects() {
   const [projects, setProjects] = useState<Project[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const location = useLocation();
 
   useEffect(() => {
     async function fetchProjects() {
@@ -41,7 +43,7 @@ export function useProjects() {
     }
 
     fetchProjects();
-  }, []);
+  }, [location.key]); // Refetch when location key changes (on navigation)
 
   return { projects, isLoading, error };
 }

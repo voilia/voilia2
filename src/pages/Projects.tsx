@@ -39,7 +39,7 @@ const Projects = () => {
             <div className="w-full sm:w-auto">
               <Search onSearch={handleSearch} value={searchQuery} />
             </div>
-            <CreateProjectDialog />
+            <CreateProjectDialog key="project-dialog" />
           </div>
         </div>
 
@@ -69,4 +69,3 @@ const Projects = () => {
 };
 
 export default Projects;
-

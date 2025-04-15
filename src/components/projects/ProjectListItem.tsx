@@ -17,6 +17,16 @@ interface ProjectListItemProps {
 }
 
 export function ProjectListItem({ project }: ProjectListItemProps) {
+  // Safely use inline styles for dynamic colors
+  const iconStyles = {
+    backgroundColor: `${project.color}20`, // 20 = 12% opacity
+    color: project.color,
+  };
+  
+  const iconHoverStyles = {
+    '--hover-bg': `${project.color}33`, // 33 = 20% opacity
+  } as React.CSSProperties;
+
   return (
     <NavLink
       to={`/projects/${project.id}`}
@@ -31,10 +41,8 @@ export function ProjectListItem({ project }: ProjectListItemProps) {
     >
       <div className="flex items-center gap-4">
         <div
-          className={cn(
-            "rounded-full p-2 transition-colors",
-            `bg-[${project.color}]/10 hover:bg-[${project.color}]/20 text-[${project.color}]`
-          )}
+          className="rounded-full p-2 transition-colors hover:bg-[var(--hover-bg)]"
+          style={{...iconStyles, ...iconHoverStyles}}
         >
           <Folder className="h-5 w-5" />
         </div>
