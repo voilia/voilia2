@@ -77,6 +77,6 @@ export function useCreateProject() {
   return {
     form,
     isSubmitting,
-    onSubmit: form.handleSubmit(onSubmit)
+    onSubmit
   };
 }

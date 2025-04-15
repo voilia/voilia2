@@ -34,6 +34,7 @@ export function CreateProjectDialog({ variant = "default", className }: CreatePr
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Enter' && !e.shiftKey && form.getValues('name')) {
+        e.preventDefault();
         form.handleSubmit(onSubmit)();
       }
     };
@@ -65,7 +66,7 @@ export function CreateProjectDialog({ variant = "default", className }: CreatePr
           <DialogTitle className="text-xl font-semibold">Create New Project</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={onSubmit} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
               name="name"
