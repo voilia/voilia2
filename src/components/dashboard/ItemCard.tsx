@@ -39,8 +39,9 @@ export function ItemCard({
       to={path}
       className={({ isActive }) =>
         cn(
-          "relative block h-[160px] rounded-2xl border bg-white p-6 transition-all dark:bg-zinc-800 dark:border-white/5",
-          "hover:scale-[1.01] hover:shadow-md",
+          "group relative block h-[160px] rounded-2xl border p-6 transition-all",
+          "bg-white dark:bg-[#342a52] dark:border-white/5",
+          "hover:scale-[1.01] hover:shadow-md dark:hover:border-[#9b87f5]/30",
           isActive && "border-l-4 border-l-primary",
           className
         )
@@ -56,7 +57,6 @@ export function ItemCard({
           <h3 className="font-medium text-lg line-clamp-1">{title}</h3>
         </div>
 
-        {/* Action Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button 
@@ -92,4 +92,3 @@ export function ItemCard({
     </NavLink>
   );
 }
-
