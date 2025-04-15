@@ -13,20 +13,29 @@ export function ColorSwatch({ value, onChange }: ColorSwatchProps) {
     <RadioGroup
       value={value}
       onValueChange={onChange as (value: string) => void}
-      className="flex gap-3"
+      className="grid grid-cols-5 sm:flex gap-2 sm:gap-3"
     >
       {Object.entries(projectColors).map(([color, hex]) => (
-        <RadioGroupItem
+        <div 
           key={color}
-          value={color}
-          id={color}
-          className={cn(
-            "h-8 w-8 rounded-full border-2 transition-all duration-300",
-            "data-[state=checked]:ring-2 data-[state=checked]:ring-offset-2",
-            "hover:scale-110 cursor-pointer"
-          )}
-          style={{ backgroundColor: hex }}
-        />
+          className="relative flex items-center justify-center"
+        >
+          <RadioGroupItem
+            value={color}
+            id={color}
+            className={cn(
+              "w-9 h-9 rounded-full cursor-pointer transition hover:scale-105",
+              "data-[state=checked]:ring-2 data-[state=checked]:ring-offset-2",
+              "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary",
+              "dark:data-[state=checked]:ring-offset-[#342a52]"
+            )}
+            style={{ 
+              backgroundColor: hex,
+              borderColor: hex,
+              '--ring-color': hex,
+            } as React.CSSProperties}
+          />
+        </div>
       ))}
     </RadioGroup>
   );

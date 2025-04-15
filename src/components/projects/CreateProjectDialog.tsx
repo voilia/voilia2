@@ -1,4 +1,5 @@
 
+import { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -29,6 +30,17 @@ interface CreateProjectDialogProps {
 export function CreateProjectDialog({ variant = "default", className }: CreateProjectDialogProps) {
   const { form, isSubmitting, onSubmit } = useCreateProject();
 
+  // Handle Enter key press
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' && !e.shiftKey && form.getValues('name')) {
+        form.handleSubmit(onSubmit)();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [form, onSubmit]);
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -48,9 +60,9 @@ export function CreateProjectDialog({ variant = "default", className }: CreatePr
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-full sm:max-w-lg max-h-[90vh] overflow-y-auto dark:bg-[#342a52] transition-transform ease-in-out">
         <DialogHeader>
-          <DialogTitle>Create New Project</DialogTitle>
+          <DialogTitle className="text-xl font-semibold">Create New Project</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={onSubmit} className="space-y-6">
@@ -59,9 +71,14 @@ export function CreateProjectDialog({ variant = "default", className }: CreatePr
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Project Name</FormLabel>
+                  <FormLabel className="text-base sm:text-sm">Project Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="My Awesome Project" {...field} />
+                    <Input 
+                      {...field}
+                      placeholder="My Awesome Project"
+                      className="px-4 py-2 rounded-md text-base sm:text-sm dark:bg-muted/950 dark:border-white/10"
+                      autoFocus
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -72,13 +89,12 @@ export function CreateProjectDialog({ variant = "default", className }: CreatePr
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description (Optional)</FormLabel>
+                  <FormLabel className="text-base sm:text-sm">Description (Optional)</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Describe your project..."
-                      className="resize-none"
-                      rows={3}
                       {...field}
+                      placeholder="Describe your project..."
+                      className="min-h-[100px] px-4 py-2 rounded-md resize-y text-base sm:text-sm dark:bg-muted/950 dark:border-white/10"
                     />
                   </FormControl>
                   <FormMessage />
@@ -90,7 +106,7 @@ export function CreateProjectDialog({ variant = "default", className }: CreatePr
               name="color"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Project Color</FormLabel>
+                  <FormLabel className="text-base sm:text-sm">Project Color</FormLabel>
                   <FormControl>
                     <ColorSwatch 
                       value={field.value}
@@ -101,7 +117,11 @@ export function CreateProjectDialog({ variant = "default", className }: CreatePr
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
+            <Button 
+              type="submit" 
+              className="w-full py-2.5 rounded-lg text-base sm:text-sm"
+              disabled={isSubmitting}
+            >
               {isSubmitting ? "Creating..." : "Create Project"}
             </Button>
           </form>
