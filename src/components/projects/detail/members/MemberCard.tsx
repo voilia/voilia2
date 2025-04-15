@@ -1,13 +1,12 @@
 
-import { useState } from "react";
-import { toast } from "sonner";
-import { MoreHorizontal, X, Check, Crown } from "lucide-react";
+import { Crown, MoreHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Member } from "@/hooks/useProjectMembers";
+import { useMemberRoleManagement } from "@/hooks/useMemberRoleManagement";
 
 interface MemberCardProps {
   member: Member;
@@ -16,40 +15,7 @@ interface MemberCardProps {
 }
 
 export function MemberCard({ member, projectId, onUpdate }: MemberCardProps) {
-  const [isChangingRole, setIsChangingRole] = useState(false);
-  const [newRole, setNewRole] = useState(member.role);
-
-  const handleRoleChange = async (roleValue: string) => {
-    setNewRole(roleValue as "owner" | "admin" | "member" | "viewer");
-    setIsChangingRole(true);
-    
-    try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      toast.success(`Role updated to ${roleValue}`);
-      onUpdate();
-      setIsChangingRole(false);
-    } catch (error) {
-      console.error("Error updating role:", error);
-      toast.error("Failed to update role");
-      setIsChangingRole(false);
-    }
-  };
-
-  const handleRemoveMember = async () => {
-    if (member.role === "owner") {
-      toast.error("Cannot remove the project owner");
-      return;
-    }
-    
-    try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      toast.success("Member removed from project");
-      onUpdate();
-    } catch (error) {
-      console.error("Error removing member:", error);
-      toast.error("Failed to remove member");
-    }
-  };
+  const { isChangingRole, updateMemberRole, removeMember } = useMemberRoleManagement(projectId, onUpdate);
 
   return (
     <Card className="p-4 flex items-center justify-between">
@@ -74,14 +40,13 @@ export function MemberCard({ member, projectId, onUpdate }: MemberCardProps) {
       <div className="flex items-center gap-2">
         {isChangingRole ? (
           <div className="flex items-center gap-1 animate-pulse">
-            <Check className="h-4 w-4 text-primary" />
             <span className="text-sm">Updating...</span>
           </div>
         ) : (
           <div className="flex items-center gap-2">
             <Select 
               value={member.role} 
-              onValueChange={handleRoleChange}
+              onValueChange={(value) => updateMemberRole(member.id, value as Member['role'])}
               disabled={member.role === "owner"}
             >
               <SelectTrigger className="w-[120px] h-8 text-xs">
@@ -103,7 +68,7 @@ export function MemberCard({ member, projectId, onUpdate }: MemberCardProps) {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={handleRemoveMember} className="text-destructive">
+                  <DropdownMenuItem onClick={() => removeMember(member)} className="text-destructive">
                     <X className="h-4 w-4 mr-2" />
                     Remove
                   </DropdownMenuItem>
@@ -116,3 +81,4 @@ export function MemberCard({ member, projectId, onUpdate }: MemberCardProps) {
     </Card>
   );
 }
+
