@@ -11,7 +11,6 @@ interface MainLayoutProps {
 
 export function MainLayout({ children }: MainLayoutProps) {
   const isMobile = useIsMobile();
-  // Changed default state to false (expanded)
   const [isCollapsed, setIsCollapsed] = useState(false);
   
   const toggleSidebar = useCallback(() => {
@@ -34,13 +33,14 @@ export function MainLayout({ children }: MainLayoutProps) {
       )}
       
       <main 
-        className="flex-1 transition-all duration-300 ease-in-out overflow-x-hidden"
+        className="flex-1 transition-all duration-200 ease-out overflow-x-hidden pr-6 md:pr-8 lg:pr-10"
         style={{ 
           marginLeft: isMobile ? '0' : (isCollapsed ? '0' : '240px'),
           paddingTop: isMobile ? '56px' : '3.5rem',
+          paddingRight: isMobile ? '16px' : '24px',
         }}
       >
-        <div className="p-4 md:p-6 lg:p-4">
+        <div className="p-4 md:p-6 lg:p-8">
           {children}
         </div>
       </main>

@@ -18,6 +18,7 @@ export type Database = {
           is_public: boolean | null
           name: string
           system_prompt: string | null
+          updated_at: string | null
         }
         Insert: {
           created_at?: string | null
@@ -27,6 +28,7 @@ export type Database = {
           is_public?: boolean | null
           name: string
           system_prompt?: string | null
+          updated_at?: string | null
         }
         Update: {
           created_at?: string | null
@@ -36,6 +38,7 @@ export type Database = {
           is_public?: boolean | null
           name?: string
           system_prompt?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -114,6 +117,7 @@ export type Database = {
           id: string
           message_text: string | null
           room_id: string
+          updated_at: string | null
           user_id: string | null
         }
         Insert: {
@@ -122,6 +126,7 @@ export type Database = {
           id?: string
           message_text?: string | null
           room_id: string
+          updated_at?: string | null
           user_id?: string | null
         }
         Update: {
@@ -130,6 +135,7 @@ export type Database = {
           id?: string
           message_text?: string | null
           room_id?: string
+          updated_at?: string | null
           user_id?: string | null
         }
         Relationships: [
