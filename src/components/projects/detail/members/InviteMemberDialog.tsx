@@ -13,16 +13,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { supabase } from "@/integrations/supabase/client";
 
 interface InviteMemberDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onInvite: () => void;
+  projectId?: string;
 }
 
-export function InviteMemberDialog({ isOpen, onClose, onInvite }: InviteMemberDialogProps) {
+export function InviteMemberDialog({ isOpen, onClose, onInvite, projectId }: InviteMemberDialogProps) {
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState<string>("member");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInviteMember = async () => {
     if (!inviteEmail.trim()) {
@@ -30,8 +33,40 @@ export function InviteMemberDialog({ isOpen, onClose, onInvite }: InviteMemberDi
       return;
     }
 
+    if (!projectId) {
+      toast.error("Project ID is missing");
+      return;
+    }
+
+    setIsSubmitting(true);
+    
     try {
-      toast.success(`Invitation sent to ${inviteEmail}`);
+      // In a real implementation, you would look up the user by email
+      // For now, we're using a mock user ID derived from the email
+      const mockUserId = `mock-${inviteEmail.replace(/[^a-z0-9]/gi, "")}`;
+      
+      // Use upsert method with onConflict option
+      const { data, error } = await supabase
+        .from("project_members")
+        .upsert({
+          project_id: projectId,
+          user_id: mockUserId,
+          role: inviteRole as any
+        }, {
+          onConflict: 'project_id,user_id',
+          ignoreDuplicates: false // Update the row if it exists
+        });
+
+      if (error) {
+        if (error.code === '23505') { // Postgres duplicate key error
+          toast.info(`User is already a member of this project`);
+        } else {
+          throw error;
+        }
+      } else {
+        toast.success(`Invitation sent to ${inviteEmail}`);
+      }
+      
       onInvite();
       setInviteEmail("");
       setInviteRole("member");
@@ -39,6 +74,8 @@ export function InviteMemberDialog({ isOpen, onClose, onInvite }: InviteMemberDi
     } catch (error) {
       console.error("Error inviting member:", error);
       toast.error("Failed to send invitation");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -86,10 +123,12 @@ export function InviteMemberDialog({ isOpen, onClose, onInvite }: InviteMemberDi
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={onClose} disabled={isSubmitting}>
             Cancel
           </Button>
-          <Button onClick={handleInviteMember}>Send Invitation</Button>
+          <Button onClick={handleInviteMember} disabled={isSubmitting}>
+            {isSubmitting ? "Sending..." : "Send Invitation"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

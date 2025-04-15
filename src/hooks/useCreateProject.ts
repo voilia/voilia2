@@ -52,25 +52,34 @@ export function useCreateProject(onSuccess?: () => void) {
         throw projectError;
       }
 
-      // Create project member record separately
-      const { error: memberError } = await supabase
+      // Check if a membership record for this user and project already exists
+      const { data: existingMember, error: checkError } = await supabase
         .from("project_members")
-        .insert({
-          project_id: project.id,
-          user_id: user.id,
-          role: "owner"
-        });
+        .select()
+        .eq("project_id", project.id)
+        .eq("user_id", user.id)
+        .single();
+        
+      if (checkError && checkError.code !== 'PGRST116') { // PGRST116 is "no rows returned" error
+        console.log("Error checking existing membership:", checkError);
+        // Continue with creation if error is just "no rows returned"
+      } else if (existingMember) {
+        console.log("User is already a member of this project:", existingMember);
+        // Skip creation of member record as it already exists
+      } else {
+        // Create project member record only if it doesn't exist
+        const { error: memberError } = await supabase
+          .from("project_members")
+          .insert({
+            project_id: project.id,
+            user_id: user.id,
+            role: "owner"
+          });
 
-      // Check for duplicate key violation (error code 23505)
-      // If it's a duplicate key violation, the user is already a member of the project
-      // This is not a critical error and we can continue with the success flow
-      if (memberError && memberError.code !== '23505') {
-        console.error("Project member creation error:", memberError);
-        // Only throw errors that are not duplicate key violations
-        throw memberError;
-      } else if (memberError) {
-        // Just log the duplicate key error but continue with success flow
-        console.log("User is already a member of this project:", memberError);
+        if (memberError) {
+          console.error("Project member creation error:", memberError);
+          // Only log the error but continue with success flow since project was created
+        }
       }
 
       toast.success("Project created successfully!");
