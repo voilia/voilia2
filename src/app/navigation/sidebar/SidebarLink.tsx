@@ -47,7 +47,9 @@ export const SidebarLink = React.forwardRef<HTMLButtonElement, SidebarLinkProps>
 
     return (
       <Tooltip>
-        <TooltipTrigger asChild>{button}</TooltipTrigger>
+        <TooltipTrigger>
+          {button}
+        </TooltipTrigger>
         <TooltipContent
           side="right"
           align="center"

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,7 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { MessageSquare, Plus, Users, Clock, MoreHorizontal } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -31,7 +30,6 @@ export function ProjectRoomsTab({ projectId }: ProjectRoomsTabProps) {
   const [newRoomName, setNewRoomName] = useState("");
   const [newRoomDescription, setNewRoomDescription] = useState("");
 
-  // Fetch rooms data
   const { data: rooms, isLoading, refetch } = useQuery({
     queryKey: ["rooms", projectId],
     queryFn: async () => {
@@ -47,7 +45,6 @@ export function ProjectRoomsTab({ projectId }: ProjectRoomsTabProps) {
     },
   });
 
-  // Handle room creation
   const handleCreateRoom = async () => {
     if (!newRoomName.trim()) {
       toast.error("Room name is required");
@@ -79,7 +76,6 @@ export function ProjectRoomsTab({ projectId }: ProjectRoomsTabProps) {
     }
   };
 
-  // Empty state
   if (!isLoading && (!rooms || rooms.length === 0)) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -93,7 +89,6 @@ export function ProjectRoomsTab({ projectId }: ProjectRoomsTabProps) {
           Create Room
         </Button>
 
-        {/* Create Room Dialog */}
         <CreateRoomDialog
           isOpen={isCreateDialogOpen}
           onOpenChange={setIsCreateDialogOpen}
@@ -119,10 +114,8 @@ export function ProjectRoomsTab({ projectId }: ProjectRoomsTabProps) {
         </Button>
       </div>
 
-      {/* Rooms Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {isLoading ? (
-          // Loading skeleton
           Array.from({ length: 3 }).map((_, i) => (
             <Card key={i} className="animate-pulse">
               <CardHeader className="h-[120px] bg-muted/30" />
@@ -131,14 +124,12 @@ export function ProjectRoomsTab({ projectId }: ProjectRoomsTabProps) {
             </Card>
           ))
         ) : (
-          // Rooms cards
           rooms?.map((room) => (
             <RoomCard key={room.id} room={room} />
           ))
         )}
       </div>
 
-      {/* Create Room Dialog */}
       <CreateRoomDialog
         isOpen={isCreateDialogOpen}
         onOpenChange={setIsCreateDialogOpen}
@@ -168,7 +159,7 @@ function RoomCard({ room }: RoomCardProps) {
             <CardTitle className="text-lg">{room.name}</CardTitle>
           </div>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger>
               <Button 
                 variant="ghost" 
                 size="icon" 
@@ -234,9 +225,6 @@ function CreateRoomDialog({
 }: CreateRoomDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>
-        <span></span> {/* Empty trigger as we control opening externally */}
-      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create New Room</DialogTitle>

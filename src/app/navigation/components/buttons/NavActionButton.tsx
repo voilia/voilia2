@@ -69,7 +69,7 @@ export function NavActionButton({ type, isMobile, tooltipText }: NavActionButton
     <div className={buttonContainerStyles}>
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger asChild>
+          <TooltipTrigger>
             {buttonElement}
           </TooltipTrigger>
           <TooltipContent 

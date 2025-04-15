@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,8 +9,7 @@ import {
   DialogDescription, 
   DialogFooter, 
   DialogHeader, 
-  DialogTitle, 
-  DialogTrigger 
+  DialogTitle
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -26,7 +24,6 @@ interface Member {
   user_id: string;
   role: "owner" | "admin" | "member" | "viewer";
   joined_at: string;
-  // User data would come from a join or separate query in a real implementation
   user_name?: string;
   user_email?: string;
 }
@@ -40,7 +37,6 @@ export function ProjectMembersTab({ projectId }: ProjectMembersTabProps) {
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState<string>("member");
 
-  // Fetch members data
   const { data: members, isLoading, refetch } = useQuery({
     queryKey: ["project-members", projectId],
     queryFn: async () => {
@@ -51,8 +47,6 @@ export function ProjectMembersTab({ projectId }: ProjectMembersTabProps) {
 
       if (error) throw error;
       
-      // In a real app, you would fetch user details separately or via a join
-      // For demo, we're adding mock user data
       return data.map((member: any) => ({
         ...member,
         user_name: member.role === "owner" ? "Project Owner" : `Team Member ${member.id.substring(0, 4)}`,
@@ -61,7 +55,6 @@ export function ProjectMembersTab({ projectId }: ProjectMembersTabProps) {
     },
   });
 
-  // Handle member invitation
   const handleInviteMember = async () => {
     if (!inviteEmail.trim()) {
       toast.error("Email is required");
@@ -69,14 +62,8 @@ export function ProjectMembersTab({ projectId }: ProjectMembersTabProps) {
     }
 
     try {
-      // In a real implementation, you would:
-      // 1. Check if user exists
-      // 2. Add to project_members table
-      // 3. Send invitation email
-      
       toast.success(`Invitation sent to ${inviteEmail}`);
       
-      // For demo, we'll just simulate adding a member
       await new Promise(resolve => setTimeout(resolve, 500));
       refetch();
       
@@ -89,7 +76,6 @@ export function ProjectMembersTab({ projectId }: ProjectMembersTabProps) {
     }
   };
 
-  // Empty state
   if (!isLoading && (!members || members.length === 0)) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -106,7 +92,6 @@ export function ProjectMembersTab({ projectId }: ProjectMembersTabProps) {
     );
   }
 
-  // Sort members by role importance
   const sortedMembers = [...(members || [])].sort((a, b) => {
     const roleOrder = { owner: 0, admin: 1, member: 2, viewer: 3 };
     return roleOrder[a.role] - roleOrder[b.role];
@@ -124,10 +109,8 @@ export function ProjectMembersTab({ projectId }: ProjectMembersTabProps) {
         </Button>
       </div>
 
-      {/* Members List */}
       <div className="space-y-3">
         {isLoading ? (
-          // Loading skeleton
           Array.from({ length: 3 }).map((_, i) => (
             <Card key={i} className="p-4 animate-pulse flex">
               <div className="h-10 w-10 rounded-full bg-muted mr-3" />
@@ -138,7 +121,6 @@ export function ProjectMembersTab({ projectId }: ProjectMembersTabProps) {
             </Card>
           ))
         ) : (
-          // Members cards
           sortedMembers.map((member) => (
             <MemberCard 
               key={member.id} 
@@ -150,11 +132,7 @@ export function ProjectMembersTab({ projectId }: ProjectMembersTabProps) {
         )}
       </div>
 
-      {/* Invite Member Dialog */}
       <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
-        <DialogTrigger asChild>
-          <span></span> {/* Empty trigger as we control opening externally */}
-        </DialogTrigger>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Invite Team Member</DialogTitle>
@@ -218,13 +196,11 @@ function MemberCard({ member, projectId, refetchMembers }: MemberCardProps) {
   const [isChangingRole, setIsChangingRole] = useState(false);
   const [newRole, setNewRole] = useState(member.role);
 
-  // Handle role change
   const handleRoleChange = async (roleValue: string) => {
     setNewRole(roleValue as "owner" | "admin" | "member" | "viewer");
     setIsChangingRole(true);
     
     try {
-      // In a real implementation, update the role in the database
       await new Promise(resolve => setTimeout(resolve, 500));
       
       toast.success(`Role updated to ${roleValue}`);
@@ -237,7 +213,6 @@ function MemberCard({ member, projectId, refetchMembers }: MemberCardProps) {
     }
   };
 
-  // Handle member removal
   const handleRemoveMember = async () => {
     if (member.role === "owner") {
       toast.error("Cannot remove the project owner");
@@ -245,7 +220,6 @@ function MemberCard({ member, projectId, refetchMembers }: MemberCardProps) {
     }
     
     try {
-      // In a real implementation, remove the member from the database
       await new Promise(resolve => setTimeout(resolve, 500));
       
       toast.success("Member removed from project");
@@ -302,7 +276,7 @@ function MemberCard({ member, projectId, refetchMembers }: MemberCardProps) {
             
             {member.role !== "owner" && (
               <DropdownMenu>
-                <DropdownMenuTrigger asChild>
+                <DropdownMenuTrigger>
                   <Button variant="ghost" size="icon" className="h-8 w-8">
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
