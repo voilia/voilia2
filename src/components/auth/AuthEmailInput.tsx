@@ -19,6 +19,7 @@ export const AuthEmailInput = ({ form }: AuthEmailInputProps) => {
             <Input 
               placeholder="name@example.com" 
               {...field} 
+              autoComplete="email"
               className="transition-all duration-200 focus:ring-2 ring-primary/40"
             />
           </FormControl>

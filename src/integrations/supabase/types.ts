@@ -201,7 +201,38 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      check_token_quota: {
+        Args: { p_project_id: string; p_tokens_needed: number }
+        Returns: boolean
+      }
+      get_personalized_agents: {
+        Args: { p_user_id: string; p_room_id: string }
+        Returns: {
+          agent_id: string
+          relevance_score: number
+          preferred_style: string[]
+        }[]
+      }
+      get_user_style_preferences: {
+        Args: { p_user_id: string }
+        Returns: {
+          style_type: string
+          style_value: string
+          confidence: number
+        }[]
+      }
+      increment_token_usage: {
+        Args: { p_project_id: string; p_tokens_used: number }
+        Returns: undefined
+      }
+      log_workflow_execution: {
+        Args: { p_workflow_id: string }
+        Returns: undefined
+      }
+      reset_monthly_quotas: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       project_role: "owner" | "admin" | "member" | "viewer"
