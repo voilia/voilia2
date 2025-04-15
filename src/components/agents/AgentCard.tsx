@@ -4,10 +4,11 @@ import { Agent } from "./types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -53,10 +54,14 @@ export function AgentCard({ agent }: AgentCardProps) {
   return (
     <div 
       className={cn(
-        "group relative flex flex-col justify-between h-[200px] rounded-xl border p-5",
-        "transition-all duration-200 bg-white dark:bg-[#1a1a1a]",
-        "hover:shadow-md hover:scale-[1.01] dark:hover:border-primary/30",
-        "dark:border-white/5 dark:hover:bg-white/[0.02]"
+        "group relative flex flex-col justify-between",
+        "h-[280px] w-full max-w-[280px]", // Fixed dimensions
+        "rounded-xl border p-5",
+        "transition-all duration-200",
+        "bg-card dark:bg-[#1a1a1a]", // Matching projects card background
+        "hover:shadow-md hover:scale-[1.01]",
+        "dark:border-white/5 dark:hover:border-primary/30",
+        "dark:hover:bg-white/[0.02]"
       )}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
@@ -66,7 +71,7 @@ export function AgentCard({ agent }: AgentCardProps) {
           <div 
             className="rounded-full p-2 flex-shrink-0"
             style={{ 
-              backgroundColor: `${agent.color}20`, // 20 = 12% opacity
+              backgroundColor: `${agent.color}20`,
               color: agent.color 
             }}
           >
@@ -85,32 +90,43 @@ export function AgentCard({ agent }: AgentCardProps) {
         </div>
         
         <div>
-          <h3 className="font-medium text-lg line-clamp-1">{agent.name}</h3>
-          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+          <h3 className="font-medium text-lg mb-2">{agent.name}</h3>
+          <p 
+            className={cn(
+              "text-sm text-muted-foreground",
+              "line-clamp-3 min-h-[3.6em]",
+              "display-webkit-box webkit-line-clamp-3 webkit-box-orient-vertical"
+            )}
+          >
             {agent.description}
           </p>
         </div>
       </div>
       
-      <div className="pt-3">
-        <HoverCard openDelay={300} closeDelay={100}>
-          <HoverCardTrigger asChild>
-            <Button 
-              className="w-full"
-              variant={isHovering ? "default" : "outline"}
+      <div className="pt-3 pb-1"> {/* Added padding above and below button */}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                className="w-full"
+                variant={isHovering ? "default" : "outline"}
+                aria-label={`Activate ${agent.name}`}
+              >
+                Activate
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent 
+              side="top" 
+              className="z-50"
+              sideOffset={4}
             >
-              Activate
-            </Button>
-          </HoverCardTrigger>
-          <HoverCardContent className="w-80">
-            <div className="space-y-2">
-              <h4 className="font-medium">Activate {agent.name}</h4>
-              <p className="text-sm text-muted-foreground">
-                This agent will be available in all your rooms. You can select it when starting a new conversation.
+              <p>Activate {agent.name}</p>
+              <p className="text-xs text-muted-foreground">
+                Available in all your rooms
               </p>
-            </div>
-          </HoverCardContent>
-        </HoverCard>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
   );

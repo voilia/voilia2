@@ -129,4 +129,16 @@
   .content-container {
     @apply max-w-[1200px] mx-auto w-full;
   }
+  
+  .webkit-line-clamp-3 {
+    -webkit-line-clamp: 3;
+  }
+  
+  .webkit-box-orient-vertical {
+    -webkit-box-orient: vertical;
+  }
+  
+  .display-webkit-box {
+    display: -webkit-box;
+  }
 }
