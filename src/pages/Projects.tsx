@@ -37,7 +37,12 @@ const Projects = () => {
           
           <div className="flex flex-col sm:flex-row w-full md:w-auto gap-3 items-start sm:items-center">
             <div className="w-full sm:w-auto">
-              <Search onSearch={handleSearch} value={searchQuery} />
+              <Search 
+                onSearch={handleSearch} 
+                value={searchQuery} 
+                id="project-search"
+                name="project-search-query"
+              />
             </div>
             <CreateProjectDialog key="project-dialog" />
           </div>

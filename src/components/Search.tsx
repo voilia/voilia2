@@ -8,9 +8,17 @@ interface SearchProps {
   value?: string;
   onSearch?: (query: string) => void;
   placeholder?: string;
+  id?: string;
+  name?: string;
 }
 
-export function Search({ value = "", onSearch, placeholder = "Search..." }: SearchProps) {
+export function Search({ 
+  value = "", 
+  onSearch, 
+  placeholder = "Search...", 
+  id = "search-input",
+  name = "search-query" 
+}: SearchProps) {
   const [query, setQuery] = useState(value);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,6 +40,9 @@ export function Search({ value = "", onSearch, placeholder = "Search..." }: Sear
         className="h-9 md:w-[200px] lg:w-[250px]"
         value={query}
         onChange={handleChange}
+        id={id}
+        name={name}
+        autoComplete="off"
       />
       <Button type="submit" size="icon" className="h-9 w-9">
         <SearchIcon className="h-4 w-4" />
