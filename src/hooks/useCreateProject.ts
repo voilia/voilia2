@@ -33,7 +33,7 @@ export function useCreateProject() {
       // Convert color key to hex value
       const colorValue = projectColors[values.color as ProjectColor] || values.color;
 
-      // Insert project with the current user as owner
+      // Create the project
       const { data: project, error: projectError } = await supabase
         .from("projects")
         .insert({
@@ -45,10 +45,13 @@ export function useCreateProject() {
         .select()
         .single();
 
-      if (projectError) throw projectError;
+      if (projectError) {
+        console.error("Project creation error:", projectError);
+        throw projectError;
+      }
 
-      // Manually insert the project_member record to avoid relying on triggers
-      await supabase
+      // Create project member record separately
+      const { error: memberError } = await supabase
         .from("project_members")
         .insert({
           project_id: project.id,
@@ -56,8 +59,13 @@ export function useCreateProject() {
           role: "owner"
         });
 
+      if (memberError) {
+        console.error("Project member creation error:", memberError);
+        // Continue anyway - project exists
+      }
+
       toast.success("Project created successfully!");
-      navigate("/projects"); // Navigate to projects list
+      navigate("/projects");
     } catch (error) {
       console.error("Error creating project:", error);
       toast.error("Failed to create project. Please try again.");

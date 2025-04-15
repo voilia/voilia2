@@ -20,13 +20,12 @@ export function useProjects() {
           throw new Error("User not authenticated");
         }
 
-        // Simplified query to only fetch projects where the user is the owner
-        // This avoids the complex join that might cause RLS recursion
+        // Get projects where user is owner
         const { data, error } = await supabase
           .from("projects")
           .select("*")
+          .eq("owner_id", user.id)
           .eq("is_deleted", false)
-          .or(`owner_id.eq.${user.id}`)
           .order("updated_at", { ascending: false });
 
         if (error) throw error;
