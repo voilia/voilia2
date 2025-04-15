@@ -2,18 +2,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "react-router-dom";
-import { LucideIcon, Plus } from "lucide-react";
+import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { toast } from "sonner";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { NavItemLabel } from "./NavItemLabel";
 import { NavItemChildrenToggle } from "./NavItemChildrenToggle";
-import { CreateProjectDialog } from "@/components/projects/CreateProjectDialog";
+import { NavActionButton } from "./buttons/NavActionButton";
 
 interface SidebarNavItemWithChildrenProps {
   title: string;
@@ -33,64 +27,6 @@ export function SidebarNavItemWithChildren({
 }: SidebarNavItemWithChildrenProps) {
   const [isOpen, setIsOpen] = useState(true);
   const isMobile = useIsMobile();
-
-  const getActionButton = (childTitle: string) => {
-    const showToast = (title: string) => {
-      toast({
-        title,
-        description: "This feature is coming soon!",
-      });
-    };
-
-    if (childTitle === "All Projects") {
-      return (
-        <div className={cn(
-          isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100",
-          "absolute right-2 top-1/2 -translate-y-1/2 transition-opacity duration-200"
-        )}>
-          <CreateProjectDialog variant="icon" />
-        </div>
-      );
-    }
-
-    const tooltipText = childTitle === "All Rooms" ? "New Room" : "Coming Soon";
-    
-    const ButtonComponent = () => (
-      <Button
-        variant="ghost"
-        size="icon"
-        className={cn(
-          isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100",
-          "absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 transition-opacity duration-200"
-        )}
-        onClick={(e) => {
-          e.stopPropagation();
-          showToast(tooltipText);
-        }}
-      >
-        <Plus className="h-4 w-4" />
-        <span className="sr-only">{tooltipText}</span>
-      </Button>
-    );
-
-    return !isMobile ? (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div>
-            <ButtonComponent />
-          </div>
-        </TooltipTrigger>
-        <TooltipContent 
-          side="right"
-          className="bg-secondary text-secondary-foreground"
-        >
-          {tooltipText}
-        </TooltipContent>
-      </Tooltip>
-    ) : (
-      <ButtonComponent />
-    );
-  };
   
   return (
     <div className="animate-fade-in">
@@ -130,7 +66,13 @@ export function SidebarNavItemWithChildren({
                 </NavLink>
               </Button>
               
-              {child.title.startsWith("All") && getActionButton(child.title)}
+              {child.title.startsWith("All") && (
+                <NavActionButton
+                  type={child.title === "All Projects" ? "project" : "room"}
+                  isMobile={isMobile}
+                  tooltipText={child.title === "All Rooms" ? "New Room" : undefined}
+                />
+              )}
             </div>
           ))}
         </div>
