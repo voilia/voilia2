@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { Layers } from "lucide-react";
 
 interface ItemCardProps {
   title: string;
@@ -23,7 +24,7 @@ interface ItemCardProps {
 export function ItemCard({
   title,
   description,
-  icon: Icon,
+  icon: Icon = Layers,
   path,
   isPinned = false,
   color = "#9b87f5",
@@ -54,14 +55,12 @@ export function ItemCard({
     >
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
-          {Icon && (
-            <div
-              className="rounded-full p-2 transition-colors hover:bg-[var(--hover-bg)]"
-              style={{...iconStyles, ...iconHoverStyles}}
-            >
-              <Icon className="h-5 w-5" />
-            </div>
-          )}
+          <div
+            className="rounded-full p-2 transition-colors hover:bg-[var(--hover-bg)]"
+            style={{...iconStyles, ...iconHoverStyles}}
+          >
+            <Icon className="h-5 w-5" />
+          </div>
           <h3 className="font-medium text-lg line-clamp-1">{title}</h3>
         </div>
 
@@ -89,7 +88,7 @@ export function ItemCard({
       </div>
 
       {description && (
-        <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
+        <p className="text-sm text-muted-foreground mt-4 line-clamp-2">
           {description}
         </p>
       )}
@@ -103,3 +102,4 @@ export function ItemCard({
     </NavLink>
   );
 }
+
