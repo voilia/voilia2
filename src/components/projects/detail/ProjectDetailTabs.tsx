@@ -14,25 +14,25 @@ export function ProjectDetailTabs({ activeTab, onTabChange }: ProjectDetailTabsP
     <div className="border-b sticky top-0 bg-background z-10 pb-1">
       <Tabs value={activeTab} onValueChange={(value) => onTabChange(value as TabType)} className="w-full">
         <TabsList className="grid grid-cols-4 max-w-md">
-          <TabsTrigger value="rooms" className="flex items-center gap-2">
+          <TabsTrigger value="rooms">
             <div className="flex items-center gap-2">
               <Home className="h-4 w-4" />
               <span className="text-sm">Rooms</span>
             </div>
           </TabsTrigger>
-          <TabsTrigger value="members" className="flex items-center gap-2">
+          <TabsTrigger value="members">
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               <span className="text-sm">Members</span>
             </div>
           </TabsTrigger>
-          <TabsTrigger value="settings" className="flex items-center gap-2">
+          <TabsTrigger value="settings">
             <div className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
               <span className="text-sm">Settings</span>
             </div>
           </TabsTrigger>
-          <TabsTrigger value="analytics" className="flex items-center gap-2">
+          <TabsTrigger value="analytics">
             <div className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
               <span className="text-sm">Analytics</span>
