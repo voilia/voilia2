@@ -44,13 +44,12 @@ export function SidebarNavItemWithChildren({
 
     if (childTitle === "All Projects") {
       return (
-        <CreateProjectDialog 
-          variant="icon"
-          className={cn(
-            isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100",
-            "absolute right-2 top-1/2 -translate-y-1/2 transition-opacity duration-200"
-          )}
-        />
+        <div className={cn(
+          isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+          "absolute right-2 top-1/2 -translate-y-1/2 transition-opacity duration-200"
+        )}>
+          <CreateProjectDialog variant="icon" />
+        </div>
       );
     }
 
