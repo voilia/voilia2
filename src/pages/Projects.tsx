@@ -5,7 +5,6 @@ import { ProjectsList } from "@/components/projects/ProjectsList";
 import { useProjects } from "@/hooks/useProjects";
 import { EmptyProjectsState } from "@/components/projects/EmptyProjectsState";
 import { CreateProjectDialog } from "@/components/projects/CreateProjectDialog";
-import { ProjectsHeader } from "@/components/projects/ProjectsHeader";
 import { ViewToggle, ViewMode, SortOption } from "@/components/projects/ViewToggle";
 import { Search } from "@/components/Search";
 
@@ -70,3 +69,4 @@ const Projects = () => {
 };
 
 export default Projects;
+
