@@ -34,7 +34,6 @@ export function NavActionButton({ type, isMobile, tooltipText }: NavActionButton
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Fixed toast notification by correctly using the toast function from sonner
     if (tooltipText) {
       toast("This feature is coming soon!", {
         description: tooltipText
@@ -42,31 +41,38 @@ export function NavActionButton({ type, isMobile, tooltipText }: NavActionButton
     }
   };
 
-  // Separate the button element
-  const actionButton = (
-    <Button
-      variant="ghost"
-      size="icon"
-      className="h-7 w-7"
-      onClick={handleClick}
-    >
-      <Plus className="h-4 w-4" />
-      <span className="sr-only">{tooltipText}</span>
-    </Button>
-  );
-
-  // For mobile, just return the button in a container
+  // For mobile, just return the button without tooltip
   if (isMobile) {
-    return <div className={buttonContainerStyles}>{actionButton}</div>;
+    return (
+      <div className={buttonContainerStyles}>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={handleClick}
+        >
+          <Plus className="h-4 w-4" />
+          <span className="sr-only">{tooltipText}</span>
+        </Button>
+      </div>
+    );
   }
 
-  // For desktop, wrap with TooltipProvider and proper structure
+  // For desktop, use the tooltip structure
   return (
     <div className={buttonContainerStyles}>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            {actionButton}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
+              onClick={handleClick}
+            >
+              <Plus className="h-4 w-4" />
+              <span className="sr-only">{tooltipText}</span>
+            </Button>
           </TooltipTrigger>
           <TooltipContent 
             side="right"
