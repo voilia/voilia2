@@ -6,6 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription, // Add this import
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -73,6 +74,10 @@ export function CreateProjectDialog({ variant = "default", className }: CreatePr
       <DialogContent className="w-full sm:max-w-lg max-h-[90vh] overflow-y-auto dark:bg-[#342a52] transition-transform ease-in-out">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">Create New Project</DialogTitle>
+          <DialogDescription>
+            Fill out the details below to create a new project in your workspace. 
+            Provide a name, optional description, and choose a color to help you identify it easily.
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
