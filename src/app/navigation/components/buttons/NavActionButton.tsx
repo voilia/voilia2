@@ -34,10 +34,13 @@ export function NavActionButton({ type, isMobile, tooltipText }: NavActionButton
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    toast({
-      title: tooltipText,
-      description: "This feature is coming soon!"
-    });
+    // Show toast with the tooltip text instead of trying to set title property on a ReactNode
+    if (tooltipText) {
+      toast({
+        title: tooltipText,
+        description: "This feature is coming soon!"
+      });
+    }
   };
 
   const actionButton = (
