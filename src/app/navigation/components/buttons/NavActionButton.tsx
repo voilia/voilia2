@@ -42,38 +42,35 @@ export function NavActionButton({ type, isMobile, tooltipText }: NavActionButton
     }
   };
 
+  // Define button element that will be used in both mobile and desktop
+  const buttonElement = (
+    <Button
+      variant="ghost"
+      size="icon"
+      className="h-7 w-7"
+      onClick={handleClick}
+    >
+      <Plus className="h-4 w-4" />
+      <span className="sr-only">{tooltipText || "Action"}</span>
+    </Button>
+  );
+
   // For mobile, return a button without tooltip
   if (isMobile) {
     return (
       <div className={buttonContainerStyles}>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-7 w-7"
-          onClick={handleClick}
-        >
-          <Plus className="h-4 w-4" />
-          <span className="sr-only">{tooltipText || "Action"}</span>
-        </Button>
+        {buttonElement}
       </div>
     );
   }
 
-  // For desktop, use TooltipProvider outside of the component tree
+  // For desktop, use TooltipProvider
   return (
     <div className={buttonContainerStyles}>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7"
-              onClick={handleClick}
-            >
-              <Plus className="h-4 w-4" />
-              <span className="sr-only">{tooltipText || "Action"}</span>
-            </Button>
+            {buttonElement}
           </TooltipTrigger>
           <TooltipContent 
             side="right"
