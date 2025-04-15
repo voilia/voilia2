@@ -17,11 +17,6 @@ interface ProjectListItemProps {
 }
 
 export function ProjectListItem({ project }: ProjectListItemProps) {
-  const darkMode = document.documentElement.classList.contains("dark");
-  const iconColorClass = darkMode 
-    ? `bg-[${project.color}]/30 text-[${project.color}]/400` 
-    : `bg-[${project.color}]/20 text-[${project.color}]/700`;
-
   return (
     <NavLink
       to={`/projects/${project.id}`}
@@ -29,13 +24,18 @@ export function ProjectListItem({ project }: ProjectListItemProps) {
         cn(
           "group relative flex items-center justify-between gap-4 rounded-lg border p-4 transition-all",
           "bg-white dark:bg-[#342a52] dark:border-white/5",
-          "hover:scale-[1.005] hover:shadow-sm dark:hover:border-[#9b87f5]/30",
-          isActive && "border-l-4 border-l-primary",
+          "hover:scale-[1.01] hover:bg-accent/5 dark:hover:bg-white/[0.02] hover:shadow-sm dark:hover:border-[#9b87f5]/30",
+          isActive && "border-l-4 border-l-primary"
         )
       }
     >
       <div className="flex items-center gap-4">
-        <div className={cn("rounded-full p-2", iconColorClass)}>
+        <div
+          className={cn(
+            "rounded-full p-2 transition-colors",
+            `bg-[${project.color}]/10 hover:bg-[${project.color}]/20 text-[${project.color}]`
+          )}
+        >
           <Folder className="h-5 w-5" />
         </div>
         <div>
@@ -58,7 +58,7 @@ export function ProjectListItem({ project }: ProjectListItemProps) {
             <Button 
               variant="ghost" 
               size="icon"
-              className="h-8 w-8 text-muted-foreground hover:bg-accent/80"
+              className="h-8 w-8 opacity-0 group-hover:opacity-100 text-muted-foreground hover:bg-accent/80 transition-opacity"
             >
               <MoreHorizontal className="h-4 w-4" />
               <span className="sr-only">Open menu</span>
@@ -72,6 +72,11 @@ export function ProjectListItem({ project }: ProjectListItemProps) {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      <div 
+        className="absolute bottom-3 right-3 h-2 w-2 rounded-full"
+        style={{ backgroundColor: project.color || '#9b87f5' }}
+      />
     </NavLink>
   );
 }

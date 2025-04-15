@@ -29,11 +29,6 @@ export function ItemCard({
   color = "#9b87f5",
   className,
 }: ItemCardProps) {
-  const darkMode = document.documentElement.classList.contains("dark");
-  const iconColorClass = darkMode 
-    ? `bg-[${color}]/30 text-[${color}]/400` 
-    : `bg-[${color}]/20 text-[${color}]/700`;
-
   return (
     <NavLink
       to={path}
@@ -41,7 +36,7 @@ export function ItemCard({
         cn(
           "group relative block h-[160px] rounded-2xl border p-6 transition-all",
           "bg-white dark:bg-[#342a52] dark:border-white/5",
-          "hover:scale-[1.01] hover:shadow-md dark:hover:border-[#9b87f5]/30",
+          "hover:scale-[1.01] hover:bg-accent/5 dark:hover:bg-white/[0.02] hover:shadow-sm dark:hover:border-[#9b87f5]/30",
           isActive && "border-l-4 border-l-primary",
           className
         )
@@ -50,7 +45,12 @@ export function ItemCard({
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           {Icon && (
-            <div className={cn("rounded-full p-2", iconColorClass)}>
+            <div
+              className={cn(
+                "rounded-full p-2 transition-colors",
+                `bg-[${color}]/10 hover:bg-[${color}]/20 text-[${color}]`
+              )}
+            >
               <Icon className="h-5 w-5" />
             </div>
           )}
@@ -62,7 +62,7 @@ export function ItemCard({
             <Button 
               variant="ghost" 
               size="icon"
-              className="h-8 w-8 absolute top-3 right-3 opacity-100 text-muted-foreground hover:bg-accent/80"
+              className="h-8 w-8 absolute top-3 right-3 opacity-0 group-hover:opacity-100 text-muted-foreground hover:bg-accent/80 transition-opacity"
             >
               <MoreHorizontal className="h-4 w-4" />
               <span className="sr-only">Open menu</span>
@@ -87,7 +87,10 @@ export function ItemCard({
       )}
 
       {isPinned && (
-        <div className="absolute bottom-3 right-3 h-2 w-2 rounded-full bg-primary animate-pulse-subtle" />
+        <div 
+          className="absolute bottom-3 right-3 h-2 w-2 rounded-full animate-pulse-subtle"
+          style={{ backgroundColor: color }}
+        />
       )}
     </NavLink>
   );
