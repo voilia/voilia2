@@ -39,7 +39,7 @@ export function ItemCard({
       to={path}
       className={({ isActive }) =>
         cn(
-          "relative block h-[160px] rounded-2xl border bg-white p-6 transition-all dark:bg-muted/950 dark:border-white/5",
+          "relative block h-[160px] rounded-2xl border bg-white p-6 transition-all dark:bg-zinc-800 dark:border-white/5",
           "hover:scale-[1.01] hover:shadow-md",
           isActive && "border-l-4 border-l-primary",
           className
@@ -62,7 +62,7 @@ export function ItemCard({
             <Button 
               variant="ghost" 
               size="icon"
-              className="h-8 w-8 absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="h-8 w-8 absolute top-3 right-3 opacity-100 text-muted-foreground hover:bg-accent/80"
             >
               <MoreHorizontal className="h-4 w-4" />
               <span className="sr-only">Open menu</span>
@@ -92,3 +92,4 @@ export function ItemCard({
     </NavLink>
   );
 }
+
