@@ -1,5 +1,5 @@
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";  // Add this import
 import { ItemCard } from "@/components/dashboard/ItemCard";
 import { Button } from "@/components/ui/button";
 import { LucideIcon, Plus } from "lucide-react";

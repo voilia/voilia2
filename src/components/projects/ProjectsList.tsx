@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { Project, SortOption, ViewMode } from "@/components/projects/types";
 import { ItemCard } from "@/components/dashboard/ItemCard";
 import { ProjectListItem } from "@/components/projects/ProjectListItem";
+import { cn } from "@/lib/utils";  // Add this import
 import { Folder } from "lucide-react";
 
 interface ProjectsListProps {

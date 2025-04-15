@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Project } from "./types";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";  // Ensure this import is present
 import { format } from "date-fns";
 
 interface ProjectListItemProps {
