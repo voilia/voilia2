@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 import { LucideIcon, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import {
   Tooltip,
   TooltipContent,
@@ -33,7 +33,6 @@ export function SidebarNavItemWithChildren({
 }: SidebarNavItemWithChildrenProps) {
   const [isOpen, setIsOpen] = useState(true);
   const isMobile = useIsMobile();
-  const { toast } = useToast();
 
   const getActionButton = (childTitle: string) => {
     const showToast = (title: string) => {
@@ -106,8 +105,8 @@ export function SidebarNavItemWithChildren({
       </Button>
       {isOpen && (
         <div className="ml-4 mt-1 space-y-1 pl-2 pt-1">
-          {children.map((child) => (
-            <div key={child.path} className="relative group">
+          {children.map((child, index) => (
+            <div key={`${child.path}-${index}`} className="relative group">
               <Button
                 variant="ghost"
                 asChild

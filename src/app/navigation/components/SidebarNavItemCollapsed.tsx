@@ -3,49 +3,54 @@ import { Button } from "@/components/ui/button";
 import { NavLink } from "react-router-dom";
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface SidebarNavItemCollapsedProps {
   title: string;
-  path?: string;
-  icon?: LucideIcon;
+  icon: LucideIcon;
+  navItems?: {
+    title: string;
+    path: string;
+  }[];
   onItemClick?: () => void;
 }
 
 export function SidebarNavItemCollapsed({
   title,
-  path,
   icon: Icon,
+  navItems,
   onItemClick
 }: SidebarNavItemCollapsedProps) {
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      asChild={!!path}
-      className="h-9 w-9 my-1"
-      onClick={onItemClick}
-    >
-      {path ? (
-        <NavLink
-          to={path}
-          className={({ isActive }) =>
-            cn(
-              "flex items-center justify-center rounded-md",
-              isActive
-                ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                : "hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
-            )
-          }
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-9 w-9 my-1"
+          onClick={onItemClick}
         >
-          {Icon && <Icon className="h-5 w-5" />}
+          <Icon className="h-5 w-5" />
           <span className="sr-only">{title}</span>
-        </NavLink>
-      ) : (
-        <div className="flex items-center justify-center">
-          {Icon && <Icon className="h-5 w-5" />}
-          <span className="sr-only">{title}</span>
-        </div>
-      )}
-    </Button>
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="right" className="flex flex-col gap-1">
+        <span className="font-medium">{title}</span>
+        {navItems && navItems.length > 0 && (
+          <div className="space-y-1 pt-1 text-xs">
+            {navItems.map((item, index) => (
+              <NavLink 
+                key={index} 
+                to={item.path}
+                className="block hover:underline"
+                onClick={onItemClick}
+              >
+                {item.title}
+              </NavLink>
+            ))}
+          </div>
+        )}
+      </TooltipContent>
+    </Tooltip>
   );
 }

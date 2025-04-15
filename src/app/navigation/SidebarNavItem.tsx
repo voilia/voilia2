@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SidebarNavItemCollapsed } from "./components/SidebarNavItemCollapsed";
@@ -29,7 +29,7 @@ export function SidebarNavItem({
         <SidebarNavItemCollapsed
           title={title}
           icon={icon}
-          children={children}
+          navItems={children}
           onItemClick={onItemClick}
         />
       ) : (

@@ -16,19 +16,19 @@ export function ProjectDetailTabs({ activeTab, onTabChange }: ProjectDetailTabsP
         <TabsList className="grid grid-cols-4 max-w-md">
           <TabsTrigger value="rooms" className="flex items-center gap-2">
             <Home className="h-4 w-4" />
-            <span>Rooms</span>
+            <span className="text-sm">Rooms</span>
           </TabsTrigger>
           <TabsTrigger value="members" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
-            <span>Members</span>
+            <span className="text-sm">Members</span>
           </TabsTrigger>
           <TabsTrigger value="settings" className="flex items-center gap-2">
             <Settings className="h-4 w-4" />
-            <span>Settings</span>
+            <span className="text-sm">Settings</span>
           </TabsTrigger>
           <TabsTrigger value="analytics" className="flex items-center gap-2">
             <BarChart3 className="h-4 w-4" />
-            <span>Analytics</span>
+            <span className="text-sm">Analytics</span>
           </TabsTrigger>
         </TabsList>
       </Tabs>
