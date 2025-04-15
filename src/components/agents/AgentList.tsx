@@ -3,6 +3,7 @@ import { AgentCard } from "./AgentCard";
 import { Agent } from "./types";
 import { ViewMode } from "@/components/projects/types";
 import { AgentListItem } from "./AgentListItem";
+import { Bot } from "lucide-react"; // Added this import for the Bot icon
 
 interface AgentListProps {
   agents: Agent[];
