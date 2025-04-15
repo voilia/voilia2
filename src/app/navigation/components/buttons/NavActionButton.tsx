@@ -24,6 +24,7 @@ export function NavActionButton({ type, isMobile, tooltipText }: NavActionButton
     "absolute right-2 top-1/2 -translate-y-1/2 transition-opacity duration-200"
   );
 
+  // Handle project button separately
   if (type === "project") {
     return (
       <div className={buttonContainerStyles}>
@@ -41,7 +42,7 @@ export function NavActionButton({ type, isMobile, tooltipText }: NavActionButton
     }
   };
 
-  // For mobile, just return the button without tooltip
+  // For mobile, return a button without tooltip
   if (isMobile) {
     return (
       <div className={buttonContainerStyles}>
@@ -52,13 +53,13 @@ export function NavActionButton({ type, isMobile, tooltipText }: NavActionButton
           onClick={handleClick}
         >
           <Plus className="h-4 w-4" />
-          <span className="sr-only">{tooltipText}</span>
+          <span className="sr-only">{tooltipText || "Action"}</span>
         </Button>
       </div>
     );
   }
 
-  // For desktop, use the tooltip structure
+  // For desktop, use TooltipProvider outside of the component tree
   return (
     <div className={buttonContainerStyles}>
       <TooltipProvider>
@@ -71,7 +72,7 @@ export function NavActionButton({ type, isMobile, tooltipText }: NavActionButton
               onClick={handleClick}
             >
               <Plus className="h-4 w-4" />
-              <span className="sr-only">{tooltipText}</span>
+              <span className="sr-only">{tooltipText || "Action"}</span>
             </Button>
           </TooltipTrigger>
           <TooltipContent 
