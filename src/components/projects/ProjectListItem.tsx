@@ -1,6 +1,6 @@
 
 import { NavLink } from "react-router-dom";
-import { Layers, MoreHorizontal } from "lucide-react";
+import { Folder, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -44,7 +44,7 @@ export function ProjectListItem({ project }: ProjectListItemProps) {
           className="rounded-full p-2 transition-colors hover:bg-[var(--hover-bg)]"
           style={{...iconStyles, ...iconHoverStyles}}
         >
-          <Layers className="h-5 w-5" />
+          <Folder className="h-5 w-5" />
         </div>
         <div>
           <h3 className="font-medium line-clamp-1">{project.name}</h3>
@@ -88,4 +88,3 @@ export function ProjectListItem({ project }: ProjectListItemProps) {
     </NavLink>
   );
 }
-

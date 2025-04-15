@@ -1,7 +1,6 @@
 
-import { cn } from "@/lib/utils";
-import { LucideIcon, MoreHorizontal } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { Folder, MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,12 +8,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Layers } from "lucide-react";
 
 interface ItemCardProps {
   title: string;
   description?: string;
-  icon?: LucideIcon;
+  icon?: React.ComponentType<{ className?: string }>;
   path: string;
   isPinned?: boolean;
   color?: string;
@@ -24,7 +22,7 @@ interface ItemCardProps {
 export function ItemCard({
   title,
   description,
-  icon: Icon = Layers,
+  icon: Icon = Folder,
   path,
   isPinned = false,
   color = "#9b87f5",
@@ -102,4 +100,3 @@ export function ItemCard({
     </NavLink>
   );
 }
-
