@@ -42,6 +42,7 @@ export function NavActionButton({ type, isMobile, tooltipText }: NavActionButton
     }
   };
 
+  // Separate the button element
   const actionButton = (
     <Button
       variant="ghost"
@@ -54,10 +55,12 @@ export function NavActionButton({ type, isMobile, tooltipText }: NavActionButton
     </Button>
   );
 
+  // For mobile, just return the button in a container
   if (isMobile) {
     return <div className={buttonContainerStyles}>{actionButton}</div>;
   }
 
+  // For desktop, wrap with TooltipProvider and proper structure
   return (
     <div className={buttonContainerStyles}>
       <TooltipProvider>
