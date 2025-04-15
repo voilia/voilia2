@@ -28,7 +28,7 @@ export type Project = {
   id: string;
   name: string;
   description: string | null;
-  color: string | null;
+  color: string | null; // Made nullable to match database structure
   owner_id: string;
   created_at: string;
   updated_at: string;

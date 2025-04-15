@@ -23,6 +23,7 @@ export function useProjects() {
         const { data, error } = await supabase
           .from("projects")
           .select("*")
+          .or(`owner_id.eq.${user.id},id.in.(select project_id from project_members where user_id = '${user.id}')`)
           .eq("is_deleted", false)
           .order("updated_at", { ascending: false });
 

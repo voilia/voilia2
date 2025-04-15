@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { CreateProjectFormValues, createProjectSchema } from "@/components/projects/types";
+import { CreateProjectFormValues, createProjectSchema, projectColors, ProjectColor } from "@/components/projects/types";
 
 export function useCreateProject() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,13 +30,18 @@ export function useCreateProject() {
         throw new Error("User not authenticated");
       }
 
+      // Convert color key to hex value
+      const colorValue = values.color in projectColors 
+        ? projectColors[values.color as ProjectColor] 
+        : values.color;
+
       // Insert project with the current user as owner
       const { data: project, error: projectError } = await supabase
         .from("projects")
         .insert({
           name: values.name,
           description: values.description || null,
-          color: values.color,
+          color: colorValue,
           owner_id: user.id // Add the owner_id field
         })
         .select()
@@ -45,7 +50,7 @@ export function useCreateProject() {
       if (projectError) throw projectError;
 
       toast.success("Project created successfully!");
-      navigate(`/projects/${project.id}`);
+      navigate(`/projects`); // Changed from project.id to just /projects
     } catch (error) {
       console.error("Error creating project:", error);
       toast.error("Failed to create project. Please try again.");
