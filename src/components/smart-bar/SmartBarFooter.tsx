@@ -1,5 +1,6 @@
 
 import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
 interface SmartBarFooterProps {
   enterSends: boolean;
@@ -10,14 +11,20 @@ export function SmartBarFooter({ enterSends, onToggleEnterSends }: SmartBarFoote
   const isMobile = useIsMobile();
 
   return (
-    <div className="flex justify-between items-center text-xs text-muted-foreground py-1 px-4 md:px-6 lg:px-8">
-      <div className="flex-1">
+    <div className={cn(
+      "flex items-center py-1 px-4 text-xs text-muted-foreground",
+      isMobile ? "justify-center" : "justify-between"
+    )}>
+      <div className={cn(
+        "flex-1",
+        isMobile && "text-center"
+      )}>
         AI can make mistakes. Verify important information.
       </div>
       {!isMobile && (
         <button 
           type="button"
-          className="hover:text-foreground text-right"
+          className="hover:text-foreground transition-colors duration-200"
           onClick={onToggleEnterSends}
         >
           Enter = {enterSends ? "Send" : "New Line"}

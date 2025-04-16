@@ -44,16 +44,20 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
 
   return (
     <div 
-      className="fixed bottom-0 z-50 bg-background/95 backdrop-blur-sm"
+      className={cn(
+        "fixed bottom-0 z-20 bg-background/95 backdrop-blur-sm",
+        "w-[calc(100%-2rem)]",
+        "transition-all duration-300 ease-in-out",
+        isMobile ? "left-[1rem] right-[1rem]" : "right-[1rem]"
+      )}
       style={{ 
-        left: isMobile ? '0' : 'var(--sidebar-width, 0px)',
-        right: '0',
-        width: '100%',
-        marginBottom: '0.75rem'
+        left: isMobile ? '1rem' : 'calc(var(--sidebar-width, 0px) + 1rem)',
+        maxWidth: 'calc(900px + 2rem)',
+        margin: '0 auto 0.75rem'
       }}
     >
-      <div className="max-w-[900px] mx-auto relative">
-        <form onSubmit={handleSubmit} className="px-4 md:px-6 lg:px-8">
+      <div className="relative">
+        <form onSubmit={handleSubmit} className="px-4">
           <div className="relative rounded-xl border border-input bg-background/70 backdrop-blur-md shadow-sm overflow-hidden group hover:border-primary/50 hover:shadow-md transition-all duration-200">
             {/* Input area */}
             <div className="w-full">
