@@ -11,22 +11,20 @@ export function SmartBarFooter({ enterSends, onToggleEnterSends }: SmartBarFoote
   const isMobile = useIsMobile();
 
   return (
-    <div className="flex justify-between items-center text-xs text-muted-foreground px-4 py-1.5 bg-background/80 backdrop-blur-sm">
+    <div className="flex justify-between items-center text-xs text-muted-foreground px-4 py-1.5">
       <div>
         AI can make mistakes. Verify important information.
       </div>
       {!isMobile && (
-        <div className="flex items-center">
-          <Button 
-            type="button" 
-            variant="ghost" 
-            size="sm" 
-            className="h-6 px-2 text-xs hover:bg-transparent"
-            onClick={onToggleEnterSends}
-          >
-            Enter = {enterSends ? "Send" : "New Line"}
-          </Button>
-        </div>
+        <Button 
+          type="button" 
+          variant="ghost" 
+          size="sm" 
+          className="h-6 px-2 text-xs hover:bg-transparent"
+          onClick={onToggleEnterSends}
+        >
+          Enter = {enterSends ? "Send" : "New Line"}
+        </Button>
       )}
     </div>
   );

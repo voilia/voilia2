@@ -46,7 +46,7 @@ export function SmartBarInput({
       placeholder={placeholder}
       disabled={isDisabled || isSubmitting}
       className={cn(
-        "min-h-[44px] max-h-[40vh] flex-1 resize-none border-0 p-3 pr-24 focus-visible:ring-0 focus-visible:ring-offset-0 transition-all duration-200",
+        "min-h-[44px] max-h-[40vh] flex-1 resize-none border-0 p-3 focus-visible:ring-0 focus-visible:ring-offset-0 transition-all duration-200",
         value && "animate-pulse-subtle"
       )}
     />

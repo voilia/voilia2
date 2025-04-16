@@ -11,7 +11,7 @@ interface SmartBarActionsProps {
 
 export function SmartBarActions({ className }: SmartBarActionsProps) {
   return (
-    <div className={cn("flex items-center gap-2 overflow-x-auto hide-scrollbar", className)}>
+    <div className={cn("flex items-center gap-1", className)}>
       <SmartBarModeButton />
       <SmartBarAgentButton />
       <SmartBarFileButton />
@@ -19,4 +19,3 @@ export function SmartBarActions({ className }: SmartBarActionsProps) {
     </div>
   );
 }
-
