@@ -46,7 +46,7 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-t border-border">
       <form onSubmit={handleSubmit} className="container max-w-5xl mx-auto">
         <div className="p-3">
-          <div className="relative rounded-xl border border-input bg-background/70 backdrop-blur-md shadow-sm overflow-hidden group hover:border-primary/50 transition-all duration-200">
+          <div className="relative rounded-xl border border-input bg-background/70 backdrop-blur-md shadow-sm overflow-hidden group hover:border-primary/50 hover:shadow-md transition-all duration-200">
             {/* Top actions row inside the input container */}
             <div className="flex items-center gap-2 px-3 py-2 border-b border-border/50">
               <SmartBarActions />

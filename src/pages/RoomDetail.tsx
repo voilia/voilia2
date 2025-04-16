@@ -1,3 +1,4 @@
+
 import { useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useRoom } from "@/hooks/useRoom";
@@ -5,7 +6,7 @@ import { RoomMessage, useRoomMessages } from "@/hooks/useRoomMessages";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { MainLayout } from "@/app/layout/MainLayout";
 import { ContentContainer } from "@/components/ui/ContentContainer";
-import { SmartBar } from "@/components/rooms/SmartBar";
+import { SmartBar } from "@/components/smart-bar/SmartBar";
 import { MessageGroup } from "@/components/rooms/MessageGroup";
 import { EmptyMessagesState } from "@/components/rooms/EmptyMessagesState";
 import { ScrollArea } from "@/components/ui/scroll-area";
