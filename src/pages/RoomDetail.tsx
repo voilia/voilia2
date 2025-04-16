@@ -15,6 +15,7 @@ import { ArrowLeft, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SmartBarProvider } from "@/components/smart-bar/context/SmartBarContext";
+import { FileDropZone } from "@/components/smart-bar/file-upload/FileDropZone";
 
 export default function RoomDetail() {
   const { id } = useParams<{ id: string }>();
@@ -70,72 +71,74 @@ export default function RoomDetail() {
 
   return (
     <MainLayout>
-      <div className="flex flex-col h-[calc(100vh-56px)] md:h-screen relative">
-        <div className="bg-background/95 backdrop-blur-sm border-b border-border p-3 md:p-4 sticky top-0 z-10 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="mr-1"
-              onClick={() => navigate(-1)}
-              aria-label="Go back"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            
-            {isRoomLoading ? (
-              <Skeleton className="h-6 w-48" />
-            ) : (
-              <>
-                <h1 className="text-lg font-semibold">{room?.name}</h1>
-                {room?.projects && (
-                  <Link to={`/projects/${room.project_id}`}>
-                    <Badge variant="outline" className="text-xs hover:bg-background/80 cursor-pointer" style={{ 
-                      backgroundColor: room.projects.color + "20", 
-                      borderColor: room.projects.color 
-                    }}>
-                      {room.projects.name}
-                    </Badge>
-                  </Link>
-                )}
-              </>
-            )}
-          </div>
-          <Button size="icon" variant="ghost">
-            <Settings className="h-4 w-4" />
-          </Button>
-        </div>
-
-        <div className="flex-1 overflow-hidden">
-          <ScrollArea className="h-full" ref={scrollAreaRef}>
-            <ContentContainer className="py-4 pb-[160px]">
-              {isLoading ? (
-                <div className="space-y-4 p-4">
-                  <Skeleton className="h-12 w-2/3" />
-                  <Skeleton className="h-12 w-1/2 ml-auto" />
-                  <Skeleton className="h-12 w-3/4" />
-                </div>
-              ) : messageGroups.length > 0 ? (
-                <div className="space-y-4">
-                  {messageGroups.map((group, i) => (
-                    <MessageGroup 
-                      key={`${group.userId}-${i}`} 
-                      messages={group.messages} 
-                      isUserGroup={group.userId === user?.id}
-                    />
-                  ))}
-                </div>
+      <SmartBarProvider>
+        <div className="flex flex-col h-[calc(100vh-56px)] md:h-screen relative">
+          <div className="bg-background/95 backdrop-blur-sm border-b border-border p-3 md:p-4 sticky top-0 z-10 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="mr-1"
+                onClick={() => navigate(-1)}
+                aria-label="Go back"
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+              
+              {isRoomLoading ? (
+                <Skeleton className="h-6 w-48" />
               ) : (
-                <EmptyMessagesState roomName={room?.name} />
+                <>
+                  <h1 className="text-lg font-semibold">{room?.name}</h1>
+                  {room?.projects && (
+                    <Link to={`/projects/${room.project_id}`}>
+                      <Badge variant="outline" className="text-xs hover:bg-background/80 cursor-pointer" style={{ 
+                        backgroundColor: room.projects.color + "20", 
+                        borderColor: room.projects.color 
+                      }}>
+                        {room.projects.name}
+                      </Badge>
+                    </Link>
+                  )}
+                </>
               )}
-            </ContentContainer>
-          </ScrollArea>
-        </div>
+            </div>
+            <Button size="icon" variant="ghost">
+              <Settings className="h-4 w-4" />
+            </Button>
+          </div>
 
-        <SmartBarProvider>
+          <FileDropZone>
+            <div className="flex-1 overflow-hidden">
+              <ScrollArea className="h-full" ref={scrollAreaRef}>
+                <ContentContainer className="py-4 pb-[160px]">
+                  {isLoading ? (
+                    <div className="space-y-4 p-4">
+                      <Skeleton className="h-12 w-2/3" />
+                      <Skeleton className="h-12 w-1/2 ml-auto" />
+                      <Skeleton className="h-12 w-3/4" />
+                    </div>
+                  ) : messageGroups.length > 0 ? (
+                    <div className="space-y-4">
+                      {messageGroups.map((group, i) => (
+                        <MessageGroup 
+                          key={`${group.userId}-${i}`} 
+                          messages={group.messages} 
+                          isUserGroup={group.userId === user?.id}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <EmptyMessagesState roomName={room?.name} />
+                  )}
+                </ContentContainer>
+              </ScrollArea>
+            </div>
+          </FileDropZone>
+
           <SmartBar onSendMessage={handleSendMessage} isDisabled={isLoading} />
-        </SmartBarProvider>
-      </div>
+        </div>
+      </SmartBarProvider>
     </MainLayout>
   );
 }

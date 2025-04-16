@@ -7,6 +7,8 @@ import { SmartBarInput } from "./SmartBarInput";
 import { AnimatedSubmitButton } from "./buttons/submit/AnimatedSubmitButton";
 import { SmartBarVoiceButton } from "./buttons/SmartBarVoiceButton";
 import { ColoredModeIndicator } from "./buttons/mode-selector/ColoredModeIndicator";
+import { FileUploadPopover } from "./file-upload/FileUploadPopover";
+import { VoiceRecordingPopover } from "./voice-input/VoiceRecordingPopover";
 import { cn } from "@/lib/utils";
 import { useSmartBar } from "./context/SmartBarContext";
 import { useTheme } from "@/components/ThemeProvider";
@@ -24,7 +26,9 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
     isSubmitting, 
     setIsSubmitting,
     enterSends,
-    setEnterSends 
+    setEnterSends,
+    uploadedFiles,
+    clearFiles
   } = useSmartBar();
   
   const formRef = useRef<HTMLFormElement>(null);
@@ -36,12 +40,13 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!message.trim() || isDisabled || isSubmitting) return;
+    if ((!message.trim() && uploadedFiles.length === 0) || isDisabled || isSubmitting) return;
 
     try {
       setIsSubmitting(true);
       await onSendMessage(message);
       setMessage("");
+      clearFiles(); // Clear the files after sending
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {
@@ -51,7 +56,7 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey && enterSends) {
-      if (!message.trim() || isDisabled || isSubmitting) return;
+      if ((!message.trim() && uploadedFiles.length === 0) || isDisabled || isSubmitting) return;
       e.preventDefault();
       handleSubmit(e as unknown as React.FormEvent);
     }
@@ -97,12 +102,18 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
             <div className="flex items-center gap-3">
               <SmartBarVoiceButton />
               <AnimatedSubmitButton 
-                disabled={!message.trim() || isDisabled || isSubmitting}
+                disabled={!message.trim() && uploadedFiles.length === 0 || isDisabled || isSubmitting}
                 mode={mode}
               />
             </div>
           </div>
         </form>
+        
+        {/* File Upload Popover */}
+        <FileUploadPopover />
+        
+        {/* Voice Recording Popover */}
+        <VoiceRecordingPopover />
       </div>
       
       <SmartBarFooter 

@@ -1,0 +1,93 @@
+
+import { useEffect, useRef } from "react";
+import { useSmartBar } from "../context/SmartBarContext";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+
+interface FileDropZoneProps {
+  children: React.ReactNode;
+}
+
+export function FileDropZone({ children }: FileDropZoneProps) {
+  const { isDraggingOver, setIsDraggingOver, addFiles } = useSmartBar();
+  const dropZoneRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleDragEnter = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDraggingOver(true);
+    };
+
+    const handleDragOver = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!isDraggingOver) setIsDraggingOver(true);
+    };
+
+    const handleDragLeave = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // Only set to false if we're leaving the drop zone
+      if (dropZoneRef.current && !dropZoneRef.current.contains(e.relatedTarget as Node)) {
+        setIsDraggingOver(false);
+      }
+    };
+
+    const handleDrop = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDraggingOver(false);
+
+      if (e.dataTransfer?.files?.length) {
+        const files = Array.from(e.dataTransfer.files);
+        handleFiles(files);
+      }
+    };
+
+    const handleFiles = (files: File[]) => {
+      if (files.length > 10) {
+        toast.warning("Maximum 10 files can be uploaded at once.");
+        addFiles(files.slice(0, 10));
+      } else {
+        addFiles(files);
+      }
+    };
+
+    const dropZoneElement = dropZoneRef.current;
+    if (dropZoneElement) {
+      dropZoneElement.addEventListener("dragenter", handleDragEnter);
+      dropZoneElement.addEventListener("dragover", handleDragOver);
+      dropZoneElement.addEventListener("dragleave", handleDragLeave);
+      dropZoneElement.addEventListener("drop", handleDrop);
+
+      return () => {
+        dropZoneElement.removeEventListener("dragenter", handleDragEnter);
+        dropZoneElement.removeEventListener("dragover", handleDragOver);
+        dropZoneElement.removeEventListener("dragleave", handleDragLeave);
+        dropZoneElement.removeEventListener("drop", handleDrop);
+      };
+    }
+  }, [isDraggingOver, setIsDraggingOver, addFiles]);
+
+  return (
+    <div 
+      ref={dropZoneRef} 
+      className={cn(
+        "relative h-full w-full transition-all duration-300",
+        isDraggingOver && "after:absolute after:inset-0 after:bg-primary/10 after:backdrop-blur-sm after:border-2 after:border-dashed after:border-primary/30 after:rounded-lg after:z-10"
+      )}
+    >
+      {children}
+      
+      {isDraggingOver && (
+        <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+          <div className="bg-background/80 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-primary/20 animate-fade-in">
+            <p className="text-xl font-medium text-center">Drop files to upload</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
