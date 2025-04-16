@@ -10,14 +10,14 @@ export function SmartBarFooter({ enterSends, onToggleEnterSends }: SmartBarFoote
   const isMobile = useIsMobile();
 
   return (
-    <div className="flex justify-between items-center text-xs text-muted-foreground py-1">
-      <div>
+    <div className="flex justify-between items-center text-xs text-muted-foreground py-1 px-4 md:px-6 lg:px-8">
+      <div className="flex-1">
         AI can make mistakes. Verify important information.
       </div>
       {!isMobile && (
         <button 
           type="button"
-          className="hover:text-foreground"
+          className="hover:text-foreground text-right"
           onClick={onToggleEnterSends}
         >
           Enter = {enterSends ? "Send" : "New Line"}
