@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SmartBarFooter } from "./SmartBarFooter";
@@ -26,7 +25,9 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
     enterSends,
     setEnterSends 
   } = useSmartBar();
-  const [isExpanded, setIsExpanded] = useState(false);
+  
+  const isExpanded = true;
+  
   const isMobile = useIsMobile();
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -54,10 +55,6 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
     }
   };
 
-  useEffect(() => {
-    setIsExpanded(message.length > 0);
-  }, [message]);
-
   return (
     <>
       <div 
@@ -76,7 +73,7 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
             "border transition-all duration-300",
             isDark ? "border-white/10 bg-black/30" : "border-foreground/10 bg-foreground/5",
             "backdrop-blur-lg shadow-sm",
-            isExpanded ? "min-h-24" : "h-14"
+            "min-h-24"
           )}
         >
           <ColoredModeIndicator mode={mode} />
@@ -94,7 +91,7 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
           <div className="flex items-center justify-between px-3 py-2">
             <SmartBarActions />
             
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <SmartBarVoiceButton />
               <AnimatedSubmitButton 
                 disabled={!message.trim() || isDisabled || isSubmitting}

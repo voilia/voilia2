@@ -44,7 +44,7 @@ export function AnimatedSubmitButton({ disabled, mode, className }: AnimatedSubm
           : [
               getButtonColor(),
               "hover:opacity-90 hover:scale-105",
-              "animate-pulse-subtle"
+              // Removed animation class
             ],
         className
       )}
