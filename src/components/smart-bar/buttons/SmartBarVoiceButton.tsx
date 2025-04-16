@@ -12,7 +12,7 @@ export function SmartBarVoiceButton({ className }: SmartBarVoiceButtonProps) {
     <SmartBarButton 
       icon={Mic} 
       tooltip="Voice Input" 
-      className={cn("", className)}
+      className={cn("text-foreground", className)}
     />
   );
 }

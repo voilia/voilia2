@@ -35,7 +35,7 @@ export function SmartBarButton({
             size={size}
             className={cn(
               "h-8 w-8",
-              "hover:bg-accent/80 dark:hover:bg-white/10",
+              "bg-transparent hover:bg-accent/80 dark:hover:bg-white/10",
               "transition-all duration-200 active:scale-95",
               className
             )}

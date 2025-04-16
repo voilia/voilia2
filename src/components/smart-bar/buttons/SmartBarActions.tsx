@@ -3,7 +3,6 @@ import { cn } from "@/lib/utils";
 import { SmartBarFileButton } from "./SmartBarFileButton";
 import { SmartBarAgentButton } from "./SmartBarAgentButton";
 import { SmartBarModeSelector } from "../SmartBarModeSelector";
-import type { SmartBarMode } from "../types/smart-bar-types";
 
 interface SmartBarActionsProps {
   className?: string;
