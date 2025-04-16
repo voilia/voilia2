@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { useSmartBar } from "../../context/SmartBarContext";
 import type { SmartBarMode } from "../../types/smart-bar-types";
 import { useRef, useEffect, useState } from "react";
+import { useTheme } from "@/components/ThemeProvider";
 
 const modes: { id: SmartBarMode; icon: typeof BotMessageSquare; label: string }[] = [
   { id: "chat", icon: BotMessageSquare, label: "Chat" },
@@ -20,6 +21,9 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
   const { mode, setMode } = useSmartBar();
   const smartBarRef = useRef<HTMLDivElement | null>(null);
   const [popoverWidth, setPopoverWidth] = useState<number | null>(null);
+  const [open, setOpen] = useState(false);
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   
   // Find the SmartBar element to match its width
   useEffect(() => {
@@ -41,17 +45,27 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
     return () => window.removeEventListener('resize', updateWidth);
   }, []);
 
+  const handleSelectMode = (selectedMode: SmartBarMode) => {
+    setMode(selectedMode);
+    setOpen(false); // Close popover after selection
+  };
+
   return (
-    <Popover modal={true}>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         {children}
       </PopoverTrigger>
       <PopoverContent 
-        className="p-0 bg-background border border-border shadow-md rounded-xl overflow-hidden"
+        className={cn(
+          "p-0 shadow-md rounded-2xl overflow-hidden border",
+          isDark ? "border-white/10 bg-black/30" : "border-foreground/10 bg-foreground/5",
+          "backdrop-blur-lg"
+        )}
         style={{ width: popoverWidth ? `${popoverWidth}px` : 'auto' }}
         align="center"
         side="top"
-        sideOffset={16}
+        sideOffset={8}
+        avoidCollisions={false}
       >
         <div className="flex w-full">
           {modes.map(({ id, icon: Icon, label }) => {
@@ -59,12 +73,12 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
             return (
               <button
                 key={id}
-                onClick={() => setMode(id)}
+                onClick={() => handleSelectMode(id)}
                 className={cn(
                   "flex flex-col items-center justify-center py-3 flex-1",
                   "transition-all duration-200",
-                  "focus:outline-none",
-                  isSelected ? "bg-background" : "bg-muted/30 hover:bg-muted/50"
+                  "focus:outline-none focus:ring-0 focus:ring-offset-0", // Remove focus outline
+                  isSelected ? "bg-muted/30" : "hover:bg-muted/10"
                 )}
               >
                 <Icon className={cn(
