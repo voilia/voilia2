@@ -5,24 +5,25 @@ import { cn } from "@/lib/utils";
 interface SmartBarFooterProps {
   enterSends: boolean;
   onToggleEnterSends: () => void;
+  className?: string;
 }
 
-export function SmartBarFooter({ enterSends, onToggleEnterSends }: SmartBarFooterProps) {
+export function SmartBarFooter({ enterSends, onToggleEnterSends, className }: SmartBarFooterProps) {
   const isMobile = useIsMobile();
 
   return (
-    <div className="fixed bottom-0 z-10 w-full" style={{
+    <div className={`fixed z-10 w-full ${className}`} style={{
       left: isMobile ? 0 : 'var(--sidebar-width, 0px)',
       right: 0,
-      maxWidth: '48rem', // 3xl equivalent
+      maxWidth: isMobile ? '100%' : '48rem',
       margin: '0 auto',
     }}>
-      <div className="px-4 pt-1 pb-2 flex items-center justify-between text-xs text-muted-foreground">
+      <div className="px-2 md:px-4 py-1 flex items-center justify-center text-xs text-muted-foreground">
         <span>AI can make mistakes. Verify important information.</span>
         {!isMobile && (
           <button 
             type="button"
-            className="hover:text-foreground transition-colors duration-200"
+            className="hover:text-foreground transition-colors duration-200 ml-2"
             onClick={onToggleEnterSends}
           >
             Enter = {enterSends ? "Send" : "New Line"}
