@@ -14,7 +14,7 @@ export function SmartBarFooter({ enterSends, onToggleEnterSends }: SmartBarFoote
     <div className="fixed bottom-0 z-10 w-full" style={{
       left: isMobile ? 0 : 'var(--sidebar-width, 0px)',
       right: 0,
-      maxWidth: 'calc(900px + 2rem)',
+      maxWidth: '48rem', // 3xl equivalent
       margin: '0 auto',
     }}>
       <div className="px-4 pt-1 pb-2 flex items-center justify-between text-xs text-muted-foreground">

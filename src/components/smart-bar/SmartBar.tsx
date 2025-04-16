@@ -1,12 +1,14 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SmartBarFooter } from "./SmartBarFooter";
 import { SmartBarActions } from "./buttons/SmartBarActions";
 import { SmartBarInput } from "./SmartBarInput";
 import { SmartBarSubmitButton } from "./buttons/SmartBarSubmitButton";
 import { SmartBarVoiceButton } from "./buttons/SmartBarVoiceButton";
+import { SmartBarModeSelector, SmartBarMode } from "./SmartBarModeSelector";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/components/ThemeProvider";
 
 interface SmartBarProps {
   onSendMessage: (message: string) => Promise<void>;
@@ -17,7 +19,11 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
   const [message, setMessage] = useState("");
   const [enterSends, setEnterSends] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [mode, setMode] = useState<SmartBarMode>("chat");
+  const [isExpanded, setIsExpanded] = useState(false);
   const isMobile = useIsMobile();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,24 +48,41 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
     }
   };
 
+  useEffect(() => {
+    setIsExpanded(message.length > 0);
+  }, [message]);
+
   return (
     <>
-      <form 
-        onSubmit={handleSubmit} 
-        className={cn(
-          "fixed bottom-14 z-20", 
-          "px-4 w-full"
-        )}
+      <div 
+        className="fixed bottom-14 z-20 w-full px-4"
         style={{
-          left: isMobile ? '1rem' : 'calc(var(--sidebar-width, 0px) + 1rem)',
-          right: '1rem',
-          maxWidth: 'calc(900px + 2rem)',
+          left: isMobile ? 0 : 'var(--sidebar-width, 0px)',
+          right: 0,
+          maxWidth: '48rem', // 3xl equivalent
           margin: '0 auto',
         }}
       >
-        <div className="relative rounded-xl border border-input/10 bg-background/40 dark:bg-neutral-800/50 backdrop-blur-md shadow-sm overflow-hidden group hover:border-primary/30 hover:shadow-md transition-all duration-200">
-          {/* Input area */}
-          <div className="w-full">
+        <form 
+          onSubmit={handleSubmit} 
+          className={cn(
+            "relative rounded-2xl overflow-hidden",
+            "border transition-all duration-300",
+            isDark ? "border-white/10 bg-black/30" : "border-foreground/10 bg-foreground/5",
+            "backdrop-blur-lg shadow-sm",
+            isExpanded ? "min-h-24" : "h-14"
+          )}
+        >
+          {/* Colored mode indicator line */}
+          <div 
+            className={cn(
+              "absolute top-0 left-0 right-0 h-1 transition-colors duration-300",
+              `bg-smartbar-${mode}-${isDark ? "dark" : "light"}`
+            )} 
+          />
+          
+          {/* Input area with padding to account for the colored line */}
+          <div className="w-full pt-1">
             <SmartBarInput
               value={message}
               onChange={setMessage}
@@ -69,9 +92,16 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
             />
           </div>
           
-          {/* Bottom row with actions and submit */}
+          {/* Bottom row with mode selector, actions and submit */}
           <div className="flex items-center justify-between px-3 py-2 border-t border-input/5 dark:border-white/5">
-            <SmartBarActions />
+            <div className="flex items-center">
+              <SmartBarModeSelector
+                selectedMode={mode}
+                onModeChange={setMode}
+                className="mr-2"
+              />
+              <SmartBarActions />
+            </div>
             
             <div className="flex items-center gap-2">
               <SmartBarVoiceButton className={cn(
@@ -83,8 +113,8 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
               />
             </div>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
       
       <SmartBarFooter 
         enterSends={enterSends}
