@@ -11,7 +11,7 @@ export function SmartBarFooter({ enterSends, onToggleEnterSends }: SmartBarFoote
   const isMobile = useIsMobile();
 
   return (
-    <div className="flex justify-between items-center text-xs text-muted-foreground px-4 py-2 bg-background/80 backdrop-blur-sm border-t border-border">
+    <div className="flex justify-between items-center text-xs text-muted-foreground px-4 py-1.5 bg-background/80 backdrop-blur-sm">
       <div>
         AI can make mistakes. Verify important information.
       </div>
@@ -21,7 +21,7 @@ export function SmartBarFooter({ enterSends, onToggleEnterSends }: SmartBarFoote
             type="button" 
             variant="ghost" 
             size="sm" 
-            className="h-6 px-2 text-xs"
+            className="h-6 px-2 text-xs hover:bg-transparent"
             onClick={onToggleEnterSends}
           >
             Enter = {enterSends ? "Send" : "New Line"}

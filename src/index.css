@@ -119,6 +119,14 @@
   .status-indicator {
     @apply relative after:absolute after:w-2 after:h-2 after:rounded-full after:bg-green-500 after:animate-pulse;
   }
+  
+  .smart-bar-container {
+    @apply fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-t border-border transition-all duration-200;
+  }
+  
+  .smart-bar-input {
+    @apply min-h-[44px] max-h-[40vh] w-full resize-none rounded-lg border border-input bg-background p-3 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring transition-all duration-200;
+  }
 }
 
 @layer utilities {
