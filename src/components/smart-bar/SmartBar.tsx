@@ -59,7 +59,7 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
   return (
     <>
       <div 
-        className="fixed bottom-12 z-20 w-full px-4"  // Changed from bottom-16 to bottom-12
+        className="fixed bottom-16 z-20 w-full px-4"
         style={{
           left: isMobile ? 0 : 'var(--sidebar-width, 0px)',
           right: 0,
@@ -110,4 +110,3 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
     </>
   );
 }
-
