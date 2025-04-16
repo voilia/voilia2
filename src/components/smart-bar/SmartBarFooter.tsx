@@ -12,7 +12,8 @@ export function SmartBarFooter({ enterSends, onToggleEnterSends }: SmartBarFoote
 
   return (
     <div className={cn(
-      "flex items-center py-1 px-4 text-xs text-muted-foreground",
+      "fixed bottom-0 left-0 right-0 pt-1 pb-2 px-4 text-xs text-muted-foreground z-10",
+      "flex items-center",
       isMobile ? "justify-center" : "justify-between"
     )}>
       {isMobile ? (

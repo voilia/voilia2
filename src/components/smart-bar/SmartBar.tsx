@@ -43,21 +43,21 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
   };
 
   return (
-    <div 
-      className={cn(
-        "fixed bottom-0 z-20",
-        "bg-background/60 dark:bg-black/50 backdrop-blur-xl",
-        "transition-all duration-300 ease-in-out shadow-lg",
-        isMobile ? "left-[1rem] right-[1rem] w-[calc(100%-2rem)]" : 
-        "right-[1rem] w-[calc(100%-2rem)] xl:w-[calc(85%-2rem)]"
-      )}
-      style={{ 
-        left: isMobile ? '1rem' : 'calc(var(--sidebar-width, 0px) + 1rem)',
-        maxWidth: 'calc(900px + 2rem)',
-        margin: '0 auto 0.75rem'
-      }}
-    >
-      <div className="relative">
+    <>
+      <div 
+        className={cn(
+          "fixed bottom-0 z-20",
+          "bg-background/60 dark:bg-black/50 backdrop-blur-xl",
+          "transition-all duration-300 ease-in-out shadow-lg",
+          isMobile ? "left-[1rem] right-[1rem] w-[calc(100%-2rem)]" : 
+          "right-[1rem] w-[calc(100%-2rem)] xl:w-[calc(85%-2rem)]"
+        )}
+        style={{ 
+          left: isMobile ? '1rem' : 'calc(var(--sidebar-width, 0px) + 1rem)',
+          maxWidth: 'calc(900px + 2rem)',
+          margin: '0 auto 0.75rem'
+        }}
+      >
         <form onSubmit={handleSubmit} className="px-4">
           <div className="relative rounded-xl border border-input/10 bg-background/40 dark:bg-neutral-800/50 backdrop-blur-md shadow-sm overflow-hidden group hover:border-primary/30 hover:shadow-md transition-all duration-200">
             {/* Input area */}
@@ -87,12 +87,12 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
             </div>
           </div>
         </form>
-        
-        <SmartBarFooter 
-          enterSends={enterSends}
-          onToggleEnterSends={() => setEnterSends(!enterSends)}
-        />
       </div>
-    </div>
+      
+      <SmartBarFooter 
+        enterSends={enterSends}
+        onToggleEnterSends={() => setEnterSends(!enterSends)}
+      />
+    </>
   );
 }
