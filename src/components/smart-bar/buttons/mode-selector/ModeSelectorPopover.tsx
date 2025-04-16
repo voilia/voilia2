@@ -8,6 +8,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useSmartBar } from "../../context/SmartBarContext";
 import type { SmartBarMode } from "../../types/smart-bar-types";
+import { useRef, useState } from "react";
 
 const modes: { id: SmartBarMode; icon: typeof BotMessageSquare; label: string }[] = [
   { id: "chat", icon: BotMessageSquare, label: "Chat" },
@@ -18,43 +19,65 @@ const modes: { id: SmartBarMode; icon: typeof BotMessageSquare; label: string }[
 
 export function ModeSelectorPopover({ children }: { children: React.ReactNode }) {
   const { mode, setMode } = useSmartBar();
+  const [open, setOpen] = useState(false);
+  const smartBarRef = useRef<HTMLDivElement | null>(null);
+  
+  // Find the SmartBar element to match its width
+  const getSmartBarWidth = () => {
+    if (typeof window === 'undefined') return 'auto';
+    
+    if (!smartBarRef.current) {
+      // Try to find the SmartBar container
+      const smartBarForm = document.querySelector('form.rounded-2xl');
+      if (smartBarForm) {
+        smartBarRef.current = smartBarForm as HTMLDivElement;
+      }
+    }
+    
+    return smartBarRef.current ? `${smartBarRef.current.offsetWidth}px` : 'auto';
+  };
 
-  const getModeColor = (modeId: SmartBarMode) => {
+  const getModeColor = (modeId: SmartBarMode, opacity: number = 0.3) => {
+    const opacityValue = Math.round(opacity * 100);
     switch (modeId) {
-      case "chat": return "bg-purple-500/30";
-      case "visual": return "bg-orange-500/30";
-      case "assist": return "bg-blue-500/30";
-      case "vault": return "bg-green-500/30";
+      case "chat": return `bg-purple-500/${opacityValue}`;
+      case "visual": return `bg-orange-500/${opacityValue}`;
+      case "assist": return `bg-blue-500/${opacityValue}`;
+      case "vault": return `bg-green-500/${opacityValue}`;
     }
   };
 
   const handleModeChange = (newMode: SmartBarMode) => {
     setMode(newMode);
+    setOpen(false);
   };
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         {children}
       </PopoverTrigger>
       <PopoverContent 
-        className="w-48 p-2 grid grid-cols-2 gap-2 bg-popover text-popover-foreground shadow-md border border-border rounded-md"
+        className="p-2 grid grid-cols-5 gap-2 bg-background border border-border shadow-lg rounded-lg"
+        style={{ width: getSmartBarWidth() }}
         align="center"
         side="top"
         sideOffset={16}
+        onEscapeKeyDown={() => setOpen(false)}
+        onInteractOutside={() => setOpen(false)}
       >
         {modes.map(({ id, icon: Icon, label }) => (
           <button
             key={id}
             onClick={() => handleModeChange(id)}
             className={cn(
-              "flex flex-col items-center justify-center p-3 rounded-lg",
-              "transition-all duration-300 hover:bg-accent",
+              "flex flex-col items-center justify-center py-3 px-2 rounded-lg",
+              "transition-all duration-200 hover:bg-accent/80",
               "focus:outline-none focus:ring-2 focus:ring-ring",
               mode === id ? getModeColor(id) : "hover:bg-accent/80"
             )}
           >
-            <Icon className="w-5 h-5 mb-1" />
+            <Icon className="w-6 h-6 mb-1" />
             <span className="text-sm font-medium">{label}</span>
           </button>
         ))}

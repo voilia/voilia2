@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SmartBarFooter } from "./SmartBarFooter";
 import { SmartBarActions } from "./buttons/SmartBarActions";
@@ -27,6 +27,7 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
     setEnterSends 
   } = useSmartBar();
   
+  const formRef = useRef<HTMLFormElement>(null);
   const isExpanded = true;
   
   const isMobile = useIsMobile();
@@ -68,6 +69,7 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
         }}
       >
         <form 
+          ref={formRef}
           onSubmit={handleSubmit} 
           className={cn(
             "relative rounded-2xl overflow-hidden",
