@@ -1,7 +1,7 @@
 
 import { useSmartBar } from "../../context/SmartBarContext";
 import { SmartBarButton } from "../../SmartBarButton";
-import { Play, Pause, Stop, Trash2 } from "lucide-react";
+import { Play, Pause, Square, Trash2 } from "lucide-react";
 import { formatTime } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
