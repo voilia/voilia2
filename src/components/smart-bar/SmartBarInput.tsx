@@ -50,6 +50,8 @@ export function SmartBarInput({
         "min-h-[56px] max-h-[40vh] flex-1 resize-none border-0 p-3 pb-2",
         "focus-visible:ring-0 focus-visible:ring-offset-0",
         "transition-all duration-200",
+        "placeholder:text-muted-foreground/70 dark:placeholder:text-neutral-400",
+        "bg-transparent text-foreground dark:text-neutral-100",
         value && "animate-pulse-subtle"
       )}
     />

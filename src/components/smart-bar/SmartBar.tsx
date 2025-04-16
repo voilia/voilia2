@@ -45,8 +45,9 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
   return (
     <div 
       className={cn(
-        "fixed bottom-0 z-20 bg-background/95 backdrop-blur-sm",
-        "transition-all duration-300 ease-in-out",
+        "fixed bottom-0 z-20",
+        "bg-background/60 dark:bg-black/50 backdrop-blur-xl",
+        "transition-all duration-300 ease-in-out shadow-lg",
         isMobile ? "left-[1rem] right-[1rem] w-[calc(100%-2rem)]" : 
         "right-[1rem] w-[calc(100%-2rem)] xl:w-[calc(85%-2rem)]"
       )}
@@ -58,7 +59,7 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
     >
       <div className="relative">
         <form onSubmit={handleSubmit} className="px-4">
-          <div className="relative rounded-xl border border-input bg-background/70 backdrop-blur-md shadow-sm overflow-hidden group hover:border-primary/50 hover:shadow-md transition-all duration-200">
+          <div className="relative rounded-xl border border-input/10 bg-background/40 dark:bg-neutral-800/50 backdrop-blur-md shadow-sm overflow-hidden group hover:border-primary/30 hover:shadow-md transition-all duration-200">
             {/* Input area */}
             <div className="w-full">
               <SmartBarInput
@@ -71,7 +72,7 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
             </div>
             
             {/* Bottom row with actions and submit */}
-            <div className="flex items-center justify-between px-3 py-2 border-t border-input/50">
+            <div className="flex items-center justify-between px-3 py-2 border-t border-input/5 dark:border-white/5">
               <SmartBarActions />
               
               <div className="flex items-center gap-2">

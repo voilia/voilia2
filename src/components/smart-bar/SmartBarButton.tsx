@@ -30,10 +30,15 @@ export function SmartBarButton({
             type="button"
             variant={variant}
             size={size}
-            className="h-8 w-8"
+            className={cn(
+              "h-8 w-8",
+              "hover:bg-accent/80 dark:hover:bg-white/10",
+              "transition-all duration-200 active:scale-95",
+              className
+            )}
             {...props}
           >
-            <Icon className="h-4 w-4" />
+            <Icon className="h-4 w-4 text-muted-foreground dark:text-neutral-300" />
             <span className="sr-only">{tooltip}</span>
           </Button>
         </TooltipTrigger>
