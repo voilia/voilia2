@@ -28,24 +28,30 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
     }
   };
 
+  const handleModeChange = (newMode: SmartBarMode) => {
+    setMode(newMode);
+  };
+
   return (
     <Popover>
       <PopoverTrigger asChild>
         {children}
       </PopoverTrigger>
       <PopoverContent 
-        className="w-auto p-2 grid grid-cols-2 sm:grid-cols-4 gap-2 z-50" 
-        align="start"
-        sideOffset={5}
+        className="w-auto p-2 grid grid-cols-2 gap-2 z-[110]" 
+        align="center"
+        side="top"
+        sideOffset={16}
       >
         {modes.map(({ id, icon: Icon, label }) => (
           <button
             key={id}
-            onClick={() => setMode(id)}
+            onClick={() => handleModeChange(id)}
             className={cn(
-              "flex flex-col items-center p-2 rounded-lg",
-              "transition duration-300 hover:bg-accent",
-              mode === id && getModeColor(id)
+              "flex flex-col items-center justify-center p-3 rounded-lg",
+              "transition-all duration-300 hover:bg-accent",
+              "focus:outline-none focus:ring-2 focus:ring-ring",
+              mode === id ? getModeColor(id) : "hover:bg-accent/80"
             )}
           >
             <Icon className="w-5 h-5 mb-1" />
