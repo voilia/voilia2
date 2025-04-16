@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 interface SmartBarButtonProps extends Omit<ButtonProps, "children"> {
   icon: LucideIcon;
   tooltip: string;
+  customColor?: string;
 }
 
 export function SmartBarButton({ 
@@ -21,6 +22,7 @@ export function SmartBarButton({
   variant = "ghost",
   size = "icon",
   className,
+  customColor,
   ...props 
 }: SmartBarButtonProps) {
   return (
@@ -37,6 +39,7 @@ export function SmartBarButton({
               "transition-all duration-200 active:scale-95",
               className
             )}
+            style={customColor ? { color: customColor } : undefined}
             {...props}
           >
             <Icon className="h-4 w-4 text-muted-foreground dark:text-neutral-300" />
