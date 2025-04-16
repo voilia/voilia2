@@ -20,7 +20,7 @@ export function FileUploadPopover() {
   return createPortal(
     <div 
       className={cn(
-        "file-upload-popover fixed z-50 overflow-hidden",
+        "file-upload-popover fixed z-40 overflow-hidden",
         "shadow-lg transition-all duration-200 rounded-2xl p-3",
         isDark 
           ? "bg-black/30 border-white/10" 

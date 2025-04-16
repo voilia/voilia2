@@ -9,6 +9,7 @@ import {
 import { LucideIcon } from "lucide-react";
 import { ButtonProps } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 interface SmartBarButtonProps extends Omit<ButtonProps, "children"> {
   icon: LucideIcon;
@@ -25,9 +26,11 @@ export function SmartBarButton({
   customColor,
   ...props 
 }: SmartBarButtonProps) {
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+
   return (
     <TooltipProvider>
-      <Tooltip>
+      <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
         <TooltipTrigger asChild>
           <Button
             type="button"
@@ -40,6 +43,12 @@ export function SmartBarButton({
               className
             )}
             style={customColor ? { color: customColor } : undefined}
+            onMouseEnter={() => setTooltipOpen(true)}
+            onMouseLeave={() => setTooltipOpen(false)}
+            onClick={() => {
+              setTooltipOpen(false);
+              if (props.onClick) props.onClick({} as React.MouseEvent);
+            }}
             {...props}
           >
             <Icon className="h-5 w-5" />

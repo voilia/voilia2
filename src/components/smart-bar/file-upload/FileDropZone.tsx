@@ -74,7 +74,7 @@ export function FileDropZone({ children }: FileDropZoneProps) {
       {children}
       
       {isDraggingOver && (
-        <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+        <div className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none">
           <div className="bg-background/80 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-primary/20 animate-fade-in">
             <div className="flex flex-col items-center gap-3">
               <Paperclip className="h-10 w-10 text-primary/80" />
