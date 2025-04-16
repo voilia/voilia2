@@ -15,7 +15,6 @@ export function SmartBarActions({ className }: SmartBarActionsProps) {
       <SmartBarModeButton />
       <SmartBarAgentButton />
       <SmartBarFileButton />
-      <SmartBarVoiceButton className="md:hidden" />
     </div>
   );
 }

@@ -43,34 +43,38 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
   };
 
   return (
-    <div className="relative mb-4">
+    <div className="max-w-[1200px] mx-auto px-4 md:px-6 lg:px-8 mb-4">
       <form onSubmit={handleSubmit}>
         <div className="relative rounded-xl border border-input bg-background/70 backdrop-blur-md shadow-sm overflow-hidden group hover:border-primary/50 hover:shadow-md transition-all duration-200">
-          <div className="relative flex items-end">
-            {/* Action buttons on the left */}
-            <div className="px-3 py-3 flex items-center">
-              <SmartBarActions />
-            </div>
+          {/* Input area */}
+          <div className="w-full">
+            <SmartBarInput
+              value={message}
+              onChange={setMessage}
+              onKeyDown={handleKeyDown}
+              isDisabled={isDisabled}
+              isSubmitting={isSubmitting}
+            />
+          </div>
+          
+          {/* Bottom row with actions and submit */}
+          <div className="flex items-center justify-between px-3 py-2 border-t border-input/50">
+            <SmartBarActions />
             
-            {/* Input area */}
-            <div className="flex-1 pr-[84px]">
-              <SmartBarInput
-                value={message}
-                onChange={setMessage}
-                onKeyDown={handleKeyDown}
-                isDisabled={isDisabled}
-                isSubmitting={isSubmitting}
-              />
-            </div>
-            
-            {/* Voice button and submit button */}
-            <div className="absolute right-3 bottom-3 flex items-center gap-2">
-              <SmartBarVoiceButton 
-                className={cn(
-                  "transition-opacity duration-200",
-                  isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-                )}
-              />
+            <div className="flex items-center gap-2">
+              {!isMobile && (
+                <button 
+                  type="button" 
+                  className="text-xs text-muted-foreground hover:text-foreground px-2"
+                  onClick={() => setEnterSends(!enterSends)}
+                >
+                  Enter = {enterSends ? "Send" : "New Line"}
+                </button>
+              )}
+              <SmartBarVoiceButton className={cn(
+                "transition-opacity duration-200",
+                isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+              )} />
               <SmartBarSubmitButton 
                 disabled={!message.trim() || isDisabled || isSubmitting}
               />
