@@ -9,6 +9,140 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      agent_chain_steps: {
+        Row: {
+          agent_id: string | null
+          chain_id: string | null
+          created_at: string | null
+          id: string
+          notes: string | null
+          room_id: string | null
+          step_order: number | null
+        }
+        Insert: {
+          agent_id?: string | null
+          chain_id?: string | null
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          room_id?: string | null
+          step_order?: number | null
+        }
+        Update: {
+          agent_id?: string | null
+          chain_id?: string | null
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          room_id?: string | null
+          step_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_chain_steps_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_chain_steps_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_feedback: {
+        Row: {
+          agent_id: string | null
+          approved: boolean | null
+          created_at: string | null
+          execution_id: string | null
+          feedback_weight: number | null
+          id: string
+          rating: number | null
+          rejected_reason: string | null
+          style_tags: string[] | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          approved?: boolean | null
+          created_at?: string | null
+          execution_id?: string | null
+          feedback_weight?: number | null
+          id?: string
+          rating?: number | null
+          rejected_reason?: string | null
+          style_tags?: string[] | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          approved?: boolean | null
+          created_at?: string | null
+          execution_id?: string | null
+          feedback_weight?: number | null
+          id?: string
+          rating?: number | null
+          rejected_reason?: string | null
+          style_tags?: string[] | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_feedback_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_feedback_execution_id_fkey"
+            columns: ["execution_id"]
+            isOneToOne: false
+            referencedRelation: "prompt_executions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_versions: {
+        Row: {
+          agent_id: string | null
+          created_at: string | null
+          created_by: string | null
+          id: string
+          is_active: boolean | null
+          system_prompt: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          system_prompt?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          system_prompt?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_versions_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agents: {
         Row: {
           created_at: string | null
@@ -41,6 +175,105 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      model_responses: {
+        Row: {
+          agent_id: string | null
+          created_at: string | null
+          duration_ms: number | null
+          execution_id: string | null
+          id: string
+          model_name: string | null
+          prompt: string | null
+          response: string | null
+          tokens_input: number | null
+          tokens_output: number | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string | null
+          duration_ms?: number | null
+          execution_id?: string | null
+          id?: string
+          model_name?: string | null
+          prompt?: string | null
+          response?: string | null
+          tokens_input?: number | null
+          tokens_output?: number | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string | null
+          duration_ms?: number | null
+          execution_id?: string | null
+          id?: string
+          model_name?: string | null
+          prompt?: string | null
+          response?: string | null
+          tokens_input?: number | null
+          tokens_output?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "model_responses_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "model_responses_execution_id_fkey"
+            columns: ["execution_id"]
+            isOneToOne: false
+            referencedRelation: "prompt_executions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      preview_blocks: {
+        Row: {
+          agent_id: string | null
+          approved: boolean | null
+          created_at: string | null
+          data: Json | null
+          id: string
+          room_id: string | null
+          type: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          approved?: boolean | null
+          created_at?: string | null
+          data?: Json | null
+          id?: string
+          room_id?: string | null
+          type?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          approved?: boolean | null
+          created_at?: string | null
+          data?: Json | null
+          id?: string
+          room_id?: string | null
+          type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "preview_blocks_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "preview_blocks_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       project_members: {
         Row: {
@@ -109,6 +342,131 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      prompt_execution_agents: {
+        Row: {
+          agent_id: string | null
+          created_at: string | null
+          execution_id: string | null
+          id: string
+          is_shadow: boolean | null
+          output: string | null
+          step_order: number | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string | null
+          execution_id?: string | null
+          id?: string
+          is_shadow?: boolean | null
+          output?: string | null
+          step_order?: number | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string | null
+          execution_id?: string | null
+          id?: string
+          is_shadow?: boolean | null
+          output?: string | null
+          step_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prompt_execution_agents_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prompt_execution_agents_execution_id_fkey"
+            columns: ["execution_id"]
+            isOneToOne: false
+            referencedRelation: "prompt_executions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prompt_executions: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          input: string | null
+          room_id: string | null
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          input?: string | null
+          room_id?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          input?: string | null
+          room_id?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prompt_executions_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      room_agents: {
+        Row: {
+          agent_id: string | null
+          created_at: string | null
+          execution_order: number | null
+          id: string
+          is_visible: boolean | null
+          room_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string | null
+          execution_order?: number | null
+          id?: string
+          is_visible?: boolean | null
+          room_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string | null
+          execution_order?: number | null
+          id?: string
+          is_visible?: boolean | null
+          room_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "room_agents_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "room_agents_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       room_messages: {
         Row: {
@@ -196,6 +554,131 @@ export type Database = {
           },
         ]
       }
+      usage_log: {
+        Row: {
+          agent_id: string | null
+          cost_estimate: number | null
+          created_at: string | null
+          execution_id: string | null
+          id: string
+          project_id: string | null
+          tokens_used: number | null
+          user_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          cost_estimate?: number | null
+          created_at?: string | null
+          execution_id?: string | null
+          id?: string
+          project_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          cost_estimate?: number | null
+          created_at?: string | null
+          execution_id?: string | null
+          id?: string
+          project_id?: string | null
+          tokens_used?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_log_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "usage_log_execution_id_fkey"
+            columns: ["execution_id"]
+            isOneToOne: false
+            referencedRelation: "prompt_executions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "usage_log_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vault_entries: {
+        Row: {
+          content: string | null
+          content_type: string | null
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          room_id: string | null
+        }
+        Insert: {
+          content?: string | null
+          content_type?: string | null
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          room_id?: string | null
+        }
+        Update: {
+          content?: string | null
+          content_type?: string | null
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          room_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vault_entries_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vault_updates_log: {
+        Row: {
+          approved: boolean | null
+          created_at: string | null
+          id: string
+          notes: string | null
+          user_id: string | null
+          vault_entry_id: string | null
+        }
+        Insert: {
+          approved?: boolean | null
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          user_id?: string | null
+          vault_entry_id?: string | null
+        }
+        Update: {
+          approved?: boolean | null
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          user_id?: string | null
+          vault_entry_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vault_updates_log_vault_entry_id_fkey"
+            columns: ["vault_entry_id"]
+            isOneToOne: false
+            referencedRelation: "vault_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -210,7 +693,6 @@ export type Database = {
         Returns: {
           agent_id: string
           relevance_score: number
-          preferred_style: string[]
         }[]
       }
       get_user_style_preferences: {
@@ -232,6 +714,10 @@ export type Database = {
       reset_monthly_quotas: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      safely_add_project_member: {
+        Args: { p_project_id: string; p_user_id: string; p_role?: string }
+        Returns: string
       }
     }
     Enums: {

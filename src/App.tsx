@@ -10,6 +10,7 @@ import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
+import RoomDetail from "./pages/RoomDetail";
 import Agents from "./pages/Agents";
 import AuthProvider, { useAuth } from "./components/auth/AuthProvider";
 
@@ -71,6 +72,14 @@ const App = () => {
                   element={
                     <ProtectedRoute>
                       <ProjectDetail />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/rooms/:id"
+                  element={
+                    <ProtectedRoute>
+                      <RoomDetail />
                     </ProtectedRoute>
                   }
                 />
