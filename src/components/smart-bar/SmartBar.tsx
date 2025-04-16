@@ -102,11 +102,12 @@ export function SmartBar({ onSendMessage, isDisabled = false, projectId = null }
   return (
     <>
       <div 
-        className="fixed bottom-16 z-20 w-full px-4"
+        className={`fixed z-20 w-full ${isMobile ? 'px-2' : 'px-4'}`}
         style={{
           left: isMobile ? 0 : 'var(--sidebar-width, 0px)',
           right: 0,
-          maxWidth: '48rem',
+          bottom: isMobile ? 0 : '4rem',
+          maxWidth: isMobile ? '100%' : '48rem',
           margin: '0 auto',
         }}
       >
@@ -156,6 +157,7 @@ export function SmartBar({ onSendMessage, isDisabled = false, projectId = null }
       <SmartBarFooter 
         enterSends={enterSends}
         onToggleEnterSends={() => setEnterSends(!enterSends)}
+        className={isMobile ? "bottom-16" : "bottom-0"}
       />
     </>
   );
