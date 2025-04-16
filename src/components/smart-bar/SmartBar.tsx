@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SmartBarFooter } from "./SmartBarFooter";
@@ -12,13 +13,16 @@ import { cn } from "@/lib/utils";
 import { useSmartBar } from "./context/SmartBarContext";
 import { useTheme } from "@/components/ThemeProvider";
 import { toast } from "sonner";
+import { useParams } from "react-router-dom";
+import { submitSmartBarMessage } from "@/services/n8nService";
 
 interface SmartBarProps {
   onSendMessage: (message: string, files?: File[]) => Promise<void>;
   isDisabled?: boolean;
+  projectId?: string | null;
 }
 
-export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
+export function SmartBar({ onSendMessage, isDisabled = false, projectId = null }: SmartBarProps) {
   const { 
     message, 
     setMessage, 
@@ -31,6 +35,7 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
     clearFiles
   } = useSmartBar();
   
+  const { id: roomId } = useParams<{ id: string }>();
   const formRef = useRef<HTMLFormElement>(null);
   const isExpanded = true;
   
@@ -45,13 +50,34 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
     try {
       setIsSubmitting(true);
       
-      // Collect files from uploadedFiles
+      // First, handle the standard message sending to update the local UI
+      // This provides immediate feedback to the user
       const files = uploadedFiles.map(item => item.file);
-      
-      // Send message with files - we're not showing success toast anymore
       await onSendMessage(message, files);
       
-      // Reset state after sending
+      // Then submit to the N8N webhook
+      if (roomId) {
+        await submitSmartBarMessage({
+          message,
+          roomId,
+          projectId,
+          mode,
+          uploadedFiles,
+          agentIds: [], // You can add agent selection logic here
+          onStart: () => {
+            // Already handled with setIsSubmitting(true)
+          },
+          onComplete: () => {
+            // UI reset is already handled below
+          },
+          onError: (error) => {
+            console.error("N8N webhook error:", error);
+            // Don't show toast here as the message was already sent locally
+          }
+        });
+      }
+      
+      // Reset UI state
       setMessage("");
       clearFiles();
     } catch (error) {

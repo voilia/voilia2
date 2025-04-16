@@ -9,6 +9,21 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_users: {
+        Row: {
+          role: string
+          user_id: string
+        }
+        Insert: {
+          role: string
+          user_id: string
+        }
+        Update: {
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       agent_chain_steps: {
         Row: {
           agent_id: string | null
@@ -108,6 +123,57 @@ export type Database = {
           },
         ]
       }
+      agent_personas: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          example_prompt: string | null
+          id: string
+          is_public: boolean | null
+          name: string
+          style_config: Json | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          example_prompt?: string | null
+          id?: string
+          is_public?: boolean | null
+          name: string
+          style_config?: Json | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          example_prompt?: string | null
+          id?: string
+          is_public?: boolean | null
+          name?: string
+          style_config?: Json | null
+        }
+        Relationships: []
+      }
+      agent_template_links: {
+        Row: {
+          agent_id: string
+          relevance_score: number | null
+          template_id: string
+        }
+        Insert: {
+          agent_id: string
+          relevance_score?: number | null
+          template_id: string
+        }
+        Update: {
+          agent_id?: string
+          relevance_score?: number | null
+          template_id?: string
+        }
+        Relationships: []
+      }
       agent_versions: {
         Row: {
           agent_id: string | null
@@ -145,32 +211,38 @@ export type Database = {
       }
       agents: {
         Row: {
+          agent_type: string | null
           created_at: string | null
           created_by: string | null
           description: string | null
           id: string
           is_public: boolean | null
           name: string
+          persona: string | null
           system_prompt: string | null
           updated_at: string | null
         }
         Insert: {
+          agent_type?: string | null
           created_at?: string | null
           created_by?: string | null
           description?: string | null
           id?: string
           is_public?: boolean | null
           name: string
+          persona?: string | null
           system_prompt?: string | null
           updated_at?: string | null
         }
         Update: {
+          agent_type?: string | null
           created_at?: string | null
           created_by?: string | null
           description?: string | null
           id?: string
           is_public?: boolean | null
           name?: string
+          persona?: string | null
           system_prompt?: string | null
           updated_at?: string | null
         }
@@ -334,6 +406,79 @@ export type Database = {
           },
         ]
       }
+      project_profiles: {
+        Row: {
+          inferred_roles: string[] | null
+          project_id: string
+          recommended_agent_ids: string[] | null
+          recommended_room_template_ids: string[] | null
+          summary: string | null
+          tags: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          inferred_roles?: string[] | null
+          project_id: string
+          recommended_agent_ids?: string[] | null
+          recommended_room_template_ids?: string[] | null
+          summary?: string | null
+          tags?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          inferred_roles?: string[] | null
+          project_id?: string
+          recommended_agent_ids?: string[] | null
+          recommended_room_template_ids?: string[] | null
+          summary?: string | null
+          tags?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_profiles_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_suggestions: {
+        Row: {
+          created_at: string | null
+          generated_by: string | null
+          id: number
+          project_id: string | null
+          suggested_agent_ids: string[] | null
+          suggested_template_ids: string[] | null
+        }
+        Insert: {
+          created_at?: string | null
+          generated_by?: string | null
+          id?: never
+          project_id?: string | null
+          suggested_agent_ids?: string[] | null
+          suggested_template_ids?: string[] | null
+        }
+        Update: {
+          created_at?: string | null
+          generated_by?: string | null
+          id?: never
+          project_id?: string | null
+          suggested_agent_ids?: string[] | null
+          suggested_template_ids?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_suggestions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
           color: string | null
@@ -453,6 +598,58 @@ export type Database = {
           },
         ]
       }
+      room_agent_personas: {
+        Row: {
+          agent_id: string | null
+          applied_config: Json | null
+          created_at: string | null
+          created_by: string | null
+          id: string
+          persona_id: string | null
+          room_id: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          applied_config?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          persona_id?: string | null
+          room_id?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          applied_config?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          persona_id?: string | null
+          room_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "room_agent_personas_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "room_agent_personas_persona_id_fkey"
+            columns: ["persona_id"]
+            isOneToOne: false
+            referencedRelation: "agent_personas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "room_agent_personas_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       room_agents: {
         Row: {
           agent_id: string | null
@@ -539,6 +736,107 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      room_suggestions: {
+        Row: {
+          accepted: boolean | null
+          created_at: string | null
+          id: string
+          project_id: string | null
+          reason: string | null
+          suggested_id: string | null
+          suggestion_type: string | null
+          user_id: string | null
+        }
+        Insert: {
+          accepted?: boolean | null
+          created_at?: string | null
+          id?: string
+          project_id?: string | null
+          reason?: string | null
+          suggested_id?: string | null
+          suggestion_type?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          accepted?: boolean | null
+          created_at?: string | null
+          id?: string
+          project_id?: string | null
+          reason?: string | null
+          suggested_id?: string | null
+          suggestion_type?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "room_suggestions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      room_template_groups: {
+        Row: {
+          description: string | null
+          id: string
+          label: string | null
+          tags: string[] | null
+          template_ids: string[] | null
+          use_case: string | null
+        }
+        Insert: {
+          description?: string | null
+          id: string
+          label?: string | null
+          tags?: string[] | null
+          template_ids?: string[] | null
+          use_case?: string | null
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          label?: string | null
+          tags?: string[] | null
+          template_ids?: string[] | null
+          use_case?: string | null
+        }
+        Relationships: []
+      }
+      room_templates: {
+        Row: {
+          category: string | null
+          description: string | null
+          group_id: string | null
+          icon: string | null
+          id: number
+          suggested_for_profiles: string[] | null
+          suggested_tags: string[] | null
+          tags: string[] | null
+        }
+        Insert: {
+          category?: string | null
+          description?: string | null
+          group_id?: string | null
+          icon?: string | null
+          id?: never
+          suggested_for_profiles?: string[] | null
+          suggested_tags?: string[] | null
+          tags?: string[] | null
+        }
+        Update: {
+          category?: string | null
+          description?: string | null
+          group_id?: string | null
+          icon?: string | null
+          id?: never
+          suggested_for_profiles?: string[] | null
+          suggested_tags?: string[] | null
+          tags?: string[] | null
+        }
+        Relationships: []
       }
       rooms: {
         Row: {

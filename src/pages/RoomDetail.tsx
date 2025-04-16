@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useRoom } from "@/hooks/useRoom";
@@ -156,7 +157,11 @@ export default function RoomDetail() {
             </div>
           </FileDropZone>
 
-          <SmartBar onSendMessage={handleSendMessage} isDisabled={isLoading} />
+          <SmartBar 
+            onSendMessage={handleSendMessage} 
+            isDisabled={isLoading} 
+            projectId={room?.project_id || null}
+          />
         </div>
       </SmartBarProvider>
     </MainLayout>
