@@ -9,7 +9,7 @@ interface SmartBarFooterProps {
 
 export function SmartBarFooter({ enterSends, onToggleEnterSends }: SmartBarFooterProps) {
   return (
-    <div className="flex justify-between items-center text-xs text-muted-foreground px-4 py-1.5 mt-1">
+    <div className="flex justify-between items-center text-xs text-muted-foreground px-4 py-1">
       <div>
         AI can make mistakes. Verify important information.
       </div>

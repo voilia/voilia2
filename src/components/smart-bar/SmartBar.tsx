@@ -43,7 +43,7 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
   };
 
   return (
-    <div className="max-w-[1200px] mx-auto px-4 md:px-6 lg:px-8 mb-4">
+    <div className="max-w-[1200px] mx-auto px-4 md:px-6 lg:px-8 fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm">
       <form onSubmit={handleSubmit}>
         <div className="relative rounded-xl border border-input bg-background/70 backdrop-blur-md shadow-sm overflow-hidden group hover:border-primary/50 hover:shadow-md transition-all duration-200">
           {/* Input area */}

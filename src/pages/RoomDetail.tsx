@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useRoom } from "@/hooks/useRoom";
@@ -70,7 +69,6 @@ export default function RoomDetail() {
   return (
     <MainLayout>
       <div className="flex flex-col h-[calc(100vh-56px)] md:h-screen relative">
-        {/* Header with back button and navigation */}
         <div className="bg-background/95 backdrop-blur-sm border-b border-border p-3 md:p-4 sticky top-0 z-10 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Button 
@@ -108,7 +106,7 @@ export default function RoomDetail() {
 
         <div className="flex-1 overflow-hidden">
           <ScrollArea className="h-full" ref={scrollAreaRef}>
-            <ContentContainer className="py-4">
+            <ContentContainer className="py-4 pb-[120px]">
               {isLoading ? (
                 <div className="space-y-4 p-4">
                   <Skeleton className="h-12 w-2/3" />
