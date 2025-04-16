@@ -18,6 +18,7 @@ import { SmartBarProvider } from "@/components/smart-bar/context/SmartBarContext
 import { FileDropZone } from "@/components/smart-bar/file-upload/FileDropZone";
 import { toast } from "sonner";
 import { useThrottle } from "@/components/smart-bar/buttons/mode-selector/hooks/useThrottle";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function RoomDetail() {
   const { id } = useParams<{ id: string }>();
@@ -27,7 +28,8 @@ export default function RoomDetail() {
   const { messages, isLoading: isMessagesLoading, sendMessage } = useRoomMessages(id);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [messageGroups, setMessageGroups] = useState<{ userId: string | null; messages: RoomMessage[] }[]>([]);
-
+  const isMobile = useIsMobile();
+  
   useEffect(() => {
     if (!messages?.length) {
       setMessageGroups([]);
@@ -94,7 +96,7 @@ export default function RoomDetail() {
     <MainLayout>
       <SmartBarProvider>
         <div className="flex flex-col h-[calc(100vh-56px)] md:h-screen relative">
-          <div className="bg-background/95 backdrop-blur-sm border-b border-border p-3 md:p-4 sticky top-0 z-10 flex items-center justify-between">
+          <div className="bg-background/95 backdrop-blur-sm border-b border-border p-2 md:p-4 sticky top-0 z-10 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Button 
                 variant="ghost" 
@@ -132,7 +134,7 @@ export default function RoomDetail() {
           <FileDropZone>
             <div className="flex-1 overflow-hidden">
               <ScrollArea className="h-full" ref={scrollAreaRef}>
-                <ContentContainer className="py-4 pb-[160px]">
+                <ContentContainer className={`py-4 ${isMobile ? 'pb-[120px]' : 'pb-[160px]'}`}>
                   {isLoading ? (
                     <div className="space-y-4 p-4">
                       <Skeleton className="h-12 w-2/3" />
