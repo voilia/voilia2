@@ -46,9 +46,9 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
     <div 
       className={cn(
         "fixed bottom-0 z-20 bg-background/95 backdrop-blur-sm",
-        "w-[calc(100%-2rem)]",
         "transition-all duration-300 ease-in-out",
-        isMobile ? "left-[1rem] right-[1rem]" : "right-[1rem]"
+        isMobile ? "left-[1rem] right-[1rem] w-[calc(100%-2rem)]" : 
+        "right-[1rem] w-[calc(100%-2rem)] xl:w-[calc(85%-2rem)]"
       )}
       style={{ 
         left: isMobile ? '1rem' : 'calc(var(--sidebar-width, 0px) + 1rem)',

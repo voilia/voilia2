@@ -26,12 +26,13 @@ export function SmartBarInput({
     const textarea = textareaRef.current;
     if (!textarea) return;
     
-    // Reset height to get accurate scrollHeight
-    textarea.style.height = "56px";
+    // Reset height to auto first to get accurate scrollHeight
+    textarea.style.height = 'auto';
     
     // Calculate new height (capped at 40vh)
     const maxHeight = window.innerHeight * 0.4;
-    const newHeight = Math.min(textarea.scrollHeight, maxHeight);
+    const minHeight = 56; // Minimum height in pixels
+    const newHeight = Math.max(Math.min(textarea.scrollHeight, maxHeight), minHeight);
     
     // Apply new height with smooth transition
     textarea.style.height = `${newHeight}px`;
@@ -46,7 +47,9 @@ export function SmartBarInput({
       placeholder={placeholder}
       disabled={isDisabled || isSubmitting}
       className={cn(
-        "min-h-[56px] max-h-[40vh] flex-1 resize-none border-0 p-3 pb-2 focus-visible:ring-0 focus-visible:ring-offset-0 transition-all duration-200",
+        "min-h-[56px] max-h-[40vh] flex-1 resize-none border-0 p-3 pb-2",
+        "focus-visible:ring-0 focus-visible:ring-offset-0",
+        "transition-all duration-200",
         value && "animate-pulse-subtle"
       )}
     />
