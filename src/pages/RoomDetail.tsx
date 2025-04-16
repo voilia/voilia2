@@ -17,6 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { SmartBarProvider } from "@/components/smart-bar/context/SmartBarContext";
 import { FileDropZone } from "@/components/smart-bar/file-upload/FileDropZone";
 import { toast } from "sonner";
+import { useThrottle } from "@/components/smart-bar/buttons/mode-selector/hooks/useThrottle";
 
 export default function RoomDetail() {
   const { id } = useParams<{ id: string }>();
@@ -27,6 +28,7 @@ export default function RoomDetail() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [messageGroups, setMessageGroups] = useState<{ userId: string | null; messages: RoomMessage[] }[]>([]);
 
+  // Group messages by user
   useEffect(() => {
     if (!messages?.length) {
       setMessageGroups([]);
@@ -54,15 +56,20 @@ export default function RoomDetail() {
     setMessageGroups(groups);
   }, [messages]);
 
-  useEffect(() => {
+  // Enhanced scroll behavior with throttling
+  const scrollToBottom = useThrottle(() => {
     if (scrollAreaRef.current) {
       const scrollElement = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
       if (scrollElement) {
         scrollElement.scrollTop = scrollElement.scrollHeight;
       }
     }
-  }, [messageGroups]);
+  }, 100);
 
+  useEffect(() => {
+    scrollToBottom();
+  }, [messageGroups, scrollToBottom]);
+  
   const handleSendMessage = async (text: string, files?: File[]) => {
     if (!id) return;
     

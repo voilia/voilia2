@@ -44,10 +44,10 @@ function Message({ message, isUser }: MessageProps) {
   return (
     <div className="group">
       <div className={cn(
-        "px-4 py-2 rounded-2xl",
+        "px-4 py-2 text-sm rounded-xl",
         isUser
-          ? "bg-primary text-primary-foreground rounded-tr-none"
-          : "bg-muted text-foreground rounded-tl-none"
+          ? "bg-primary/10 text-foreground ml-auto rounded-tr-none"
+          : "bg-muted text-foreground mr-auto rounded-tl-none"
       )}>
         {message.message_text}
       </div>
