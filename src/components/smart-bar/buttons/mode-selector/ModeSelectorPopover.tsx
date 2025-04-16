@@ -1,11 +1,11 @@
-
 import { BotMessageSquare, Palette, Wrench, Vault } from "lucide-react";
 import { useSmartBar } from "../../context/SmartBarContext";
 import type { SmartBarMode } from "../../types/smart-bar-types";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, KeyboardEvent, useCallback } from "react";
 import { useTheme } from "@/components/ThemeProvider";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
+import { useThrottle } from "./hooks/useThrottle";
 
 const modes: { id: SmartBarMode; icon: typeof BotMessageSquare; label: string }[] = [
   { id: "chat", icon: BotMessageSquare, label: "Chat" },
@@ -19,61 +19,131 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
   const [popoverWidth, setPopoverWidth] = useState<number | null>(null);
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
   const [popoverOpen, setPopoverOpen] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(modes.findIndex(m => m.id === mode));
+  const [animationState, setAnimationState] = useState<'entering' | 'entered' | 'exiting' | 'exited'>('exited');
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  
   const triggerRef = useRef<HTMLDivElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
+  const modeRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  const updatePosition = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    
+    const smartBarForm = document.querySelector('form.rounded-2xl');
+    if (smartBarForm) {
+      const rect = smartBarForm.getBoundingClientRect();
+      
+      setPopoverWidth(rect.width);
+      setPopoverPosition({
+        top: rect.top - 12, // Position above with small gap
+        left: rect.left
+      });
+    }
+  }, []);
+
+  const throttledUpdatePosition = useThrottle(updatePosition, 100);
 
   useEffect(() => {
-    const updateSmartBarDimensions = () => {
-      if (typeof window === 'undefined') return;
-      
-      const smartBarForm = document.querySelector('form.rounded-2xl');
-      if (smartBarForm) {
-        const rect = smartBarForm.getBoundingClientRect();
-        
-        setPopoverWidth(rect.width);
-        setPopoverPosition({
-          top: rect.top - 12, // Position above with small gap
-          left: rect.left
-        });
-      }
-    };
-    
     if (popoverOpen) {
-      updateSmartBarDimensions();
-      window.addEventListener('resize', updateSmartBarDimensions);
-      window.addEventListener('scroll', updateSmartBarDimensions);
-      
-      return () => {
-        window.removeEventListener('resize', updateSmartBarDimensions);
-        window.removeEventListener('scroll', updateSmartBarDimensions);
-      };
+      setAnimationState('entering');
+      setTimeout(() => setAnimationState('entered'), 50);
+    } else if (animationState === 'entered' || animationState === 'entering') {
+      setAnimationState('exiting');
+      setTimeout(() => setAnimationState('exited'), 200);
     }
   }, [popoverOpen]);
 
-  const handleSelectMode = (selectedMode: SmartBarMode) => {
+  useEffect(() => {
+    if (animationState === 'entering') {
+      updatePosition();
+      window.addEventListener('resize', throttledUpdatePosition);
+      window.addEventListener('scroll', throttledUpdatePosition);
+      
+      return () => {
+        window.removeEventListener('resize', throttledUpdatePosition);
+        window.removeEventListener('scroll', throttledUpdatePosition);
+      };
+    }
+  }, [animationState, throttledUpdatePosition, updatePosition]);
+
+  useEffect(() => {
+    if (animationState === 'entered') {
+      setTimeout(() => {
+        if (modeRefs.current[selectedIndex]) {
+          modeRefs.current[selectedIndex]?.focus();
+        }
+      }, 50);
+    }
+  }, [animationState, selectedIndex]);
+
+  const handleSelectMode = (selectedMode: SmartBarMode, index: number) => {
     setMode(selectedMode);
+    setSelectedIndex(index);
+    closePopover();
+  };
+  
+  const closePopover = () => {
     setPopoverOpen(false);
+    setTimeout(() => {
+      if (triggerRef.current) {
+        const triggerElement = triggerRef.current.querySelector('button');
+        if (triggerElement) {
+          triggerElement.focus();
+        }
+      }
+    }, 250);
   };
 
-  // Toggle popover when clicking the trigger
   const handleTriggerClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent document click from firing immediately
+    e.stopPropagation();
     setPopoverOpen(!popoverOpen);
   };
 
-  // Close popover when clicking outside
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (!popoverOpen) return;
+
+    switch (e.key) {
+      case 'ArrowRight':
+        e.preventDefault();
+        setSelectedIndex(prev => (prev + 1) % modes.length);
+        modeRefs.current[(selectedIndex + 1) % modes.length]?.focus();
+        break;
+      case 'ArrowLeft':
+        e.preventDefault();
+        setSelectedIndex(prev => (prev - 1 + modes.length) % modes.length);
+        modeRefs.current[(selectedIndex - 1 + modes.length) % modes.length]?.focus();
+        break;
+      case 'Escape':
+        e.preventDefault();
+        closePopover();
+        break;
+      case 'Tab':
+        if (!e.shiftKey && selectedIndex === modes.length - 1) {
+          e.preventDefault();
+          setSelectedIndex(0);
+          modeRefs.current[0]?.focus();
+        } else if (e.shiftKey && selectedIndex === 0) {
+          e.preventDefault();
+          setSelectedIndex(modes.length - 1);
+          modeRefs.current[modes.length - 1]?.focus();
+        }
+        break;
+    }
+  };
+
   useEffect(() => {
     if (!popoverOpen) return;
 
     const handleClickOutside = (event: MouseEvent) => {
-      // Check if click is outside the trigger and outside the popover
       if (
         triggerRef.current && 
         !triggerRef.current.contains(event.target as Node) &&
-        !document.querySelector('.mode-selector-popover')?.contains(event.target as Node)
+        popoverRef.current && 
+        !popoverRef.current.contains(event.target as Node)
       ) {
-        setPopoverOpen(false);
+        closePopover();
       }
     };
 
@@ -81,14 +151,43 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [popoverOpen]);
 
+  const prefersReducedMotion = typeof window !== 'undefined' 
+    ? window.matchMedia('(prefers-reduced-motion: reduce)').matches 
+    : false;
+
+  const getAnimationStyles = () => {
+    if (prefersReducedMotion) return {};
+    
+    switch (animationState) {
+      case 'entering':
+        return { 
+          opacity: 0,
+          transform: 'translateY(-100%) scale(0.98)'
+        };
+      case 'entered':
+        return { 
+          opacity: 1,
+          transform: 'translateY(-100%) scale(1)'
+        };
+      case 'exiting':
+        return { 
+          opacity: 0,
+          transform: 'translateY(-100%) scale(0.98)'
+        };
+      default:
+        return {};
+    }
+  };
+
   const renderPopover = () => {
-    if (!popoverOpen || typeof document === 'undefined') return null;
+    if (animationState === 'exited' || typeof document === 'undefined') return null;
     
     return createPortal(
       <div 
+        ref={popoverRef}
         className={cn(
           "mode-selector-popover fixed z-50 overflow-hidden",
-          "shadow-lg transition-all duration-200 rounded-2xl",
+          "shadow-lg rounded-2xl",
           isDark 
             ? "bg-black/30 border-white/10" 
             : "bg-foreground/5 border-foreground/10",
@@ -98,24 +197,42 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
           width: popoverWidth ? `${popoverWidth}px` : 'auto',
           top: `${popoverPosition.top}px`,
           left: `${popoverPosition.left}px`,
-          transform: 'translateY(-100%)', // Move up by 100% of its height
+          ...getAnimationStyles(),
+          transition: prefersReducedMotion ? 'none' : 'opacity 200ms ease, transform 200ms ease'
         }}
+        onKeyDown={handleKeyDown}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Select Mode"
       >
-        <div className="flex w-full divide-x divide-border">
-          {modes.map(({ id, icon: Icon, label }) => {
+        <div 
+          className="flex w-full divide-x divide-border"
+          role="menubar"
+          aria-orientation="horizontal"
+        >
+          {modes.map(({ id, icon: Icon, label }, index) => {
             const isSelected = mode === id;
             return (
               <button
                 key={id}
-                onClick={() => handleSelectMode(id)}
+                ref={el => (modeRefs.current[index] = el)}
+                onClick={() => handleSelectMode(id, index)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleSelectMode(id, index);
+                  }
+                }}
                 className={cn(
                   "flex-1 flex flex-col items-center justify-center py-3",
                   "transition-all duration-200",
-                  "focus:outline-none focus:ring-0 focus:ring-offset-0",
+                  "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1",
                   "active:outline-none",
                   isSelected && "bg-muted/30"
                 )}
-                style={{ outline: 'none' }}
+                role="menuitem"
+                aria-selected={isSelected}
+                tabIndex={0}
               >
                 <Icon className={cn(
                   "w-5 h-5 mb-1",
@@ -138,7 +255,12 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
 
   return (
     <>
-      <div ref={triggerRef} onClick={handleTriggerClick}>
+      <div 
+        ref={triggerRef} 
+        onClick={handleTriggerClick}
+        aria-haspopup="dialog"
+        aria-expanded={popoverOpen}
+      >
         {children}
       </div>
       {renderPopover()}
