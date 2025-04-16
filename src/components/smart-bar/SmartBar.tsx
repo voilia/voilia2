@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SmartBarFooter } from "./SmartBarFooter";
@@ -59,7 +58,7 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
         style={{
           left: isMobile ? 0 : 'var(--sidebar-width, 0px)',
           right: 0,
-          maxWidth: '48rem', // 3xl equivalent
+          maxWidth: '48rem',
           margin: '0 auto',
         }}
       >
@@ -85,7 +84,7 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
             aria-hidden="true"
           />
           
-          {/* Input area with padding to account for the colored line */}
+          {/* Input area */}
           <div className="w-full pt-1">
             <SmartBarInput
               value={message}
@@ -96,24 +95,18 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
             />
           </div>
           
-          {/* Bottom row with mode selector, actions and submit */}
-          <div className="flex items-center justify-between px-3 py-2 border-t border-input/5 dark:border-white/5">
-            <div className="flex items-center">
-              <SmartBarModeSelector
-                selectedMode={mode}
-                onModeChange={setMode}
-                className="mr-2"
-              />
-              <SmartBarActions />
-            </div>
+          {/* Bottom row with actions and submit */}
+          <div className="flex items-center justify-between px-3 py-2">
+            <SmartBarActions 
+              selectedMode={mode} 
+              onModeChange={setMode} 
+            />
             
             <div className="flex items-center gap-2">
-              <SmartBarVoiceButton className={cn(
-                "transition-opacity duration-200",
-                isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-              )} />
+              <SmartBarVoiceButton />
               <SmartBarSubmitButton 
                 disabled={!message.trim() || isDisabled || isSubmitting}
+                mode={mode}
               />
             </div>
           </div>

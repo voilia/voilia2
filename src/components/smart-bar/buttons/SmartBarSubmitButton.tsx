@@ -1,12 +1,32 @@
 
 import { ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/components/ThemeProvider";
+import type { SmartBarMode } from "../SmartBarModeSelector";
 
 interface SmartBarSubmitButtonProps {
   disabled: boolean;
+  mode: SmartBarMode;
 }
 
-export function SmartBarSubmitButton({ disabled }: SmartBarSubmitButtonProps) {
+export function SmartBarSubmitButton({ disabled, mode }: SmartBarSubmitButtonProps) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
+  const getButtonColor = () => {
+    if (disabled) return "bg-muted/50";
+    
+    if (mode === "chat") {
+      return isDark ? "bg-[#9333EA]" : "bg-[#8B5CF6]";
+    } else if (mode === "visual") {
+      return isDark ? "bg-[#FB923C]" : "bg-[#F97316]";
+    } else if (mode === "assist") {
+      return isDark ? "bg-[#60A5FA]" : "bg-[#3B82F6]";
+    } else if (mode === "vault") {
+      return isDark ? "bg-[#34D399]" : "bg-[#10B981]";
+    }
+  };
+
   return (
     <button
       type="submit"
@@ -14,10 +34,14 @@ export function SmartBarSubmitButton({ disabled }: SmartBarSubmitButtonProps) {
       className={cn(
         "rounded-full h-8 w-8 flex items-center justify-center",
         "transition-all duration-200",
-        "shadow-sm hover:shadow-md hover:ring-2 hover:ring-primary/20",
+        "shadow-sm hover:shadow-md",
         disabled
-          ? "bg-muted/50 cursor-not-allowed"
-          : "bg-primary hover:bg-primary/90 hover:scale-105"
+          ? "cursor-not-allowed"
+          : [
+              getButtonColor(),
+              "hover:opacity-90 hover:scale-105",
+              "animate-pulse-subtle"
+            ]
       )}
       aria-label="Send message"
     >
