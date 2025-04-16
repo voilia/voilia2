@@ -1,5 +1,5 @@
 
-import { BotMessageSquare, ImageIcon, Wrench, Vault } from "lucide-react";
+import { BotMessageSquare, Palette, Wrench, Vault } from "lucide-react";
 import { 
   Popover,
   PopoverContent,
@@ -11,7 +11,7 @@ import type { SmartBarMode } from "../../types/smart-bar-types";
 
 const modes: { id: SmartBarMode; icon: typeof BotMessageSquare; label: string }[] = [
   { id: "chat", icon: BotMessageSquare, label: "Chat" },
-  { id: "visual", icon: ImageIcon, label: "Visual" },
+  { id: "visual", icon: Palette, label: "Visual" },
   { id: "assist", icon: Wrench, label: "Assist" },
   { id: "vault", icon: Vault, label: "Vault" }
 ];
@@ -21,10 +21,10 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
 
   const getModeColor = (modeId: SmartBarMode) => {
     switch (modeId) {
-      case "chat": return "bg-purple-500";
-      case "visual": return "bg-orange-500";
-      case "assist": return "bg-blue-500";
-      case "vault": return "bg-green-500";
+      case "chat": return "bg-purple-500/30";
+      case "visual": return "bg-orange-500/30";
+      case "assist": return "bg-blue-500/30";
+      case "vault": return "bg-green-500/30";
     }
   };
 
@@ -34,7 +34,7 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
         {children}
       </PopoverTrigger>
       <PopoverContent 
-        className="w-auto p-2 grid grid-cols-2 sm:grid-cols-4 gap-2" 
+        className="w-auto p-2 grid grid-cols-2 sm:grid-cols-4 gap-2 z-50" 
         align="start"
         sideOffset={5}
       >
@@ -45,7 +45,7 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
             className={cn(
               "flex flex-col items-center p-2 rounded-lg",
               "transition duration-300 hover:bg-accent",
-              mode === id && `${getModeColor(id)}/30`
+              mode === id && getModeColor(id)
             )}
           >
             <Icon className="w-5 h-5 mb-1" />

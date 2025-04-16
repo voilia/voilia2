@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { SmartBarFileButton } from "./SmartBarFileButton";
 import { ModeSelectorPopover } from "./mode-selector/ModeSelectorPopover";
 import { AgentSelectorPopover } from "./agent-selector/AgentSelectorPopover";
-import { Brain, User } from "lucide-react";
+import { BotMessageSquare, User } from "lucide-react";
 import { SmartBarButton } from "../SmartBarButton";
 import { useSmartBarColors } from "../hooks/useSmartBarColors";
 import { useSmartBar } from "../context/SmartBarContext";
@@ -21,7 +21,7 @@ export function SmartBarActions({ className }: SmartBarActionsProps) {
     <div className={cn("flex items-center gap-3", className)}>
       <ModeSelectorPopover>
         <SmartBarButton 
-          icon={Brain}
+          icon={BotMessageSquare}
           tooltip="Select Mode"
           className="text-foreground"
           customColor={colorValue}
