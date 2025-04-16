@@ -21,6 +21,7 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
   const [popoverOpen, setPopoverOpen] = useState(false);
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const triggerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const updateSmartBarDimensions = () => {
@@ -55,13 +56,23 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
     setPopoverOpen(false);
   };
 
+  // Toggle popover when clicking the trigger
+  const handleTriggerClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent document click from firing immediately
+    setPopoverOpen(!popoverOpen);
+  };
+
   // Close popover when clicking outside
   useEffect(() => {
     if (!popoverOpen) return;
 
     const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (!target.closest('.mode-selector-popover')) {
+      // Check if click is outside the trigger and outside the popover
+      if (
+        triggerRef.current && 
+        !triggerRef.current.contains(event.target as Node) &&
+        !document.querySelector('.mode-selector-popover')?.contains(event.target as Node)
+      ) {
         setPopoverOpen(false);
       }
     };
@@ -127,7 +138,7 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
 
   return (
     <>
-      <div onClick={() => setPopoverOpen(!popoverOpen)}>
+      <div ref={triggerRef} onClick={handleTriggerClick}>
         {children}
       </div>
       {renderPopover()}
