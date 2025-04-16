@@ -1,4 +1,3 @@
-
 import { useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useRoom } from "@/hooks/useRoom";
@@ -23,7 +22,6 @@ export default function RoomDetail() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [messageGroups, setMessageGroups] = useState<{ userId: string | null; messages: RoomMessage[] }[]>([]);
 
-  // Group messages by user
   useEffect(() => {
     if (!messages?.length) {
       setMessageGroups([]);
@@ -34,21 +32,16 @@ export default function RoomDetail() {
     let currentGroup: { userId: string | null; messages: RoomMessage[] } | null = null;
 
     messages.forEach((message) => {
-      // Start a new group if:
-      // 1. This is the first message
-      // 2. The sender changed
       if (!currentGroup || currentGroup.userId !== message.user_id) {
         if (currentGroup) {
           groups.push(currentGroup);
         }
         currentGroup = { userId: message.user_id, messages: [message] };
       } else {
-        // Add to existing group
         currentGroup.messages.push(message);
       }
     });
 
-    // Add the last group if it exists
     if (currentGroup) {
       groups.push(currentGroup);
     }
@@ -56,7 +49,6 @@ export default function RoomDetail() {
     setMessageGroups(groups);
   }, [messages]);
 
-  // Scroll to bottom when new messages arrive
   useEffect(() => {
     if (scrollAreaRef.current) {
       const scrollElement = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
@@ -76,7 +68,6 @@ export default function RoomDetail() {
   return (
     <MainLayout>
       <div className="flex flex-col h-[calc(100vh-56px)] md:h-screen relative">
-        {/* Top bar */}
         <div className="bg-background/80 backdrop-blur-sm border-b border-border p-3 md:p-4 sticky top-0 z-10 flex items-center justify-between">
           <div className="flex items-center gap-3">
             {isRoomLoading ? (
@@ -100,7 +91,6 @@ export default function RoomDetail() {
           </Button>
         </div>
 
-        {/* Message thread */}
         <div className="flex-1 overflow-hidden">
           <ScrollArea className="h-full" ref={scrollAreaRef}>
             <ContentContainer className="py-4">
@@ -127,10 +117,7 @@ export default function RoomDetail() {
           </ScrollArea>
         </div>
 
-        {/* SmartBar */}
-        <div className="sticky bottom-0 z-10">
-          <SmartBar onSendMessage={handleSendMessage} isDisabled={isLoading} />
-        </div>
+        <SmartBar onSendMessage={handleSendMessage} isDisabled={isLoading} />
       </div>
     </MainLayout>
   );
