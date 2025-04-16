@@ -26,10 +26,15 @@ export function SmartBarInput({
     const textarea = textareaRef.current;
     if (!textarea) return;
     
-    textarea.style.height = "44px"; // Reset height
-    const scrollHeight = textarea.scrollHeight;
-    const maxHeight = window.innerHeight * 0.4; // 40% of viewport height
-    textarea.style.height = `${Math.min(scrollHeight, maxHeight)}px`;
+    // Reset height to get accurate scrollHeight
+    textarea.style.height = "44px";
+    
+    // Calculate new height (capped at 40vh)
+    const maxHeight = window.innerHeight * 0.4;
+    const newHeight = Math.min(textarea.scrollHeight, maxHeight);
+    
+    // Apply new height with smooth transition
+    textarea.style.height = `${newHeight}px`;
   }, [value]);
 
   return (

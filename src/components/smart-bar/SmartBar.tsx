@@ -46,32 +46,34 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-t border-border">
       <form onSubmit={handleSubmit} className="container max-w-5xl mx-auto">
         <div className="p-3">
-          {/* Top controls row */}
-          <div className="flex items-center gap-2 mb-2">
-            <SmartBarActions />
-          </div>
-
-          {/* Input area */}
-          <div className="relative flex rounded-lg border border-input bg-background shadow-sm">
-            <SmartBarInput
-              value={message}
-              onChange={setMessage}
-              onKeyDown={handleKeyDown}
-              isDisabled={isDisabled}
-              isSubmitting={isSubmitting}
-            />
+          <div className="relative rounded-xl border border-input bg-background/70 backdrop-blur-md shadow-sm overflow-hidden group hover:border-primary/50 transition-all duration-200">
+            {/* Top actions row inside the input container */}
+            <div className="flex items-center gap-2 px-3 py-2 border-b border-border/50">
+              <SmartBarActions />
+            </div>
             
-            {/* Voice button and send button */}
-            <div className="absolute right-2 bottom-2 flex items-center gap-2">
-              <SmartBarVoiceButton 
-                className={cn(
-                  "transition-opacity duration-200",
-                  isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-                )}
+            {/* Input area */}
+            <div className="relative flex">
+              <SmartBarInput
+                value={message}
+                onChange={setMessage}
+                onKeyDown={handleKeyDown}
+                isDisabled={isDisabled}
+                isSubmitting={isSubmitting}
               />
-              <SmartBarSubmitButton 
-                disabled={!message.trim() || isDisabled || isSubmitting}
-              />
+              
+              {/* Voice button and send button */}
+              <div className="absolute right-2 bottom-2 flex items-center gap-2">
+                <SmartBarVoiceButton 
+                  className={cn(
+                    "transition-opacity duration-200",
+                    isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                  )}
+                />
+                <SmartBarSubmitButton 
+                  disabled={!message.trim() || isDisabled || isSubmitting}
+                />
+              </div>
             </div>
           </div>
         </div>
