@@ -18,7 +18,12 @@ export function MainLayout({ children }: MainLayoutProps) {
   }, [isCollapsed]);
   
   return (
-    <div className="min-h-screen flex bg-background text-foreground">
+    <div 
+      className="min-h-screen flex bg-background text-foreground"
+      style={{ 
+        "--sidebar-width": isMobile ? "0px" : (isCollapsed ? "0px" : "240px")
+      } as React.CSSProperties}
+    >
       <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
       
       {!isMobile && (
