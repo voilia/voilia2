@@ -43,17 +43,17 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
   };
 
   return (
-    <div className="relative">
+    <div className="relative mb-4">
       <form onSubmit={handleSubmit}>
         <div className="relative rounded-xl border border-input bg-background/70 backdrop-blur-md shadow-sm overflow-hidden group hover:border-primary/50 hover:shadow-md transition-all duration-200">
-          <div className="relative flex items-start">
+          <div className="relative flex items-end">
             {/* Action buttons on the left */}
-            <div className="absolute left-3 top-3 flex items-center gap-1">
+            <div className="px-3 py-3 flex items-center">
               <SmartBarActions />
             </div>
             
-            {/* Input area with padding for buttons */}
-            <div className="flex-1 pl-[140px] pr-[84px]">
+            {/* Input area */}
+            <div className="flex-1 pr-[84px]">
               <SmartBarInput
                 value={message}
                 onChange={setMessage}
@@ -78,6 +78,7 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
           </div>
         </div>
       </form>
+      
       <SmartBarFooter 
         enterSends={enterSends}
         onToggleEnterSends={() => setEnterSends(!enterSends)}

@@ -11,7 +11,7 @@ interface SmartBarActionsProps {
 
 export function SmartBarActions({ className }: SmartBarActionsProps) {
   return (
-    <div className={cn("flex items-center gap-1", className)}>
+    <div className={cn("flex items-center gap-2", className)}>
       <SmartBarModeButton />
       <SmartBarAgentButton />
       <SmartBarFileButton />

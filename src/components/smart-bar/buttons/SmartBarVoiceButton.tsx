@@ -1,6 +1,7 @@
 
 import { Mic } from "lucide-react";
 import { SmartBarButton } from "../SmartBarButton";
+import { cn } from "@/lib/utils";
 
 interface SmartBarVoiceButtonProps {
   className?: string;
@@ -11,7 +12,7 @@ export function SmartBarVoiceButton({ className }: SmartBarVoiceButtonProps) {
     <SmartBarButton 
       icon={Mic} 
       tooltip="Voice Input" 
-      className={className}
+      className={cn("", className)}
     />
   );
 }
