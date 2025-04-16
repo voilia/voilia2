@@ -19,45 +19,50 @@ const modes: { id: SmartBarMode; icon: typeof BotMessageSquare; label: string }[
 
 export function ModeSelectorPopover({ children }: { children: React.ReactNode }) {
   const { mode, setMode } = useSmartBar();
-  const smartBarRef = useRef<HTMLDivElement | null>(null);
   const [popoverWidth, setPopoverWidth] = useState<number | null>(null);
-  const [open, setOpen] = useState(false);
+  const [popoverOpen, setPopoverOpen] = useState(false);
   const { theme } = useTheme();
   const isDark = theme === "dark";
   
-  // Find the SmartBar element to match its width
+  // Find the SmartBar element to match its width and position
   useEffect(() => {
-    const updateWidth = () => {
+    const updateSmartBarDimensions = () => {
       if (typeof window === 'undefined') return;
       
-      // Try to find the SmartBar container
+      // Find the SmartBar form element (with the rounded-2xl class)
       const smartBarForm = document.querySelector('form.rounded-2xl');
       if (smartBarForm) {
-        smartBarRef.current = smartBarForm as HTMLDivElement;
-        setPopoverWidth(smartBarForm.clientWidth);
+        const rect = smartBarForm.getBoundingClientRect();
+        setPopoverWidth(rect.width);
       }
     };
     
-    updateWidth();
+    // Run once and then on resize
+    updateSmartBarDimensions();
+    window.addEventListener('resize', updateSmartBarDimensions);
     
-    // Update width on resize
-    window.addEventListener('resize', updateWidth);
-    return () => window.removeEventListener('resize', updateWidth);
-  }, []);
+    // Also update when popover opens
+    if (popoverOpen) {
+      updateSmartBarDimensions();
+    }
+    
+    return () => window.removeEventListener('resize', updateSmartBarDimensions);
+  }, [popoverOpen]);
 
   const handleSelectMode = (selectedMode: SmartBarMode) => {
     setMode(selectedMode);
-    setOpen(false); // Close popover after selection
+    setPopoverOpen(false); // Close popover after selection
   };
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
       <PopoverTrigger asChild>
         {children}
       </PopoverTrigger>
       <PopoverContent 
         className={cn(
-          "p-0 shadow-md rounded-2xl overflow-hidden border",
+          "p-0 overflow-hidden shadow-sm",
+          "border transition-colors duration-200 rounded-2xl",
           isDark ? "border-white/10 bg-black/30" : "border-foreground/10 bg-foreground/5",
           "backdrop-blur-lg"
         )}
@@ -78,8 +83,10 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
                   "flex flex-col items-center justify-center py-3 flex-1",
                   "transition-all duration-200",
                   "focus:outline-none focus:ring-0 focus:ring-offset-0", // Remove focus outline
+                  "active:outline-none", // Remove active outline
                   isSelected ? "bg-muted/30" : "hover:bg-muted/10"
                 )}
+                style={{ outline: 'none' }} // Ensure no outline in any browser
               >
                 <Icon className={cn(
                   "w-5 h-5 mb-1",
