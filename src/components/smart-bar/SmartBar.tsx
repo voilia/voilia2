@@ -78,7 +78,8 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
             className={cn(
               "absolute top-0 left-0 right-0 h-1 transition-colors duration-300",
               `bg-smartbar-${mode}-${isDark ? "dark" : "light"}`
-            )} 
+            )}
+            aria-hidden="true"
           />
           
           {/* Input area with padding to account for the colored line */}
