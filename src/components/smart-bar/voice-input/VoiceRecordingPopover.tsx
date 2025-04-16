@@ -34,7 +34,7 @@ export function VoiceRecordingPopover() {
     
     if (isRecording && !isPaused) {
       interval = window.setInterval(() => {
-        setRecordingTime(time => time + 1);
+        setRecordingTime(prevTime => prevTime + 1);
       }, 1000);
     }
     
@@ -83,7 +83,7 @@ export function VoiceRecordingPopover() {
       // This would be replaced with actual API call to a transcription service
       // For now, return a mock result
       const mockTranscriptionResult = "This is a sample transcription of what the user said.";
-      setMessage(prev => prev + (prev ? ' ' : '') + mockTranscriptionResult);
+      setMessage(prevMessage => prevMessage + (prevMessage ? ' ' : '') + mockTranscriptionResult);
     } catch (error) {
       console.error("Transcription error:", error);
     } finally {

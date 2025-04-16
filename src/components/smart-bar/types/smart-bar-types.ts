@@ -12,7 +12,7 @@ export interface UploadedFile {
 
 export interface SmartBarContextType {
   message: string;
-  setMessage: (message: string) => void;
+  setMessage: React.Dispatch<React.SetStateAction<string>>;
   mode: SmartBarMode;
   setMode: (mode: SmartBarMode) => void;
   isSubmitting: boolean;
@@ -35,5 +35,5 @@ export interface SmartBarContextType {
   isPaused: boolean;
   setIsPaused: (isPaused: boolean) => void;
   recordingTime: number;
-  setRecordingTime: (time: number) => void;
+  setRecordingTime: React.Dispatch<React.SetStateAction<number>>;
 }
