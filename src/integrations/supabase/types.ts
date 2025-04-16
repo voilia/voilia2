@@ -275,6 +275,33 @@ export type Database = {
           },
         ]
       }
+      processing_errors: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          error_type: string
+          execution_id: string
+          id: number
+          input_data: Json | null
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          error_type: string
+          execution_id: string
+          id?: number
+          input_data?: Json | null
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          error_type?: string
+          execution_id?: string
+          id?: number
+          input_data?: Json | null
+        }
+        Relationships: []
+      }
       project_members: {
         Row: {
           id: string
@@ -608,6 +635,69 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_interactions: {
+        Row: {
+          content_stats: Json | null
+          created_at: string | null
+          id: number
+          interaction_type: string
+          project_id: string | null
+          response_time: number | null
+          room_id: string | null
+          success: boolean | null
+          user_id: string
+        }
+        Insert: {
+          content_stats?: Json | null
+          created_at?: string | null
+          id?: number
+          interaction_type: string
+          project_id?: string | null
+          response_time?: number | null
+          room_id?: string | null
+          success?: boolean | null
+          user_id: string
+        }
+        Update: {
+          content_stats?: Json | null
+          created_at?: string | null
+          id?: number
+          interaction_type?: string
+          project_id?: string | null
+          response_time?: number | null
+          room_id?: string | null
+          success?: boolean | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_settings: {
+        Row: {
+          created_at: string | null
+          language: string | null
+          model_preferences: Json | null
+          updated_at: string | null
+          usage_limits: Json | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          language?: string | null
+          model_preferences?: Json | null
+          updated_at?: string | null
+          usage_limits?: Json | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          language?: string | null
+          model_preferences?: Json | null
+          updated_at?: string | null
+          usage_limits?: Json | null
+          user_id?: string
+        }
+        Relationships: []
       }
       vault_entries: {
         Row: {

@@ -8,7 +8,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useSmartBar } from "../../context/SmartBarContext";
 import type { SmartBarMode } from "../../types/smart-bar-types";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 const modes: { id: SmartBarMode; icon: typeof BotMessageSquare; label: string }[] = [
   { id: "chat", icon: BotMessageSquare, label: "Chat" },
@@ -19,7 +19,6 @@ const modes: { id: SmartBarMode; icon: typeof BotMessageSquare; label: string }[
 
 export function ModeSelectorPopover({ children }: { children: React.ReactNode }) {
   const { mode, setMode } = useSmartBar();
-  const [open, setOpen] = useState(false);
   const smartBarRef = useRef<HTMLDivElement | null>(null);
   
   // Find the SmartBar element to match its width
@@ -38,49 +37,44 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
   };
 
   const getModeColor = (modeId: SmartBarMode, opacity: number = 0.3) => {
-    const opacityValue = Math.round(opacity * 100);
     switch (modeId) {
-      case "chat": return `bg-purple-500/${opacityValue}`;
-      case "visual": return `bg-orange-500/${opacityValue}`;
-      case "assist": return `bg-blue-500/${opacityValue}`;
-      case "vault": return `bg-green-500/${opacityValue}`;
+      case "chat": return `bg-purple-500/30`;
+      case "visual": return `bg-orange-500/30`;
+      case "assist": return `bg-blue-500/30`;
+      case "vault": return `bg-green-500/30`;
     }
   };
 
-  const handleModeChange = (newMode: SmartBarMode) => {
-    setMode(newMode);
-    setOpen(false);
-  };
-
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover modal={true}>
       <PopoverTrigger asChild>
         {children}
       </PopoverTrigger>
       <PopoverContent 
-        className="p-2 grid grid-cols-5 gap-2 bg-background border border-border shadow-lg rounded-lg"
+        className="p-2 flex gap-2 bg-background border border-border shadow-lg rounded-lg"
         style={{ width: getSmartBarWidth() }}
-        align="center"
+        align="start"
         side="top"
         sideOffset={16}
-        onEscapeKeyDown={() => setOpen(false)}
-        onInteractOutside={() => setOpen(false)}
       >
-        {modes.map(({ id, icon: Icon, label }) => (
-          <button
-            key={id}
-            onClick={() => handleModeChange(id)}
-            className={cn(
-              "flex flex-col items-center justify-center py-3 px-2 rounded-lg",
-              "transition-all duration-200 hover:bg-accent/80",
-              "focus:outline-none focus:ring-2 focus:ring-ring",
-              mode === id ? getModeColor(id) : "hover:bg-accent/80"
-            )}
-          >
-            <Icon className="w-6 h-6 mb-1" />
-            <span className="text-sm font-medium">{label}</span>
-          </button>
-        ))}
+        {modes.map(({ id, icon: Icon, label }) => {
+          const isSelected = mode === id;
+          return (
+            <button
+              key={id}
+              onClick={() => setMode(id)}
+              className={cn(
+                "flex flex-col items-center justify-center py-3 px-2 rounded-lg flex-1",
+                "transition-all duration-200 hover:bg-accent/80",
+                "focus:outline-none focus:ring-2 focus:ring-ring",
+                isSelected ? getModeColor(id) : "hover:bg-accent/80"
+              )}
+            >
+              <Icon className="w-6 h-6 mb-1" />
+              <span className="text-sm font-medium">{label}</span>
+            </button>
+          );
+        })}
       </PopoverContent>
     </Popover>
   );
