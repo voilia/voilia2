@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SmartBarFooter } from "./SmartBarFooter";
@@ -14,7 +13,7 @@ import { useSmartBar } from "./context/SmartBarContext";
 import { useTheme } from "@/components/ThemeProvider";
 import { toast } from "sonner";
 import { useParams } from "react-router-dom";
-import { submitSmartBarMessage } from "@/services/n8nService";
+import { submitSmartBarMessage, addAiResponseToRoom } from "@/services/n8nService";
 
 interface SmartBarProps {
   onSendMessage: (message: string, files?: File[]) => Promise<void>;
@@ -73,6 +72,16 @@ export function SmartBar({ onSendMessage, isDisabled = false, projectId = null }
           onError: (error) => {
             console.error("N8N webhook error:", error);
             // Don't show toast here as the message was already sent locally
+          },
+          onResponseReceived: (responseData) => {
+            if (responseData?.data?.response?.text && roomId) {
+              // Add AI response to the database so it shows in the chat
+              addAiResponseToRoom(
+                roomId, 
+                responseData.data.agent?.id || null, 
+                responseData.data.response.text
+              );
+            }
           }
         });
       }
