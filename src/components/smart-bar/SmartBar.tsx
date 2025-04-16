@@ -62,31 +62,30 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
             <SmartBarActions />
             
             <div className="flex items-center gap-2">
-              {!isMobile && (
-                <button 
-                  type="button" 
-                  className="text-xs text-muted-foreground hover:text-foreground px-2"
-                  onClick={() => setEnterSends(!enterSends)}
-                >
-                  Enter = {enterSends ? "Send" : "New Line"}
-                </button>
-              )}
               <SmartBarVoiceButton className={cn(
                 "transition-opacity duration-200",
                 isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100"
               )} />
-              <SmartBarSubmitButton 
-                disabled={!message.trim() || isDisabled || isSubmitting}
-              />
+              <div className="flex flex-col items-end">
+                <SmartBarSubmitButton 
+                  disabled={!message.trim() || isDisabled || isSubmitting}
+                />
+                {!isMobile && (
+                  <button 
+                    type="button" 
+                    className="text-xs text-muted-foreground hover:text-foreground mt-1"
+                    onClick={() => setEnterSends(!enterSends)}
+                  >
+                    Enter = {enterSends ? "Send" : "New Line"}
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </form>
       
-      <SmartBarFooter 
-        enterSends={enterSends}
-        onToggleEnterSends={() => setEnterSends(!enterSends)}
-      />
+      <SmartBarFooter />
     </div>
   );
 }

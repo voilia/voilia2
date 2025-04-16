@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useRoom } from "@/hooks/useRoom";
@@ -106,7 +107,7 @@ export default function RoomDetail() {
 
         <div className="flex-1 overflow-hidden">
           <ScrollArea className="h-full" ref={scrollAreaRef}>
-            <ContentContainer className="py-4 pb-[120px]">
+            <ContentContainer className="py-4 pb-[160px]">
               {isLoading ? (
                 <div className="space-y-4 p-4">
                   <Skeleton className="h-12 w-2/3" />

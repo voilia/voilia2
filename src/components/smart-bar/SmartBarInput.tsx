@@ -27,7 +27,7 @@ export function SmartBarInput({
     if (!textarea) return;
     
     // Reset height to get accurate scrollHeight
-    textarea.style.height = "44px";
+    textarea.style.height = "56px";
     
     // Calculate new height (capped at 40vh)
     const maxHeight = window.innerHeight * 0.4;
