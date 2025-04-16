@@ -42,22 +42,17 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
     }
   };
 
-  const leftPosition = isMobile ? '1rem' : 'calc(var(--sidebar-width, 0px) + 1rem)';
-  const width = isMobile ? 'calc(100% - 2rem)' : 'calc(100% - 2rem)';
-  const xlWidth = isMobile ? 'calc(100% - 2rem)' : 'calc(85% - 2rem)';
-
   return (
     <>
       <form 
         onSubmit={handleSubmit} 
         className={cn(
-          "fixed bottom-14 z-20", // Moved up to leave space for the footer
-          "px-4"
+          "fixed bottom-14 z-20", 
+          "px-4 w-full"
         )}
         style={{
-          left: leftPosition,
+          left: isMobile ? '1rem' : 'calc(var(--sidebar-width, 0px) + 1rem)',
           right: '1rem',
-          width: width,
           maxWidth: 'calc(900px + 2rem)',
           margin: '0 auto',
         }}
