@@ -58,7 +58,7 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
   return (
     <>
       <div 
-        className="fixed bottom-14 z-20 w-full px-4"
+        className="fixed bottom-16 z-20 w-full px-4"
         style={{
           left: isMobile ? 0 : 'var(--sidebar-width, 0px)',
           right: 0,
@@ -70,7 +70,7 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
           onSubmit={handleSubmit} 
           className={cn(
             "relative rounded-2xl overflow-hidden",
-            "border transition-all duration-300",
+            "border transition-colors duration-200",
             isDark ? "border-white/10 bg-black/30" : "border-foreground/10 bg-foreground/5",
             "backdrop-blur-lg shadow-sm",
             "min-h-24"

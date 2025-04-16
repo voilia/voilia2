@@ -1,4 +1,3 @@
-
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useRef, useEffect } from "react";
@@ -26,15 +25,10 @@ export function SmartBarInput({
     const textarea = textareaRef.current;
     if (!textarea) return;
     
-    // Reset height to auto first to get accurate scrollHeight
     textarea.style.height = 'auto';
-    
-    // Calculate new height (capped at 40vh)
     const maxHeight = window.innerHeight * 0.4;
-    const minHeight = 56; // Minimum height in pixels
+    const minHeight = 56;
     const newHeight = Math.max(Math.min(textarea.scrollHeight, maxHeight), minHeight);
-    
-    // Apply new height with smooth transition
     textarea.style.height = `${newHeight}px`;
   }, [value]);
 
@@ -49,10 +43,8 @@ export function SmartBarInput({
       className={cn(
         "min-h-[56px] max-h-[40vh] flex-1 resize-none border-0 p-3 pb-2",
         "focus-visible:ring-0 focus-visible:ring-offset-0",
-        "transition-all duration-200",
-        "placeholder:text-muted-foreground/70 dark:placeholder:text-neutral-400",
         "bg-transparent text-foreground dark:text-neutral-100",
-        value && "animate-pulse-subtle"
+        "placeholder:text-muted-foreground/70 dark:placeholder:text-neutral-400"
       )}
     />
   );

@@ -15,9 +15,10 @@ export function AnimatedSubmitButton({ disabled, mode, className }: AnimatedSubm
   const isDark = theme === "dark";
 
   const getButtonColor = () => {
-    if (disabled) return "bg-muted/50";
-    
     if (mode === "chat") {
+      if (disabled) {
+        return isDark ? "bg-[#D6BCFA]" : "bg-[#E9D5FF]";
+      }
       return isDark ? "bg-[#9333EA]" : "bg-[#8B5CF6]";
     } else if (mode === "visual") {
       return isDark ? "bg-[#FB923C]" : "bg-[#F97316]";
@@ -40,11 +41,10 @@ export function AnimatedSubmitButton({ disabled, mode, className }: AnimatedSubm
         "transition-all duration-200",
         "shadow-sm hover:shadow-md",
         disabled
-          ? "cursor-not-allowed"
+          ? "cursor-not-allowed hover:opacity-90"
           : [
               getButtonColor(),
               "hover:opacity-90 hover:scale-105",
-              // Removed animation class
             ],
         className
       )}
@@ -52,7 +52,7 @@ export function AnimatedSubmitButton({ disabled, mode, className }: AnimatedSubm
     >
       <ArrowUp className={cn(
         "h-4 w-4",
-        disabled ? "text-muted-foreground/50" : "text-primary-foreground"
+        disabled ? "text-muted-foreground" : "text-primary-foreground"
       )} />
     </button>
   );
