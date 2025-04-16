@@ -38,7 +38,7 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
         {children}
       </PopoverTrigger>
       <PopoverContent 
-        className="w-auto p-2 grid grid-cols-2 gap-2 z-[110]" 
+        className="w-48 p-2 grid grid-cols-2 gap-2 bg-popover text-popover-foreground shadow-md border border-border rounded-md"
         align="center"
         side="top"
         sideOffset={16}

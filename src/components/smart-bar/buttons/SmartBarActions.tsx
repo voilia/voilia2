@@ -20,12 +20,13 @@ export function SmartBarActions({ className }: SmartBarActionsProps) {
   return (
     <div className={cn("flex items-center gap-3", className)}>
       <ModeSelectorPopover>
-        <SmartBarButton 
-          icon={BotMessageSquare}
-          tooltip="Select Mode"
-          className="text-foreground"
-          customColor={colorValue}
-        />
+        <button 
+          className="flex items-center justify-center h-8 w-8 rounded-md transition-colors hover:bg-accent/80 focus:outline-none"
+          style={{ color: colorValue }}
+        >
+          <BotMessageSquare className="h-5 w-5" />
+          <span className="sr-only">Select Mode</span>
+        </button>
       </ModeSelectorPopover>
       
       <AgentSelectorPopover>
