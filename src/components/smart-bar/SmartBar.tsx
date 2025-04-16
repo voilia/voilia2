@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SmartBarFooter } from "./SmartBarFooter";
@@ -66,26 +65,18 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
                 "transition-opacity duration-200",
                 isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100"
               )} />
-              <div className="flex flex-col items-end">
-                <SmartBarSubmitButton 
-                  disabled={!message.trim() || isDisabled || isSubmitting}
-                />
-                {!isMobile && (
-                  <button 
-                    type="button" 
-                    className="text-xs text-muted-foreground hover:text-foreground mt-1"
-                    onClick={() => setEnterSends(!enterSends)}
-                  >
-                    Enter = {enterSends ? "Send" : "New Line"}
-                  </button>
-                )}
-              </div>
+              <SmartBarSubmitButton 
+                disabled={!message.trim() || isDisabled || isSubmitting}
+              />
             </div>
           </div>
         </div>
       </form>
       
-      <SmartBarFooter />
+      <SmartBarFooter 
+        enterSends={enterSends}
+        onToggleEnterSends={() => setEnterSends(!enterSends)}
+      />
     </div>
   );
 }
