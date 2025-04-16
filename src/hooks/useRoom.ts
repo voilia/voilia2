@@ -12,33 +12,27 @@ export function useRoom(roomId: string | undefined) {
         throw new Error("Room ID is required");
       }
       
-      try {
-        const { data, error } = await supabase
-          .from("rooms")
-          .select("*, projects(name, color)")
-          .eq("id", roomId)
-          .single();
+      const { data, error } = await supabase
+        .from("rooms")
+        .select("*, projects(name, color)")
+        .eq("id", roomId)
+        .single();
 
-        if (error) {
-          console.error("Error fetching room:", error);
-          throw error;
-        }
-
-        if (!data) {
-          throw new Error("Room not found");
-        }
-
-        return data as Room & { projects: { name: string; color: string } };
-      } catch (error) {
+      if (error) {
         console.error("Error fetching room:", error);
+        toast.error("Failed to load room details");
         throw error;
       }
+
+      if (!data) {
+        const notFoundError = new Error("Room not found");
+        toast.error("Room not found");
+        throw notFoundError;
+      }
+
+      return data as Room & { projects: { name: string; color: string } };
     },
     enabled: !!roomId && roomId !== ":id",
-    retry: 1,
-    onError: (error) => {
-      console.error("Error in useRoom hook:", error);
-      toast.error("Failed to load room details");
-    }
+    retry: 1
   });
 }

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import type { Room } from "@/hooks/useRooms";
 
 interface RoomCardProps {
@@ -23,7 +23,7 @@ export function RoomCard({ room }: RoomCardProps) {
   return (
     <Card 
       className="hover:shadow-md transition-shadow group relative cursor-pointer"
-      onClick={handleViewRoom}
+      onClick={() => navigate(`/rooms/${room.id}`)}
     >
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
