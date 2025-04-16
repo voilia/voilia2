@@ -77,7 +77,7 @@ export default function RoomDetail() {
     <MainLayout>
       <div className="flex flex-col h-[calc(100vh-56px)] md:h-screen relative">
         {/* Top bar */}
-        <div className="bg-background border-b border-border p-3 md:p-4 sticky top-0 z-10 flex items-center justify-between">
+        <div className="bg-background/80 backdrop-blur-sm border-b border-border p-3 md:p-4 sticky top-0 z-10 flex items-center justify-between">
           <div className="flex items-center gap-3">
             {isRoomLoading ? (
               <Skeleton className="h-6 w-48" />
