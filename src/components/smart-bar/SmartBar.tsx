@@ -1,12 +1,14 @@
-import { useState, useEffect } from "react";
+
+import { useEffect, useRef } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SmartBarFooter } from "./SmartBarFooter";
 import { SmartBarActions } from "./buttons/SmartBarActions";
 import { SmartBarInput } from "./SmartBarInput";
-import { SmartBarSubmitButton } from "./buttons/SmartBarSubmitButton";
+import { AnimatedSubmitButton } from "./buttons/submit/AnimatedSubmitButton";
 import { SmartBarVoiceButton } from "./buttons/SmartBarVoiceButton";
-import { SmartBarModeSelector, SmartBarMode } from "./SmartBarModeSelector";
+import { ColoredModeIndicator } from "./buttons/mode-selector/ColoredModeIndicator";
 import { cn } from "@/lib/utils";
+import { useSmartBar } from "./context/SmartBarContext";
 import { useTheme } from "@/components/ThemeProvider";
 
 interface SmartBarProps {
@@ -15,10 +17,15 @@ interface SmartBarProps {
 }
 
 export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
-  const [message, setMessage] = useState("");
-  const [enterSends, setEnterSends] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [mode, setMode] = useState<SmartBarMode>("chat");
+  const { 
+    message, 
+    setMessage, 
+    mode, 
+    isSubmitting, 
+    setIsSubmitting,
+    enterSends,
+    setEnterSends 
+  } = useSmartBar();
   const [isExpanded, setIsExpanded] = useState(false);
   const isMobile = useIsMobile();
   const { theme } = useTheme();
@@ -72,19 +79,8 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
             isExpanded ? "min-h-24" : "h-14"
           )}
         >
-          {/* Colored mode indicator line */}
-          <div 
-            className={cn(
-              "absolute top-0 left-0 right-0 h-1 transition-colors duration-300",
-              mode === "chat" && (isDark ? "bg-[#9333EA]" : "bg-[#8B5CF6]"),
-              mode === "visual" && (isDark ? "bg-[#FB923C]" : "bg-[#F97316]"),
-              mode === "assist" && (isDark ? "bg-[#60A5FA]" : "bg-[#3B82F6]"),
-              mode === "vault" && (isDark ? "bg-[#34D399]" : "bg-[#10B981]")
-            )}
-            aria-hidden="true"
-          />
+          <ColoredModeIndicator mode={mode} />
           
-          {/* Input area */}
           <div className="w-full pt-1">
             <SmartBarInput
               value={message}
@@ -95,16 +91,12 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
             />
           </div>
           
-          {/* Bottom row with actions and submit */}
           <div className="flex items-center justify-between px-3 py-2">
-            <SmartBarActions 
-              selectedMode={mode} 
-              onModeChange={setMode} 
-            />
+            <SmartBarActions />
             
             <div className="flex items-center gap-2">
               <SmartBarVoiceButton />
-              <SmartBarSubmitButton 
+              <AnimatedSubmitButton 
                 disabled={!message.trim() || isDisabled || isSubmitting}
                 mode={mode}
               />
