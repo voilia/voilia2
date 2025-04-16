@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useRoom } from "@/hooks/useRoom";
@@ -28,7 +27,6 @@ export default function RoomDetail() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [messageGroups, setMessageGroups] = useState<{ userId: string | null; messages: RoomMessage[] }[]>([]);
 
-  // Group messages by user
   useEffect(() => {
     if (!messages?.length) {
       setMessageGroups([]);
@@ -56,7 +54,6 @@ export default function RoomDetail() {
     setMessageGroups(groups);
   }, [messages]);
 
-  // Enhanced scroll behavior with throttling
   const scrollToBottom = useThrottle(() => {
     if (scrollAreaRef.current) {
       const scrollElement = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
@@ -74,30 +71,14 @@ export default function RoomDetail() {
     if (!id) return;
     
     try {
-      // For now, we'll just send the text message
-      // In a real implementation, you would upload the files to a server
-      // and include their references in the message
-      
       if (files && files.length > 0) {
-        // Mock implementation - in a real app, you would:
-        // 1. Upload files to a storage service
-        // 2. Get back file URLs/IDs
-        // 3. Include those in your message data
         const fileNames = files.map(f => f.name).join(", ");
         const combinedText = text 
           ? `${text}\n\nAttached files: ${fileNames}` 
           : `Attached files: ${fileNames}`;
         
         await sendMessage(combinedText);
-        
-        // Mock notification for files (in a real app, the files would be processed)
-        if (files.length === 1) {
-          toast.info(`1 file attached to message`);
-        } else {
-          toast.info(`${files.length} files attached to message`);
-        }
       } else {
-        // Just send the text message without a success toast
         await sendMessage(text);
       }
     } catch (error) {
