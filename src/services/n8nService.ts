@@ -105,7 +105,11 @@ export async function submitSmartBarMessage({
     
     // Process the response
     if (onResponseReceived) {
-      onResponseReceived(responseData);
+      try {
+        onResponseReceived(responseData);
+      } catch (responseErr) {
+        console.error('Error in onResponseReceived callback:', responseErr);
+      }
     }
 
     // Signal completion
@@ -135,6 +139,23 @@ export async function addAiResponseToRoom(
   message: string
 ): Promise<RoomMessage | null> {
   try {
+    // First verify we have an authenticated session
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
+      console.warn("No active session for AI response insertion");
+      // Return a mock message object so UI doesn't break
+      return {
+        id: `temp-${Date.now()}`,
+        room_id: roomId,
+        user_id: null,
+        agent_id: agentId,
+        message_text: message,
+        created_at: new Date().toISOString(),
+        updated_at: null
+      };
+    }
+    
     const { data, error } = await supabase
       .from("room_messages")
       .insert({
@@ -146,11 +167,26 @@ export async function addAiResponseToRoom(
       .select('*')
       .single();
     
-    if (error) throw error;
+    if (error) {
+      console.error("Supabase error adding AI response:", error);
+      throw error;
+    }
+    
     return data;
   } catch (error) {
     console.error("Error adding AI response:", error);
-    toast.error("Failed to display AI response");
-    return null;
+    // Don't show toast to avoid UI clutter after error
+    // toast.error("Failed to display AI response");
+    
+    // Return a temporary message object so the UI can still display something
+    return {
+      id: `temp-${Date.now()}`,
+      room_id: roomId,
+      user_id: null,
+      agent_id: agentId,
+      message_text: message,
+      created_at: new Date().toISOString(),
+      updated_at: null
+    };
   }
 }

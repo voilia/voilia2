@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SmartBarFooter } from "./SmartBarFooter";
@@ -74,13 +75,21 @@ export function SmartBar({ onSendMessage, isDisabled = false, projectId = null }
             // Don't show toast here as the message was already sent locally
           },
           onResponseReceived: (responseData) => {
-            if (responseData?.data?.response?.text && roomId) {
-              // Add AI response to the database so it shows in the chat
-              addAiResponseToRoom(
-                roomId, 
-                responseData.data.agent?.id || null, 
-                responseData.data.response.text
-              );
+            try {
+              if (responseData?.data?.response?.text && roomId) {
+                // Add AI response to the database so it shows in the chat
+                addAiResponseToRoom(
+                  roomId, 
+                  responseData.data.agent?.id || null, 
+                  responseData.data.response.text
+                ).catch(err => {
+                  console.error("Failed to add AI response to room:", err);
+                });
+              } else {
+                console.warn("Received empty or invalid response from N8N webhook", responseData);
+              }
+            } catch (err) {
+              console.error("Error processing N8N response:", err);
             }
           }
         });
