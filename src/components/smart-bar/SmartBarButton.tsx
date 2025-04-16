@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/tooltip";
 import { LucideIcon } from "lucide-react";
 import { ButtonProps } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface SmartBarButtonProps extends Omit<ButtonProps, "children"> {
   icon: LucideIcon;
