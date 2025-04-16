@@ -97,7 +97,7 @@ export default function RoomDetail() {
           toast.info(`${files.length} files attached to message`);
         }
       } else {
-        // Just send the text message
+        // Just send the text message without a success toast
         await sendMessage(text);
       }
     } catch (error) {

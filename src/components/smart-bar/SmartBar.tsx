@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SmartBarFooter } from "./SmartBarFooter";
@@ -49,9 +48,8 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
       // Collect files from uploadedFiles
       const files = uploadedFiles.map(item => item.file);
       
-      // Send message with files
+      // Send message with files - we're not showing success toast anymore
       await onSendMessage(message, files);
-      toast.success("Message sent successfully");
       
       // Reset state after sending
       setMessage("");

@@ -1,7 +1,8 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { v4 as uuidv4 } from 'uuid';
 
 export interface RoomMessage {
   id: string;
@@ -11,12 +12,14 @@ export interface RoomMessage {
   message_text: string | null;
   created_at: string;
   updated_at: string | null;
+  isPending?: boolean; // Added for optimistic updates
 }
 
 export function useRoomMessages(roomId: string | undefined) {
   const [messages, setMessages] = useState<RoomMessage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     if (!roomId) return;
@@ -58,7 +61,23 @@ export function useRoomMessages(roomId: string | undefined) {
         },
         (payload) => {
           const newMessage = payload.new as RoomMessage;
-          setMessages((prev) => [...prev, newMessage]);
+          
+          // Only add server messages or replace pending messages with confirmed ones
+          setMessages((prev) => {
+            // If this is a confirmed version of our optimistic message, replace it
+            const pendingIndex = prev.findIndex(msg => 
+              msg.isPending && msg.message_text === newMessage.message_text && msg.user_id === newMessage.user_id
+            );
+            
+            if (pendingIndex >= 0) {
+              const updatedMessages = [...prev];
+              updatedMessages[pendingIndex] = newMessage;
+              return updatedMessages;
+            }
+            
+            // Otherwise, it's a new message from the server, add it
+            return [...prev, newMessage];
+          });
         }
       )
       .subscribe();
@@ -68,9 +87,24 @@ export function useRoomMessages(roomId: string | undefined) {
     };
   }, [roomId]);
 
-  // Function to send a new message
+  // Function to send a new message with optimistic updates
   const sendMessage = async (text: string) => {
-    if (!roomId || !text.trim()) return;
+    if (!roomId || !text.trim() || !user) return;
+
+    // Create optimistic message for immediate display
+    const optimisticMessage: RoomMessage = {
+      id: uuidv4(), // Temporary ID
+      room_id: roomId,
+      user_id: user.id,
+      agent_id: null,
+      message_text: text,
+      created_at: new Date().toISOString(),
+      updated_at: null,
+      isPending: true
+    };
+
+    // Add optimistic message immediately
+    setMessages(prev => [...prev, optimisticMessage]);
 
     try {
       const { error } = await supabase
@@ -82,8 +116,15 @@ export function useRoomMessages(roomId: string | undefined) {
         });
 
       if (error) throw error;
+      
+      // No success toast needed since we're showing the message optimistically
     } catch (err) {
       console.error("Error sending message:", err);
+      
+      // On error, remove the optimistic message
+      setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
+      
+      // Show error toast
       toast.error("Failed to send message");
       throw err;
     }
