@@ -1,15 +1,11 @@
+
 import { BotMessageSquare, Palette, Wrench, Vault } from "lucide-react";
-import { 
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
 import { useSmartBar } from "../../context/SmartBarContext";
 import type { SmartBarMode } from "../../types/smart-bar-types";
 import { useRef, useEffect, useState } from "react";
 import { useTheme } from "@/components/ThemeProvider";
 import { createPortal } from "react-dom";
+import { cn } from "@/lib/utils";
 
 const modes: { id: SmartBarMode; icon: typeof BotMessageSquare; label: string }[] = [
   { id: "chat", icon: BotMessageSquare, label: "Chat" },
@@ -25,32 +21,25 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
   const [popoverOpen, setPopoverOpen] = useState(false);
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  
-  // Calculate exact positioning relative to SmartBar
+
   useEffect(() => {
     const updateSmartBarDimensions = () => {
       if (typeof window === 'undefined') return;
       
-      // Find the SmartBar form element
       const smartBarForm = document.querySelector('form.rounded-2xl');
       if (smartBarForm) {
         const rect = smartBarForm.getBoundingClientRect();
-        const scrollTop = window.scrollY || document.documentElement.scrollTop;
         
-        // Calculate absolute position with offset
         setPopoverWidth(rect.width);
         setPopoverPosition({
-          top: rect.top + scrollTop - rect.height - 10, // Position above with gap
+          top: rect.top - 12, // Position above with small gap
           left: rect.left
         });
       }
     };
     
     if (popoverOpen) {
-      // Initial update
       updateSmartBarDimensions();
-      
-      // Set up listeners
       window.addEventListener('resize', updateSmartBarDimensions);
       window.addEventListener('scroll', updateSmartBarDimensions);
       
@@ -63,28 +52,44 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
 
   const handleSelectMode = (selectedMode: SmartBarMode) => {
     setMode(selectedMode);
-    setPopoverOpen(false); // Close popover after selection
+    setPopoverOpen(false);
   };
 
-  // Custom portal for absolute positioning
+  // Close popover when clicking outside
+  useEffect(() => {
+    if (!popoverOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.mode-selector-popover')) {
+        setPopoverOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [popoverOpen]);
+
   const renderPopover = () => {
     if (!popoverOpen || typeof document === 'undefined') return null;
     
     return createPortal(
       <div 
         className={cn(
-          "fixed z-50 overflow-hidden shadow-sm",
-          "border transition-colors duration-200 rounded-2xl",
-          isDark ? "border-white/10 bg-black/30" : "border-foreground/10 bg-foreground/5",
-          "backdrop-blur-lg"
+          "mode-selector-popover fixed z-50 overflow-hidden",
+          "shadow-lg transition-all duration-200 rounded-2xl",
+          isDark ? "bg-black/90" : "bg-white/90",
+          "backdrop-blur-lg border",
+          isDark ? "border-white/10" : "border-foreground/10"
         )}
         style={{
           width: popoverWidth ? `${popoverWidth}px` : 'auto',
           top: `${popoverPosition.top}px`,
-          left: `${popoverPosition.left}px`
+          left: `${popoverPosition.left}px`,
+          transform: 'translateY(-100%)', // Move up by 100% of its height
         }}
       >
-        <div className="flex w-full">
+        <div className="flex w-full divide-x divide-border">
           {modes.map(({ id, icon: Icon, label }) => {
             const isSelected = mode === id;
             return (
@@ -92,13 +97,13 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
                 key={id}
                 onClick={() => handleSelectMode(id)}
                 className={cn(
-                  "flex flex-col items-center justify-center py-3 flex-1",
+                  "flex-1 flex flex-col items-center justify-center py-3",
                   "transition-all duration-200",
-                  "focus:outline-none focus:ring-0 focus:ring-offset-0", // Remove focus outline
-                  "active:outline-none", // Remove active outline
-                  isSelected ? "bg-muted/30" : "hover:bg-muted/10"
+                  "focus:outline-none focus:ring-0 focus:ring-offset-0",
+                  "active:outline-none",
+                  isSelected && "bg-muted/30"
                 )}
-                style={{ outline: 'none' }} // Ensure no outline in any browser
+                style={{ outline: 'none' }}
               >
                 <Icon className={cn(
                   "w-5 h-5 mb-1",
