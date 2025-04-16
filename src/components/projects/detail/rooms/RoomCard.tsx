@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Link, useNavigate } from "react-router-dom";
 import type { Room } from "@/hooks/useRooms";
 
 interface RoomCardProps {
@@ -12,8 +13,18 @@ interface RoomCardProps {
 }
 
 export function RoomCard({ room }: RoomCardProps) {
+  const navigate = useNavigate();
+
+  const handleViewRoom = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/rooms/${room.id}`);
+  };
+
   return (
-    <Card className="hover:shadow-md transition-shadow group relative">
+    <Card 
+      className="hover:shadow-md transition-shadow group relative cursor-pointer"
+      onClick={handleViewRoom}
+    >
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3">
@@ -28,13 +39,14 @@ export function RoomCard({ room }: RoomCardProps) {
                 variant="ghost" 
                 size="icon" 
                 className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity absolute top-2 right-2"
+                onClick={(e) => e.stopPropagation()} // Prevent card click when clicking dropdown
               >
                 <MoreHorizontal className="h-4 w-4" />
                 <span className="sr-only">Actions</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>View Room</DropdownMenuItem>
+            <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+              <DropdownMenuItem onClick={handleViewRoom}>View Room</DropdownMenuItem>
               <DropdownMenuItem>Edit Room</DropdownMenuItem>
               <DropdownMenuItem>Archive Room</DropdownMenuItem>
             </DropdownMenuContent>

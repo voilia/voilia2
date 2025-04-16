@@ -8,6 +8,8 @@ import { EmptyRoomsState } from "./rooms/EmptyRoomsState";
 import { RoomCard } from "./rooms/RoomCard";
 import { CreateRoomDialog } from "./rooms/CreateRoomDialog";
 import { useRooms } from "@/hooks/useRooms";
+import { useNavigate } from "react-router-dom";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ProjectRoomsTabProps {
   projectId: string;
@@ -17,6 +19,7 @@ export function ProjectRoomsTab({ projectId }: ProjectRoomsTabProps) {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newRoomName, setNewRoomName] = useState("");
   const [newRoomDescription, setNewRoomDescription] = useState("");
+  const navigate = useNavigate();
 
   const { data: rooms, isLoading, refetch } = useRooms(projectId);
 
@@ -29,22 +32,32 @@ export function ProjectRoomsTab({ projectId }: ProjectRoomsTabProps) {
     try {
       const { data: user } = await supabase.auth.getUser();
       
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("rooms")
         .insert({
           name: newRoomName,
           description: newRoomDescription || null,
           project_id: projectId,
           created_by: user.user?.id,
-        });
+        })
+        .select('id')
+        .single();
 
       if (error) throw error;
 
-      toast.success("Room created successfully");
-      refetch();
+      // Reset form state
       setIsCreateDialogOpen(false);
       setNewRoomName("");
       setNewRoomDescription("");
+      
+      // Navigate to the newly created room
+      if (data && data.id) {
+        navigate(`/rooms/${data.id}`);
+      } else {
+        // Only show toast if not navigating (fallback)
+        toast.success("Room created successfully");
+        refetch();
+      }
     } catch (error) {
       console.error("Error creating room:", error);
       toast.error("Failed to create room");
@@ -83,10 +96,7 @@ export function ProjectRoomsTab({ projectId }: ProjectRoomsTabProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {isLoading ? (
           Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="animate-pulse">
-              <div className="h-[120px] bg-muted/30 rounded-lg mb-2" />
-              <div className="h-[80px] bg-muted/30 rounded-lg" />
-            </div>
+            <Skeleton key={i} className="h-[200px] rounded-lg" />
           ))
         ) : (
           rooms?.map((room) => (
