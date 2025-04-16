@@ -8,6 +8,8 @@ export interface UploadedFile {
   type: string;
   size: number;
   preview: string | null;
+  isRecording?: boolean;
+  duration?: number;
 }
 
 export interface SmartBarContextType {
@@ -16,24 +18,27 @@ export interface SmartBarContextType {
   mode: SmartBarMode;
   setMode: (mode: SmartBarMode) => void;
   isSubmitting: boolean;
-  setIsSubmitting: (isSubmitting: boolean) => void;
+  setIsSubmitting: React.Dispatch<React.SetStateAction<boolean>>;
   enterSends: boolean;
   setEnterSends: (enterSends: boolean) => void;
   
   // File upload
   uploadedFiles: UploadedFile[];
-  setUploadedFiles: (files: UploadedFile[]) => void;
+  setUploadedFiles: React.Dispatch<React.SetStateAction<UploadedFile[]>>;
   isDraggingOver: boolean;
-  setIsDraggingOver: (isDragging: boolean) => void;
+  setIsDraggingOver: React.Dispatch<React.SetStateAction<boolean>>;
   addFiles: (files: File[]) => void;
   removeFile: (fileId: string) => void;
   clearFiles: () => void;
   
   // Voice recording
   isRecording: boolean;
-  setIsRecording: (isRecording: boolean) => void;
+  setIsRecording: React.Dispatch<React.SetStateAction<boolean>>;
   isPaused: boolean;
-  setIsPaused: (isPaused: boolean) => void;
+  setIsPaused: React.Dispatch<React.SetStateAction<boolean>>;
   recordingTime: number;
   setRecordingTime: React.Dispatch<React.SetStateAction<number>>;
+  audioRecordingData: Blob | null;
+  setAudioRecordingData: React.Dispatch<React.SetStateAction<Blob | null>>;
+  saveRecording: () => Promise<void>;
 }

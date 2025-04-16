@@ -1,7 +1,7 @@
 
-import { File, FileImage, FileAudio, FileVideo, FileText, X } from "lucide-react";
+import { File, FileImage, FileAudio, FileVideo, FileText, X, Mic } from "lucide-react";
 import { UploadedFile } from "../../types/smart-bar-types";
-import { formatFileSize } from "@/lib/utils";
+import { formatFileSize, formatTime } from "@/lib/utils";
 import { useTheme } from "@/components/ThemeProvider";
 import { cn } from "@/lib/utils";
 
@@ -15,7 +15,8 @@ export function FilePreviewItem({ file, onRemove }: FilePreviewItemProps) {
   const isDark = theme === "dark";
   
   // Get file icon based on file type
-  const getFileIcon = (fileType: string) => {
+  const getFileIcon = (fileType: string, isRecording?: boolean) => {
+    if (isRecording) return Mic;
     if (fileType.startsWith('image/')) return FileImage;
     if (fileType.startsWith('audio/')) return FileAudio;
     if (fileType.startsWith('video/')) return FileVideo;
@@ -23,7 +24,7 @@ export function FilePreviewItem({ file, onRemove }: FilePreviewItemProps) {
     return File;
   };
 
-  const FileIcon = getFileIcon(file.type);
+  const FileIcon = getFileIcon(file.type, file.isRecording);
   
   return (
     <div 
@@ -43,18 +44,27 @@ export function FilePreviewItem({ file, onRemove }: FilePreviewItemProps) {
         </div>
       ) : (
         <div className="w-8 h-8 rounded flex items-center justify-center flex-shrink-0">
-          <FileIcon className="w-5 h-5 text-muted-foreground" />
+          <FileIcon className={cn(
+            "w-5 h-5",
+            file.isRecording ? "text-red-500" : "text-muted-foreground"
+          )} />
         </div>
       )}
       
       <div className="flex-1 min-w-0">
         <p className="text-sm truncate" title={file.name}>{file.name}</p>
-        <p className="text-xs text-muted-foreground">{formatFileSize(file.size)}</p>
+        <p className="text-xs text-muted-foreground">
+          {file.isRecording && file.duration 
+            ? `${formatTime(file.duration)} · ${formatFileSize(file.size)}`
+            : formatFileSize(file.size)
+          }
+        </p>
       </div>
       
       <button
         onClick={() => onRemove(file.id)}
         className="w-6 h-6 flex items-center justify-center rounded-full hover:bg-muted transition-colors ml-1"
+        aria-label="Remove file"
       >
         <X className="w-4 h-4" />
         <span className="sr-only">Remove file</span>

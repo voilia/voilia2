@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SmartBarProvider } from "@/components/smart-bar/context/SmartBarContext";
 import { FileDropZone } from "@/components/smart-bar/file-upload/FileDropZone";
+import { toast } from "sonner";
 
 export default function RoomDetail() {
   const { id } = useParams<{ id: string }>();
@@ -62,9 +63,40 @@ export default function RoomDetail() {
     }
   }, [messageGroups]);
 
-  const handleSendMessage = async (text: string) => {
+  const handleSendMessage = async (text: string, files?: File[]) => {
     if (!id) return;
-    await sendMessage(text);
+    
+    try {
+      // For now, we'll just send the text message
+      // In a real implementation, you would upload the files to a server
+      // and include their references in the message
+      
+      if (files && files.length > 0) {
+        // Mock implementation - in a real app, you would:
+        // 1. Upload files to a storage service
+        // 2. Get back file URLs/IDs
+        // 3. Include those in your message data
+        const fileNames = files.map(f => f.name).join(", ");
+        const combinedText = text 
+          ? `${text}\n\nAttached files: ${fileNames}` 
+          : `Attached files: ${fileNames}`;
+        
+        await sendMessage(combinedText);
+        
+        // Mock notification for files (in a real app, the files would be processed)
+        if (files.length === 1) {
+          toast.info(`1 file attached to message`);
+        } else {
+          toast.info(`${files.length} files attached to message`);
+        }
+      } else {
+        // Just send the text message
+        await sendMessage(text);
+      }
+    } catch (error) {
+      console.error("Error sending message with files:", error);
+      toast.error("Failed to send message with attachments");
+    }
   };
 
   const isLoading = isRoomLoading || isMessagesLoading;

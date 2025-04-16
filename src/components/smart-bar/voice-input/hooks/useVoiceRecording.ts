@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useSmartBar } from "../../context/SmartBarContext";
+import { toast } from "sonner";
 
 export function useVoiceRecording() {
   const { 
@@ -10,12 +11,13 @@ export function useVoiceRecording() {
     setIsPaused,
     recordingTime,
     setRecordingTime,
-    setMessage
+    setAudioRecordingData,
+    saveRecording
   } = useSmartBar();
   
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
-  const [isTranscribing, setIsTranscribing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Timer for recording duration
   useEffect(() => {
@@ -32,35 +34,10 @@ export function useVoiceRecording() {
     };
   }, [isRecording, isPaused, setRecordingTime]);
 
-  // Mock transcription - in a real app, you would call your transcription service
-  const transcribeAudio = async (audioBlob: Blob) => {
-    setIsTranscribing(true);
-    
-    try {
-      // Simulate transcription delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // This would be replaced with actual API call to a transcription service
-      // For now, return a mock result
-      const mockTranscriptionResult = "This is a sample transcription of what the user said.";
-      setMessage(prevMessage => prevMessage + (prevMessage ? ' ' : '') + mockTranscriptionResult);
-    } catch (error) {
-      console.error("Transcription error:", error);
-    } finally {
-      setIsTranscribing(false);
-      
-      // Reset recording state
-      setIsRecording(false);
-      setIsPaused(false);
-      setRecordingTime(0);
-      setAudioChunks([]);
-    }
-  };
-
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
+      const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
       
       recorder.ondataavailable = (e) => {
         if (e.data.size > 0) {
@@ -68,14 +45,15 @@ export function useVoiceRecording() {
         }
       };
       
-      recorder.onstop = () => {
+      recorder.onstop = async () => {
         const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        setAudioRecordingData(audioBlob);
         
         // Stop all tracks to release the microphone
         stream.getTracks().forEach(track => track.stop());
         
-        if (audioChunks.length > 0) {
-          transcribeAudio(audioBlob);
+        if (audioChunks.length > 0 && !isSaving) {
+          // The actual saving happens in the calling component
         }
       };
       
@@ -88,6 +66,7 @@ export function useVoiceRecording() {
       
     } catch (error) {
       console.error("Error accessing microphone:", error);
+      toast.error("Could not access microphone. Please check permissions.");
     }
   };
 
@@ -105,9 +84,21 @@ export function useVoiceRecording() {
     }
   };
 
-  const stopRecording = () => {
+  const stopRecording = async () => {
     if (mediaRecorder && (mediaRecorder.state === 'recording' || mediaRecorder.state === 'paused')) {
+      setIsSaving(true);
       mediaRecorder.stop();
+      
+      // Give time for the onstop event to fire and process the data
+      setTimeout(async () => {
+        await saveRecording();
+        
+        // Reset recording state
+        setIsRecording(false);
+        setIsPaused(false);
+        setAudioChunks([]);
+        setIsSaving(false);
+      }, 300);
     }
   };
 
@@ -127,10 +118,12 @@ export function useVoiceRecording() {
     setIsPaused(false);
     setRecordingTime(0);
     setAudioChunks([]);
+    setAudioRecordingData(null);
   };
 
   return {
-    isTranscribing,
+    startRecording,
+    isSaving,
     pauseRecording,
     resumeRecording,
     stopRecording,

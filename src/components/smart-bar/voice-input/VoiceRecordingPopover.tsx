@@ -6,17 +6,22 @@ import { useTheme } from "@/components/ThemeProvider";
 import { usePopoverPosition } from "./hooks/usePopoverPosition";
 import { useVoiceRecording } from "./hooks/useVoiceRecording";
 import { RecordingControls } from "./components/RecordingControls";
-import { TranscriptionIndicator } from "./components/TranscriptionIndicator";
 
 export function VoiceRecordingPopover() {
   const { isRecording } = useSmartBar();
   const { popoverWidth, popoverPosition } = usePopoverPosition();
-  const { isTranscribing, pauseRecording, resumeRecording, stopRecording, cancelRecording } = useVoiceRecording();
+  const { 
+    pauseRecording, 
+    resumeRecording, 
+    stopRecording, 
+    cancelRecording,
+    isSaving
+  } = useVoiceRecording();
   
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
-  if (!isRecording && !isTranscribing) return null;
+  if (!isRecording) return null;
   
   return createPortal(
     <div 
@@ -35,16 +40,13 @@ export function VoiceRecordingPopover() {
         transform: 'translateY(-100%)',
       }}
     >
-      {isTranscribing ? (
-        <TranscriptionIndicator />
-      ) : (
-        <RecordingControls 
-          pauseRecording={pauseRecording}
-          resumeRecording={resumeRecording}
-          stopRecording={stopRecording}
-          cancelRecording={cancelRecording}
-        />
-      )}
+      <RecordingControls 
+        pauseRecording={pauseRecording}
+        resumeRecording={resumeRecording}
+        stopRecording={stopRecording}
+        cancelRecording={cancelRecording}
+        isSaving={isSaving}
+      />
     </div>,
     document.body
   );

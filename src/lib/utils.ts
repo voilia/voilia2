@@ -21,3 +21,16 @@ export function formatFileSize(bytes: number): string {
   
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
+
+// Helper function to generate a unique ID
+export function generateUniqueId(prefix: string = 'id'): string {
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+}
+
+// Helper function to create a blob URL from a file
+export function createPreviewUrl(file: File): string | null {
+  if (file.type.startsWith('image/')) {
+    return URL.createObjectURL(file);
+  }
+  return null;
+}

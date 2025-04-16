@@ -12,9 +12,10 @@ import { VoiceRecordingPopover } from "./voice-input/VoiceRecordingPopover";
 import { cn } from "@/lib/utils";
 import { useSmartBar } from "./context/SmartBarContext";
 import { useTheme } from "@/components/ThemeProvider";
+import { toast } from "sonner";
 
 interface SmartBarProps {
-  onSendMessage: (message: string) => Promise<void>;
+  onSendMessage: (message: string, files?: File[]) => Promise<void>;
   isDisabled?: boolean;
 }
 
@@ -44,11 +45,20 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
 
     try {
       setIsSubmitting(true);
-      await onSendMessage(message);
+      
+      // Collect files from uploadedFiles
+      const files = uploadedFiles.map(item => item.file);
+      
+      // Send message with files
+      await onSendMessage(message, files);
+      toast.success("Message sent successfully");
+      
+      // Reset state after sending
       setMessage("");
-      clearFiles(); // Clear the files after sending
+      clearFiles();
     } catch (error) {
       console.error("Error sending message:", error);
+      toast.error("Failed to send message. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -61,6 +71,9 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
       handleSubmit(e as unknown as React.FormEvent);
     }
   };
+
+  // Allow submission even if text is empty but files are attached
+  const canSubmit = (message.trim().length > 0 || uploadedFiles.length > 0) && !isDisabled && !isSubmitting;
 
   return (
     <>
@@ -102,7 +115,7 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
             <div className="flex items-center gap-3">
               <SmartBarVoiceButton />
               <AnimatedSubmitButton 
-                disabled={!message.trim() && uploadedFiles.length === 0 || isDisabled || isSubmitting}
+                disabled={!canSubmit}
                 mode={mode}
               />
             </div>

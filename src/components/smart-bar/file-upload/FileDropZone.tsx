@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { useSmartBar } from "../context/SmartBarContext";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { Paperclip } from "lucide-react";
 
 interface FileDropZoneProps {
   children: React.ReactNode;
@@ -42,15 +43,6 @@ export function FileDropZone({ children }: FileDropZoneProps) {
 
       if (e.dataTransfer?.files?.length) {
         const files = Array.from(e.dataTransfer.files);
-        handleFiles(files);
-      }
-    };
-
-    const handleFiles = (files: File[]) => {
-      if (files.length > 10) {
-        toast.warning("Maximum 10 files can be uploaded at once.");
-        addFiles(files.slice(0, 10));
-      } else {
         addFiles(files);
       }
     };
@@ -84,7 +76,10 @@ export function FileDropZone({ children }: FileDropZoneProps) {
       {isDraggingOver && (
         <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
           <div className="bg-background/80 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-primary/20 animate-fade-in">
-            <p className="text-xl font-medium text-center">Drop files to upload</p>
+            <div className="flex flex-col items-center gap-3">
+              <Paperclip className="h-10 w-10 text-primary/80" />
+              <p className="text-xl font-medium text-center">Drop files to upload</p>
+            </div>
           </div>
         </div>
       )}

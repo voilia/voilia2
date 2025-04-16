@@ -3,6 +3,7 @@ import { Mic } from "lucide-react";
 import { SmartBarButton } from "../SmartBarButton";
 import { cn } from "@/lib/utils";
 import { useSmartBar } from "../context/SmartBarContext";
+import { useVoiceRecording } from "../voice-input/hooks/useVoiceRecording";
 import { toast } from "sonner";
 
 interface SmartBarVoiceButtonProps {
@@ -10,7 +11,8 @@ interface SmartBarVoiceButtonProps {
 }
 
 export function SmartBarVoiceButton({ className }: SmartBarVoiceButtonProps) {
-  const { isRecording, setIsRecording } = useSmartBar();
+  const { isRecording } = useSmartBar();
+  const { startRecording } = useVoiceRecording();
   
   const handleClick = async () => {
     if (isRecording) return; // Prevent multiple clicks
@@ -25,7 +27,7 @@ export function SmartBarVoiceButton({ className }: SmartBarVoiceButtonProps) {
       await navigator.mediaDevices.getUserMedia({ audio: true });
       
       // Permission granted, start recording
-      setIsRecording(true);
+      startRecording();
       
     } catch (error) {
       // Handle permission denied or other errors
