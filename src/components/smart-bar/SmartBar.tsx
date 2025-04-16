@@ -44,49 +44,50 @@ export function SmartBar({ onSendMessage, isDisabled = false }: SmartBarProps) {
 
   return (
     <div 
-      className="max-w-[900px] w-full fixed bottom-0 z-50 bg-background/95 backdrop-blur-sm" 
+      className="fixed bottom-0 z-50 bg-background/95 backdrop-blur-sm"
       style={{ 
         left: isMobile ? '0' : 'var(--sidebar-width, 0px)',
         right: '0',
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        marginBottom: '1rem'
+        width: '100%',
+        marginBottom: '0.75rem'
       }}
     >
-      <form onSubmit={handleSubmit} className="px-4 md:px-6 lg:px-8">
-        <div className="relative rounded-xl border border-input bg-background/70 backdrop-blur-md shadow-sm overflow-hidden group hover:border-primary/50 hover:shadow-md transition-all duration-200">
-          {/* Input area */}
-          <div className="w-full">
-            <SmartBarInput
-              value={message}
-              onChange={setMessage}
-              onKeyDown={handleKeyDown}
-              isDisabled={isDisabled}
-              isSubmitting={isSubmitting}
-            />
-          </div>
-          
-          {/* Bottom row with actions and submit */}
-          <div className="flex items-center justify-between px-3 py-2 border-t border-input/50">
-            <SmartBarActions />
-            
-            <div className="flex items-center gap-2">
-              <SmartBarVoiceButton className={cn(
-                "transition-opacity duration-200",
-                isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-              )} />
-              <SmartBarSubmitButton 
-                disabled={!message.trim() || isDisabled || isSubmitting}
+      <div className="max-w-[900px] mx-auto relative">
+        <form onSubmit={handleSubmit} className="px-4 md:px-6 lg:px-8">
+          <div className="relative rounded-xl border border-input bg-background/70 backdrop-blur-md shadow-sm overflow-hidden group hover:border-primary/50 hover:shadow-md transition-all duration-200">
+            {/* Input area */}
+            <div className="w-full">
+              <SmartBarInput
+                value={message}
+                onChange={setMessage}
+                onKeyDown={handleKeyDown}
+                isDisabled={isDisabled}
+                isSubmitting={isSubmitting}
               />
             </div>
+            
+            {/* Bottom row with actions and submit */}
+            <div className="flex items-center justify-between px-3 py-2 border-t border-input/50">
+              <SmartBarActions />
+              
+              <div className="flex items-center gap-2">
+                <SmartBarVoiceButton className={cn(
+                  "transition-opacity duration-200",
+                  isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                )} />
+                <SmartBarSubmitButton 
+                  disabled={!message.trim() || isDisabled || isSubmitting}
+                />
+              </div>
+            </div>
           </div>
-        </div>
-      </form>
-      
-      <SmartBarFooter 
-        enterSends={enterSends}
-        onToggleEnterSends={() => setEnterSends(!enterSends)}
-      />
+        </form>
+        
+        <SmartBarFooter 
+          enterSends={enterSends}
+          onToggleEnterSends={() => setEnterSends(!enterSends)}
+        />
+      </div>
     </div>
   );
 }
