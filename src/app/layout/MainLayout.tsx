@@ -1,5 +1,5 @@
 
-import { ReactNode, useState, useCallback } from "react";
+import { ReactNode, useState, useCallback, useEffect } from "react";
 import { Sidebar } from "@/app/navigation/Sidebar";
 import { Header } from "@/app/navigation/Header";
 import { MobileHeader } from "@/app/navigation/components/MobileHeader";
@@ -17,11 +17,16 @@ export function MainLayout({ children }: MainLayoutProps) {
     setIsCollapsed(!isCollapsed);
   }, [isCollapsed]);
   
+  // Calculate sidebar width based on device and collapsed state
+  const sidebarWidth = isMobile 
+    ? "0px" 
+    : (isCollapsed ? "0px" : "240px");
+  
   return (
     <div 
       className="min-h-screen flex bg-background text-foreground"
       style={{ 
-        "--sidebar-width": isMobile ? "0px" : (isCollapsed ? "0px" : "240px")
+        "--sidebar-width": sidebarWidth
       } as React.CSSProperties}
     >
       <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
