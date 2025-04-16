@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SmartBarProvider } from "@/components/smart-bar/context/SmartBarContext";
 
 export default function RoomDetail() {
   const { id } = useParams<{ id: string }>();
@@ -131,7 +132,9 @@ export default function RoomDetail() {
           </ScrollArea>
         </div>
 
-        <SmartBar onSendMessage={handleSendMessage} isDisabled={isLoading} />
+        <SmartBarProvider>
+          <SmartBar onSendMessage={handleSendMessage} isDisabled={isLoading} />
+        </SmartBarProvider>
       </div>
     </MainLayout>
   );
