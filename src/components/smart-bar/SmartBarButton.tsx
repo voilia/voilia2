@@ -45,9 +45,9 @@ export function SmartBarButton({
             style={customColor ? { color: customColor } : undefined}
             onMouseEnter={() => setTooltipOpen(true)}
             onMouseLeave={() => setTooltipOpen(false)}
-            onClick={() => {
+            onClick={(e) => {
               setTooltipOpen(false);
-              if (props.onClick) props.onClick({} as React.MouseEvent);
+              if (props.onClick) props.onClick(e);
             }}
             {...props}
           >
