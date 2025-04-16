@@ -1,13 +1,22 @@
 
-import { MessageSquare, User, Paperclip, Mic } from "lucide-react";
-import { SmartBarButton } from "../SmartBarButton";
+import { cn } from "@/lib/utils";
+import { SmartBarModeButton } from "./SmartBarModeButton";
+import { SmartBarAgentButton } from "./SmartBarAgentButton";
+import { SmartBarFileButton } from "./SmartBarFileButton";
+import { SmartBarVoiceButton } from "./SmartBarVoiceButton";
 
-export function SmartBarActions() {
+interface SmartBarActionsProps {
+  className?: string;
+}
+
+export function SmartBarActions({ className }: SmartBarActionsProps) {
   return (
-    <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar">
-      <SmartBarButton icon={MessageSquare} tooltip="Chat Mode" />
-      <SmartBarButton icon={User} tooltip="Select Agent" />
-      <SmartBarButton icon={Paperclip} tooltip="Upload File" />
+    <div className={cn("flex items-center gap-2 overflow-x-auto hide-scrollbar", className)}>
+      <SmartBarModeButton />
+      <SmartBarAgentButton />
+      <SmartBarFileButton />
+      <SmartBarVoiceButton className="md:hidden" />
     </div>
   );
 }
+
