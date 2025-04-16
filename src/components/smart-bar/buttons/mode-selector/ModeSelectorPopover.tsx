@@ -78,9 +78,10 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
         className={cn(
           "mode-selector-popover fixed z-50 overflow-hidden",
           "shadow-lg transition-all duration-200 rounded-2xl",
-          isDark ? "bg-black/90" : "bg-white/90",
-          "backdrop-blur-lg border",
-          isDark ? "border-white/10" : "border-foreground/10"
+          isDark 
+            ? "bg-black/30 border-white/10" 
+            : "bg-foreground/5 border-foreground/10",
+          "backdrop-blur-lg border"
         )}
         style={{
           width: popoverWidth ? `${popoverWidth}px` : 'auto',
