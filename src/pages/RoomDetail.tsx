@@ -1,5 +1,5 @@
 
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useRoom } from "@/hooks/useRoom";
 import { RoomMessage, useRoomMessages } from "@/hooks/useRoomMessages";
@@ -11,12 +11,13 @@ import { MessageGroup } from "@/components/rooms/MessageGroup";
 import { EmptyMessagesState } from "@/components/rooms/EmptyMessagesState";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Settings } from "lucide-react";
+import { ArrowLeft, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function RoomDetail() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { data: room, isLoading: isRoomLoading } = useRoom(id);
   const { messages, isLoading: isMessagesLoading, sendMessage } = useRoomMessages(id);
@@ -69,20 +70,33 @@ export default function RoomDetail() {
   return (
     <MainLayout>
       <div className="flex flex-col h-[calc(100vh-56px)] md:h-screen relative">
-        <div className="bg-background/80 backdrop-blur-sm border-b border-border p-3 md:p-4 sticky top-0 z-10 flex items-center justify-between">
+        {/* Header with back button and navigation */}
+        <div className="bg-background/95 backdrop-blur-sm border-b border-border p-3 md:p-4 sticky top-0 z-10 flex items-center justify-between">
           <div className="flex items-center gap-3">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="mr-1"
+              onClick={() => navigate(-1)}
+              aria-label="Go back"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            
             {isRoomLoading ? (
               <Skeleton className="h-6 w-48" />
             ) : (
               <>
                 <h1 className="text-lg font-semibold">{room?.name}</h1>
                 {room?.projects && (
-                  <Badge variant="outline" className="text-xs" style={{ 
-                    backgroundColor: room.projects.color + "20", 
-                    borderColor: room.projects.color 
-                  }}>
-                    {room.projects.name}
-                  </Badge>
+                  <Link to={`/projects/${room.project_id}`}>
+                    <Badge variant="outline" className="text-xs hover:bg-background/80 cursor-pointer" style={{ 
+                      backgroundColor: room.projects.color + "20", 
+                      borderColor: room.projects.color 
+                    }}>
+                      {room.projects.name}
+                    </Badge>
+                  </Link>
                 )}
               </>
             )}

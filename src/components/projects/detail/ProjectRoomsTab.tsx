@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -21,7 +21,15 @@ export function ProjectRoomsTab({ projectId }: ProjectRoomsTabProps) {
   const [newRoomDescription, setNewRoomDescription] = useState("");
   const navigate = useNavigate();
 
-  const { data: rooms, isLoading, refetch } = useRooms(projectId);
+  const { data: rooms, isLoading, error, refetch } = useRooms(projectId);
+
+  // Add error handling for room loading
+  useEffect(() => {
+    if (error) {
+      toast.error("Error loading rooms");
+      console.error("Error loading rooms:", error);
+    }
+  }, [error]);
 
   const handleCreateRoom = async () => {
     if (!newRoomName.trim()) {
