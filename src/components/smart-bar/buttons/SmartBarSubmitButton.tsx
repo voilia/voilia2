@@ -2,7 +2,7 @@
 import { ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/ThemeProvider";
-import type { SmartBarMode } from "../SmartBarModeSelector";
+import type { SmartBarMode } from "../types/smart-bar-types";
 
 interface SmartBarSubmitButtonProps {
   disabled: boolean;

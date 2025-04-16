@@ -1,5 +1,5 @@
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SmartBarFooter } from "./SmartBarFooter";
 import { SmartBarActions } from "./buttons/SmartBarActions";
