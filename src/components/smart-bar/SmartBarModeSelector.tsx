@@ -12,14 +12,15 @@ interface SmartBarModeSelectorProps {
 export function SmartBarModeSelector({ className }: SmartBarModeSelectorProps) {
   const { mode, setMode } = useSmartBar();
   const { getColors } = useSmartBarColors();
+  const colorValue = getColors(mode);
 
   return (
     <SmartBarButton 
       icon={Brain}
       tooltip="Select Mode"
-      className={cn(className, mode === "chat" && "text-primary")}
-      onClick={() => setMode("chat")}
-      customColor={getColors(mode)}
+      className={cn(className)}
+      onClick={() => setMode(mode === "chat" ? "visual" : "chat")}
+      customColor={colorValue}
     />
   );
 }

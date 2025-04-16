@@ -15,4 +15,3 @@ export function SmartBarFileButton({ className }: SmartBarFileButtonProps) {
     />
   );
 }
-

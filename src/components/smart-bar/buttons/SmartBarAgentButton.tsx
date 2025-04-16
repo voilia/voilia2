@@ -15,4 +15,3 @@ export function SmartBarAgentButton({ className }: SmartBarAgentButtonProps) {
     />
   );
 }
-

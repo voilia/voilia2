@@ -42,7 +42,7 @@ export function SmartBarButton({
             style={customColor ? { color: customColor } : undefined}
             {...props}
           >
-            <Icon className="h-4 w-4 text-muted-foreground dark:text-neutral-300" />
+            <Icon className="h-4 w-4" />
             <span className="sr-only">{tooltip}</span>
           </Button>
         </TooltipTrigger>

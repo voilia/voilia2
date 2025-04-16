@@ -26,6 +26,9 @@ export function AnimatedSubmitButton({ disabled, mode, className }: AnimatedSubm
     } else if (mode === "vault") {
       return isDark ? "bg-[#34D399]" : "bg-[#10B981]";
     }
+    
+    // Default fallback
+    return isDark ? "bg-[#9333EA]" : "bg-[#8B5CF6]";
   };
 
   return (

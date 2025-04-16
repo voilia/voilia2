@@ -5,8 +5,8 @@ import type { SmartBarMode } from "../types/smart-bar-types";
 export function useSmartBarColors() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  
-  const getColors = (mode: SmartBarMode) => {
+
+  const getColors = (mode: SmartBarMode): string => {
     if (mode === "chat") {
       return isDark ? "#9333EA" : "#8B5CF6";
     } else if (mode === "visual") {
@@ -16,8 +16,10 @@ export function useSmartBarColors() {
     } else if (mode === "vault") {
       return isDark ? "#34D399" : "#10B981";
     }
-    return "";
+    
+    // Default fallback
+    return isDark ? "#9333EA" : "#8B5CF6";
   };
 
-  return { getColors, isDark };
+  return { getColors };
 }
