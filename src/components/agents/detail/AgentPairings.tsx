@@ -29,10 +29,10 @@ export function AgentPairings({ agent }: AgentPairingsProps) {
         >
           <div>
             <div className="mx-auto rounded-full bg-primary/10 p-3 w-12 h-12 flex items-center justify-center mb-4">
-              <RefreshCw className="h-6 w-6 text-primary" />
+              <RefreshCw className="h-6 w-6 text-primary animate-[spin_3s_linear_infinite]" />
             </div>
-            <h3 className="text-lg font-medium mb-2 text-center">Coming soon</h3>
-            <p className="text-sm text-muted-foreground text-center">
+            <h3 className="text-lg font-medium mb-2">Coming soon</h3>
+            <p className="text-sm text-muted-foreground">
               VOILIA will suggest ideal teammates for this agent based on your workflows and common usage patterns.
             </p>
           </div>
@@ -41,3 +41,4 @@ export function AgentPairings({ agent }: AgentPairingsProps) {
     </Card>
   );
 }
+
