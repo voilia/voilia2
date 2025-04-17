@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
 import type { Room } from "@/hooks/useRooms";
+import { cn } from "@/lib/utils";
 
 interface RoomCardProps {
   room: Room;
@@ -22,7 +23,7 @@ export function RoomCard({ room }: RoomCardProps) {
 
   return (
     <Card 
-      className="hover:shadow-md transition-shadow group relative cursor-pointer"
+      className="hover:shadow-md transition-shadow group relative cursor-pointer glassmorphic-card"
       onClick={() => navigate(`/rooms/${room.id}`)}
     >
       <CardHeader className="pb-2">

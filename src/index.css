@@ -90,6 +90,25 @@
   }
 }
 
+/* Glassmorphic effect classes */
+@layer components {
+  .glassmorphic {
+    @apply bg-white/70 dark:bg-black/60 backdrop-blur-[8px] border border-white/20 dark:border-white/10 shadow-sm;
+  }
+  
+  .glassmorphic-card {
+    @apply glassmorphic rounded-lg hover:shadow-md transition-all duration-300;
+  }
+  
+  .glassmorphic-light {
+    @apply bg-white/90 backdrop-blur-[4px] border border-white/30 dark:bg-black/40 dark:border-white/5;
+  }
+
+  .glassmorphic-strong {
+    @apply bg-white/80 backdrop-blur-[12px] border border-white/40 dark:bg-black/70 dark:border-white/10 shadow-md;
+  }
+}
+
 /* Mobile-specific styles */
 @media (max-width: 768px) {
   /* Improve touch targets for mobile */
@@ -134,3 +153,4 @@
     display: none;
   }
 }
+

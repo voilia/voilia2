@@ -58,10 +58,9 @@ export function AgentCard({ agent }: AgentCardProps) {
         "w-full max-w-[300px] h-[280px]",
         "rounded-xl border p-5",
         "transition-all duration-300",
-        "bg-card dark:bg-[#1a1a1a]",
+        "glassmorphic-card",
         "hover:shadow-lg hover:-translate-y-1",
-        "dark:border-white/5 dark:hover:border-primary/30",
-        "dark:hover:bg-gradient-to-b dark:hover:from-white/[0.02] dark:hover:to-transparent"
+        "dark:hover:border-primary/30",
       )}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}

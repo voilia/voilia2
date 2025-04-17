@@ -46,8 +46,8 @@ export function AgentListItem({ agent }: AgentListItemProps) {
     <div 
       className={cn(
         "flex items-center justify-between p-4 rounded-lg border",
-        "bg-white dark:bg-[#1a1a1a] dark:border-white/5",
-        "hover:shadow-sm hover:bg-accent/5 dark:hover:bg-white/[0.02] transition-all duration-200"
+        "glassmorphic-card",
+        "hover:shadow-sm hover:scale-[1.005] transition-all duration-200"
       )}
     >
       <div className="flex items-center gap-4">

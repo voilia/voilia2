@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { NavLink } from "react-router-dom";
 import { Folder, MoreHorizontal } from "lucide-react";
@@ -44,9 +45,8 @@ export function ItemCard({
       to={path}
       className={({ isActive }) =>
         cn(
-          "group relative block h-[160px] rounded-2xl border p-6 transition-all",
-          "bg-white dark:bg-[#342a52] dark:border-white/5",
-          "hover:scale-[1.01] hover:bg-accent/5 dark:hover:bg-white/[0.02] hover:shadow-sm dark:hover:border-[#9b87f5]/30",
+          "group relative block h-[160px] rounded-2xl glassmorphic-card p-6 transition-all",
+          "hover:scale-[1.01] hover:bg-accent/5 dark:hover:bg-white/[0.02] hover:shadow-md",
           isActive && "border-l-4 border-l-primary",
           className
         )

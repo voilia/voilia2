@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Project } from "./types";
-import { cn } from "@/lib/utils";  // Ensure this import is present
+import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 
 interface ProjectListItemProps {
@@ -33,8 +33,8 @@ export function ProjectListItem({ project }: ProjectListItemProps) {
       className={({ isActive }) =>
         cn(
           "group relative flex items-center justify-between gap-4 rounded-lg border p-4 transition-all",
-          "bg-white dark:bg-[#342a52] dark:border-white/5",
-          "hover:scale-[1.01] hover:bg-accent/5 dark:hover:bg-white/[0.02] hover:shadow-sm dark:hover:border-[#9b87f5]/30",
+          "glassmorphic-card",
+          "hover:scale-[1.01] hover:shadow-sm dark:hover:border-[#9b87f5]/30",
           isActive && "border-l-4 border-l-primary"
         )
       }

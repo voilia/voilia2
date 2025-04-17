@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Member } from "@/hooks/useProjectMembers";
 import { useMemberRoleManagement } from "@/hooks/useMemberRoleManagement";
+import { cn } from "@/lib/utils";
 
 interface MemberCardProps {
   member: Member;
@@ -18,7 +19,7 @@ export function MemberCard({ member, projectId, onUpdate }: MemberCardProps) {
   const { isChangingRole, updateMemberRole, removeMember } = useMemberRoleManagement(projectId, onUpdate);
 
   return (
-    <Card className="p-4 flex items-center justify-between">
+    <Card className="p-4 flex items-center justify-between glassmorphic-card">
       <div className="flex items-center gap-3">
         <Avatar className="h-10 w-10">
           <AvatarImage src="/placeholder.svg" alt={member.user_name} />
@@ -81,4 +82,3 @@ export function MemberCard({ member, projectId, onUpdate }: MemberCardProps) {
     </Card>
   );
 }
-
