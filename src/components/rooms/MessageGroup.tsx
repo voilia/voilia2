@@ -10,22 +10,29 @@ interface MessageGroupProps {
 }
 
 export function MessageGroup({ messages, isUserGroup }: MessageGroupProps) {
+  const { user } = useAuth();
+  
+  // Double-check isUserGroup by comparing with current user ID
+  // This ensures consistency even when coming back to conversations
+  const isCurrentUserMessages = messages.length > 0 && messages[0].user_id === user?.id;
+  const finalIsUserGroup = isUserGroup || isCurrentUserMessages;
+  
   if (!messages.length) return null;
 
   return (
     <div className={cn(
       "flex flex-col gap-1 py-2",
-      isUserGroup ? "items-end" : "items-start"
+      finalIsUserGroup ? "items-end" : "items-start"
     )}>
       <div className={cn(
         "flex flex-col max-w-[80%] space-y-1",
-        isUserGroup ? "items-end" : "items-start"
+        finalIsUserGroup ? "items-end" : "items-start"
       )}>
         {messages.map((message) => (
           <Message 
             key={message.id} 
             message={message} 
-            isUser={isUserGroup} 
+            isUser={finalIsUserGroup} 
           />
         ))}
       </div>

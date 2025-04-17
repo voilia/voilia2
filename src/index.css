@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -120,6 +121,12 @@
   /* Reduce excessive padding/margins */
   .message-bubble {
     margin: 4px 8px;
+  }
+  
+  /* Ensure user messages always align to the right */
+  [data-user-message="true"] {
+    margin-left: auto !important;
+    margin-right: 0 !important;
   }
   
   /* Force sidebar closed by default on page load */

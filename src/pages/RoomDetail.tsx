@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useRoom } from "@/hooks/useRoom";
@@ -40,11 +39,18 @@ export default function RoomDetail() {
     let currentGroup: { userId: string | null; messages: RoomMessage[] } | null = null;
 
     messages.forEach((message) => {
-      if (!currentGroup || currentGroup.userId !== message.user_id) {
+      const isFromCurrentUser = message.user_id === user?.id;
+      
+      if (!currentGroup || 
+          (isFromCurrentUser && currentGroup.userId !== user?.id) || 
+          (!isFromCurrentUser && currentGroup.userId !== message.user_id)) {
         if (currentGroup) {
           groups.push(currentGroup);
         }
-        currentGroup = { userId: message.user_id, messages: [message] };
+        currentGroup = { 
+          userId: isFromCurrentUser ? user?.id : message.user_id, 
+          messages: [message] 
+        };
       } else {
         currentGroup.messages.push(message);
       }
@@ -55,7 +61,7 @@ export default function RoomDetail() {
     }
 
     setMessageGroups(groups);
-  }, [messages]);
+  }, [messages, user?.id]);
 
   const scrollToBottom = useThrottle(() => {
     if (scrollAreaRef.current) {
