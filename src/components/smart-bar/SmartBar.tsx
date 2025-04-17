@@ -2,6 +2,8 @@
 import { SmartBarForm } from "./components/SmartBarForm";
 import { SmartBarFooter } from "./SmartBarFooter";
 import { useSmartBar } from "./context/SmartBarContext";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { RoomMessage } from "@/hooks/useRoomMessages";
 
 interface SmartBarProps {
   onSendMessage: (message: string, files?: File[]) => Promise<void>;
