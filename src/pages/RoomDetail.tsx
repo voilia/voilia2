@@ -18,6 +18,7 @@ import { FileDropZone } from "@/components/smart-bar/file-upload/FileDropZone";
 import { toast } from "sonner";
 import { useThrottle } from "@/components/smart-bar/buttons/mode-selector/hooks/useThrottle";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useMobileScroll } from "@/hooks/useMobileScroll";
 
 export default function RoomDetail() {
   const { id } = useParams<{ id: string }>();
@@ -28,6 +29,8 @@ export default function RoomDetail() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [messageGroups, setMessageGroups] = useState<{ userId: string | null; messages: RoomMessage[] }[]>([]);
   const isMobile = useIsMobile();
+  
+  useMobileScroll();
   
   useEffect(() => {
     if (!messages?.length) {
@@ -101,13 +104,13 @@ export default function RoomDetail() {
   return (
     <MainLayout>
       <SmartBarProvider>
-        <div className="flex flex-col h-[calc(100vh-56px)] md:h-screen relative">
-          <div className="bg-background/95 backdrop-blur-sm border-b border-border p-2 md:p-4 sticky top-0 z-10 flex items-center justify-between">
-            <div className="flex items-center gap-3">
+        <div className="flex flex-col h-full w-full overflow-hidden max-w-full">
+          <div className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-10 w-full px-3 py-2 md:p-4 flex items-center justify-between">
+            <div className="flex items-center gap-2 md:gap-3 min-w-0">
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="mr-1"
+                className="flex-shrink-0"
                 onClick={() => navigate(-1)}
                 aria-label="Go back"
               >
@@ -115,12 +118,12 @@ export default function RoomDetail() {
               </Button>
               
               {isRoomLoading ? (
-                <Skeleton className="h-6 w-48" />
+                <Skeleton className="h-6 w-36 md:w-48" />
               ) : (
                 <>
-                  <h1 className="text-lg font-semibold">{room?.name}</h1>
+                  <h1 className="text-base md:text-lg font-semibold truncate">{room?.name}</h1>
                   {room?.projects && (
-                    <Link to={`/projects/${room.project_id}`}>
+                    <Link to={`/projects/${room.project_id}`} className="flex-shrink-0">
                       <Badge variant="outline" className="text-xs hover:bg-background/80 cursor-pointer" style={{ 
                         backgroundColor: room.projects.color + "20", 
                         borderColor: room.projects.color 
@@ -132,15 +135,15 @@ export default function RoomDetail() {
                 </>
               )}
             </div>
-            <Button size="icon" variant="ghost">
+            <Button size="icon" variant="ghost" className="flex-shrink-0">
               <Settings className="h-4 w-4" />
             </Button>
           </div>
 
           <FileDropZone>
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 overflow-hidden relative">
               <ScrollArea className="h-full" ref={scrollAreaRef}>
-                <ContentContainer className={`py-4 ${isMobile ? 'pb-[120px]' : 'pb-[160px]'}`}>
+                <ContentContainer className={`py-4 ${isMobile ? 'pb-[128px]' : 'pb-[160px]'}`}>
                   {isLoading ? (
                     <div className="space-y-4 p-4">
                       <Skeleton className="h-12 w-2/3" />

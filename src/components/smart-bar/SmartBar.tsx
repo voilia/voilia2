@@ -37,7 +37,6 @@ export function SmartBar({ onSendMessage, isDisabled = false, projectId = null }
   
   const { id: roomId } = useParams<{ id: string }>();
   const formRef = useRef<HTMLFormElement>(null);
-  const isExpanded = true;
   
   const isMobile = useIsMobile();
   const { theme } = useTheme();
@@ -51,7 +50,6 @@ export function SmartBar({ onSendMessage, isDisabled = false, projectId = null }
       setIsSubmitting(true);
       
       // First, handle the standard message sending to update the local UI
-      // This provides immediate feedback to the user
       const files = uploadedFiles.map(item => item.file);
       await onSendMessage(message, files);
       
@@ -120,7 +118,11 @@ export function SmartBar({ onSendMessage, isDisabled = false, projectId = null }
   return (
     <>
       <div 
-        className={`fixed z-20 w-full ${isMobile ? 'px-2' : 'px-4'}`}
+        className={cn(
+          "fixed z-20 w-full",
+          isMobile ? 'px-2 pb-2' : 'px-4',
+          "transition-all duration-150"
+        )}
         style={{
           left: isMobile ? 0 : 'var(--sidebar-width, 0px)',
           right: 0,
@@ -133,11 +135,11 @@ export function SmartBar({ onSendMessage, isDisabled = false, projectId = null }
           ref={formRef}
           onSubmit={handleSubmit} 
           className={cn(
-            "relative rounded-2xl overflow-hidden",
+            "relative rounded-xl md:rounded-2xl overflow-hidden",
             "border transition-colors duration-200",
             isDark ? "border-white/10 bg-black/30" : "border-foreground/10 bg-foreground/5",
             "backdrop-blur-lg shadow-sm",
-            "min-h-24"
+            "min-h-[90px] md:min-h-24"
           )}
         >
           <ColoredModeIndicator mode={mode} />
@@ -155,7 +157,7 @@ export function SmartBar({ onSendMessage, isDisabled = false, projectId = null }
           <div className="flex items-center justify-between px-3 py-2">
             <SmartBarActions />
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
               <SmartBarVoiceButton />
               <AnimatedSubmitButton 
                 disabled={!canSubmit}
@@ -165,17 +167,17 @@ export function SmartBar({ onSendMessage, isDisabled = false, projectId = null }
           </div>
         </form>
         
-        {/* File Upload Popover */}
+        {/* File Upload Popover with mobile optimizations */}
         <FileUploadPopover />
         
-        {/* Voice Recording Popover */}
+        {/* Voice Recording Popover with mobile optimizations */}
         <VoiceRecordingPopover />
       </div>
       
       <SmartBarFooter 
         enterSends={enterSends}
         onToggleEnterSends={() => setEnterSends(!enterSends)}
-        className={isMobile ? "bottom-16" : "bottom-0"}
+        className={isMobile ? "bottom-[86px]" : "bottom-0"}
       />
     </>
   );
