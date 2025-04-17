@@ -67,21 +67,47 @@ export function useCreateRoom(initialProjectId?: string) {
       
       setIsLoading(true);
       
-      const { data, error } = await supabase.rpc('create_room_with_agents', {
-        _project_id: selectedProjectId,
-        _name: name.trim(),
-        _description: description.trim() || null,
-        _color: projectColors[color],
-        _agent_ids: selectedAgentIds
-      });
+      // Instead of using the RPC function that relies on project_room_members,
+      // we'll insert directly into the rooms table
+      const { data: roomData, error: roomError } = await supabase
+        .from('rooms')
+        .insert({
+          project_id: selectedProjectId,
+          name: name.trim(),
+          description: description.trim() || null,
+          color: projectColors[color]
+        })
+        .select('id')
+        .single();
       
-      if (error) throw error;
+      if (roomError) throw roomError;
+      
+      if (!roomData) {
+        throw new Error("Failed to create room");
+      }
+      
+      // Now add the selected agents to the room_agents table if any were selected
+      if (selectedAgentIds.length > 0) {
+        const agentInserts = selectedAgentIds.map(agentId => ({
+          room_id: roomData.id,
+          agent_id: agentId,
+          is_visible: true,
+          execution_order: 0
+        }));
+        
+        const { error: agentsError } = await supabase
+          .from('room_agents')
+          .insert(agentInserts);
+        
+        if (agentsError) {
+          console.error("Error adding agents to room:", agentsError);
+          // Continue anyway since the room was created
+        }
+      }
       
       toast.success("Room created successfully!");
       
-      if (data) {
-        navigate(`/rooms/${data}`);
-      }
+      navigate(`/rooms/${roomData.id}`);
       
       return true;
     } catch (error) {
