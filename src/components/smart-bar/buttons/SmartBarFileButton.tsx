@@ -7,13 +7,15 @@ import { toast } from "sonner";
 
 interface SmartBarFileButtonProps {
   className?: string;
+  disabled?: boolean; // Add disabled prop to interface
 }
 
-export function SmartBarFileButton({ className }: SmartBarFileButtonProps) {
+export function SmartBarFileButton({ className, disabled }: SmartBarFileButtonProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { addFiles } = useSmartBar();
   
   const handleClick = () => {
+    if (disabled) return; // Respect disabled state
     fileInputRef.current?.click();
   };
   
@@ -42,6 +44,7 @@ export function SmartBarFileButton({ className }: SmartBarFileButtonProps) {
         tooltip="Upload File" 
         className={className}
         onClick={handleClick}
+        disabled={disabled} // Pass disabled state
       />
       <input 
         type="file"
@@ -50,6 +53,7 @@ export function SmartBarFileButton({ className }: SmartBarFileButtonProps) {
         multiple
         onChange={handleFileChange}
         accept="image/*,video/*,audio/*,application/pdf,text/plain,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        disabled={disabled} // Also disable the input
       />
     </>
   );

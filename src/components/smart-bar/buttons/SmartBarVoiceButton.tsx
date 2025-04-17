@@ -8,14 +8,15 @@ import { toast } from "sonner";
 
 interface SmartBarVoiceButtonProps {
   className?: string;
+  disabled?: boolean; // Add disabled prop to interface
 }
 
-export function SmartBarVoiceButton({ className }: SmartBarVoiceButtonProps) {
+export function SmartBarVoiceButton({ className, disabled }: SmartBarVoiceButtonProps) {
   const { isRecording } = useSmartBar();
   const { startRecording } = useVoiceRecording();
   
   const handleClick = async () => {
-    if (isRecording) return; // Prevent multiple clicks
+    if (isRecording || disabled) return; // Check disabled state
     
     try {
       // Check if browser supports getUserMedia
@@ -51,7 +52,7 @@ export function SmartBarVoiceButton({ className }: SmartBarVoiceButtonProps) {
         className
       )}
       onClick={handleClick}
-      disabled={isRecording}
+      disabled={isRecording || disabled} // Pass disabled state
     />
   );
 }
