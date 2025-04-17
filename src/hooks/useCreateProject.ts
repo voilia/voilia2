@@ -21,53 +21,21 @@ export function useCreateProject(onSuccess?: () => void) {
   });
 
   const onSubmit = async (values: CreateProjectFormValues) => {
-    if (isSubmitting) return; // Prevent multiple submissions
+    if (isSubmitting) return;
     
     setIsSubmitting(true);
     try {
-      // Get the current user
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        throw new Error("User not authenticated");
-      }
-
       // Convert color key to hex value
       const colorValue = projectColors[values.color as ProjectColor] || values.color;
 
-      // Create the project
-      const { data: project, error: projectError } = await supabase
-        .from("projects")
-        .insert({
-          name: values.name,
-          description: values.description || null,
-          color: colorValue,
-          owner_id: user.id
-        })
-        .select()
-        .single();
-
-      if (projectError) {
-        console.error("Project creation error:", projectError);
-        throw projectError;
-      }
-
-      // Using upsert with onConflict to handle duplicate memberships
-      const { error: memberError } = await supabase
-        .from("project_members")
-        .upsert({
-          project_id: project.id,
-          user_id: user.id,
-          role: "owner"
-        }, {
-          onConflict: 'project_id,user_id',
-          ignoreDuplicates: false // Update if exists
-        });
-
-      if (memberError && memberError.code !== 'PGRST116') { // Ignore "no rows returned" error
-        console.error("Project member creation error:", memberError);
-        // Log the error but continue with success flow
-      }
+      // Create project using the new RPC function
+      const { data: projectId, error } = await supabase.rpc('create_project_with_owner', {
+        _name: values.name,
+        _description: values.description || null,
+        _color: colorValue
+      });
+      
+      if (error) throw error;
 
       toast.success("Project created successfully!");
       
