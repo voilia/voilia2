@@ -91,7 +91,7 @@ const AgentDetail = () => {
           <Separator className="my-6" />
           
           {/* Main content section */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             {/* Capabilities section */}
             <AgentCapabilities agent={agent} />
             

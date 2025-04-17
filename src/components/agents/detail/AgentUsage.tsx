@@ -4,12 +4,15 @@ import { Agent } from "@/components/agents/types";
 import { Check, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AgentUsageProps {
   agent: Agent;
 }
 
 export function AgentUsage({ agent }: AgentUsageProps) {
+  const isMobile = useIsMobile();
+  
   return (
     <Card>
       <CardHeader>
@@ -69,7 +72,7 @@ export function AgentUsage({ agent }: AgentUsageProps) {
           </Tabs>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Button size="lg" className="w-full">
             Activate Agent
           </Button>
