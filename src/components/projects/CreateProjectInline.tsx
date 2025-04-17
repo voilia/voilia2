@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { ColorSwatch } from "@/components/projects/ColorSwatch";
 import { ProjectColor } from "@/components/projects/types";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "sonner";
+import { toast } from "sonner";
 import { Loader } from "@/components/ui/loader";
 import { ArrowLeft } from "lucide-react";
 
@@ -16,7 +15,6 @@ interface CreateProjectInlineProps {
 }
 
 export function CreateProjectInline({ onProjectCreated, onCancel }: CreateProjectInlineProps) {
-  const toast = useToast();
   const [projectName, setProjectName] = useState("");
   const [selectedColor, setSelectedColor] = useState<ProjectColor>("indigo");
   const [isLoading, setIsLoading] = useState(false);

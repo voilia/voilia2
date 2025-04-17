@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -22,7 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { useToast } from "sonner";
+import { toast } from "sonner";
 import { Loader } from "@/components/ui/loader";
 import { supabase } from "@/integrations/supabase/client";
 import { useAgents } from "@/hooks/useAgents";
@@ -47,7 +46,6 @@ export function CreateRoomModal({
   initialProjectId 
 }: CreateRoomModalProps) {
   const navigate = useNavigate();
-  const toast = useToast();
   
   // Form state
   const [name, setName] = useState("");
