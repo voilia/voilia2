@@ -47,8 +47,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Optional: You can also use this to enforce session duration client-side
     const checkSessionExpiration = () => {
       if (session) {
-        const sessionAge = (Date.now() - new Date(session.created_at).getTime()) / 1000;
-        if (sessionAge > SESSION_DURATION_HOURS) {
+        // Check if session is expired
+        const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+        const expiryTime = session.expires_at || 0; // expires_at is in seconds
+        
+        // Force sign out if session is older than 8 hours
+        // This is a fallback in case the server-side expiry doesn't work
+        if (currentTime > expiryTime || (expiryTime - currentTime) > SESSION_DURATION_HOURS) {
           supabase.auth.signOut();
         }
       }
