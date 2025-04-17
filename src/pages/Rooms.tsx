@@ -23,7 +23,7 @@ export default function Rooms() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   
   // Fetch the user's projects to select one when creating a room
-  const { data: projects, isLoading: isLoadingProjects } = useProjects();
+  const { projects, isLoading: isLoadingProjects } = useProjects();
   
   // Fetch all the user's rooms across projects
   const { data: allRooms, isLoading, refetch } = useRooms(selectedProjectId || "all");

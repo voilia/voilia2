@@ -19,9 +19,15 @@ export function ProjectRoomsTab({ projectId }: ProjectRoomsTabProps) {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newRoomName, setNewRoomName] = useState("");
   const [newRoomDescription, setNewRoomDescription] = useState("");
+  const [selectedProjectId, setSelectedProjectId] = useState(projectId);
   const navigate = useNavigate();
 
   const { data: rooms, isLoading, error, refetch } = useRooms(projectId);
+
+  // When the projectId prop changes, update the selectedProjectId state
+  useEffect(() => {
+    setSelectedProjectId(projectId);
+  }, [projectId]);
 
   // Add error handling for room loading
   useEffect(() => {
@@ -45,7 +51,7 @@ export function ProjectRoomsTab({ projectId }: ProjectRoomsTabProps) {
         .insert({
           name: newRoomName,
           description: newRoomDescription || null,
-          project_id: projectId,
+          project_id: selectedProjectId,
           created_by: user.user?.id,
         })
         .select('id')
@@ -84,6 +90,9 @@ export function ProjectRoomsTab({ projectId }: ProjectRoomsTabProps) {
           roomDescription={newRoomDescription}
           setRoomDescription={setNewRoomDescription}
           onCreateRoom={handleCreateRoom}
+          selectedProjectId={selectedProjectId}
+          setSelectedProjectId={setSelectedProjectId}
+          projects={[]}
         />
       </>
     );
@@ -121,6 +130,9 @@ export function ProjectRoomsTab({ projectId }: ProjectRoomsTabProps) {
         roomDescription={newRoomDescription}
         setRoomDescription={setNewRoomDescription}
         onCreateRoom={handleCreateRoom}
+        selectedProjectId={selectedProjectId}
+        setSelectedProjectId={setSelectedProjectId}
+        projects={[]}
       />
     </div>
   );
