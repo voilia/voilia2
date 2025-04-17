@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 
 import { useProjectSidebar } from "@/hooks/useProjectSidebar";
+import { NavActionButton } from "@/app/navigation/components/buttons/NavActionButton";
 
 export const useSidebarNavItems = () => {
   const { projects, isLoading } = useProjectSidebar();
@@ -29,9 +30,16 @@ export const useSidebarNavItems = () => {
     {
       title: "Rooms",
       icon: MessageSquare,
+      actionButton: (isMobile: boolean, projectId?: string) => (
+        <NavActionButton 
+          type="room" 
+          isMobile={isMobile} 
+          tooltipText="Create New Room"
+          projectId={projectId}
+        />
+      ),
       children: [
         { title: "All Rooms", path: "/rooms" },
-        { title: "Room 1", path: "/rooms/1" },
       ],
     },
     {

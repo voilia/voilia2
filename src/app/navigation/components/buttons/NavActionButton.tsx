@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -10,21 +10,25 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { CreateProjectDialog } from "@/components/projects/CreateProjectDialog";
+import { CreateRoomModal } from "@/components/rooms/CreateRoomModal";
 import { toast } from "sonner";
 
 interface NavActionButtonProps {
   type: "project" | "room" | "generic";
   isMobile: boolean;
   tooltipText?: string;
+  projectId?: string;
 }
 
-export function NavActionButton({ type, isMobile, tooltipText }: NavActionButtonProps) {
+export function NavActionButton({ type, isMobile, tooltipText, projectId }: NavActionButtonProps) {
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  
   const buttonContainerStyles = cn(
     isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100",
     "absolute right-2 top-1/2 -translate-y-1/2 transition-opacity duration-200"
   );
 
-  // Handle project button separately
+  // Handle project button
   if (type === "project") {
     return (
       <div className={buttonContainerStyles}>
@@ -33,6 +37,29 @@ export function NavActionButton({ type, isMobile, tooltipText }: NavActionButton
     );
   }
 
+  // Handle room button
+  if (type === "room") {
+    return (
+      <div className={buttonContainerStyles}>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={() => setIsCreateModalOpen(true)}
+        >
+          <Plus className="h-4 w-4" />
+          <span className="sr-only">Create Room</span>
+        </Button>
+        <CreateRoomModal
+          isOpen={isCreateModalOpen}
+          onOpenChange={setIsCreateModalOpen}
+          initialProjectId={projectId}
+        />
+      </div>
+    );
+  }
+
+  // For generic or unimplemented types
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (tooltipText) {
@@ -42,35 +69,36 @@ export function NavActionButton({ type, isMobile, tooltipText }: NavActionButton
     }
   };
 
-  // Define button element that will be used in both mobile and desktop
-  const buttonElement = (
-    <Button
-      variant="ghost"
-      size="icon"
-      className="h-7 w-7"
-      onClick={handleClick}
-    >
-      <Plus className="h-4 w-4" />
-      <span className="sr-only">{tooltipText || "Action"}</span>
-    </Button>
-  );
-
-  // For mobile, return a button without tooltip
+  // For mobile or when no tooltip is needed
   if (isMobile) {
     return (
       <div className={buttonContainerStyles}>
-        {buttonElement}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={handleClick}
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
       </div>
     );
   }
 
-  // For desktop, use TooltipProvider
+  // Desktop with tooltip
   return (
     <div className={buttonContainerStyles}>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
-            {buttonElement}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
+              onClick={handleClick}
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
           </TooltipTrigger>
           <TooltipContent 
             side="right"

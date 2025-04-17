@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { ProjectColor, projectColors } from "@/components/projects/types";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,7 +9,7 @@ export function useCreateRoom(initialProjectId?: string) {
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [color, setColor] = useState<ProjectColor>("indigo");
+  const [color, setColor] = useState<ProjectColor>("violet");
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(initialProjectId || null);
   const [selectedAgentIds, setSelectedAgentIds] = useState<string[]>([]);
   const [isCreatingProject, setIsCreatingProject] = useState(false);
@@ -18,10 +17,16 @@ export function useCreateRoom(initialProjectId?: string) {
   const [showAllAgents, setShowAllAgents] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    if (initialProjectId) {
+      setSelectedProjectId(initialProjectId);
+    }
+  }, [initialProjectId]);
+
   const resetForm = () => {
     setName("");
     setDescription("");
-    setColor("indigo");
+    setColor("violet");
     setSelectedAgentIds([]);
     setCurrentStep(1);
     setSearchQuery("");
