@@ -47,22 +47,30 @@ export function CreateProjectInline({ onProjectCreated, onCancel }: CreateProjec
       });
 
       if (error) {
-        // Check for the specific duplicate key error
-        if (error.code === '23505') {
-          console.warn("Potential duplicate project. This may be a temporary error, continuing...");
+        // Handle the specific conflict errors for duplicate projects
+        if (error.code === '23505' || error.code === '409') {
+          console.log("Duplicate project detected, attempting to find existing project");
           
-          // Fetch the user's projects to find the one that may have been created
-          const { data: projects } = await supabase
+          // Try to find the existing project with this name
+          const { data: existingProjects, error: findError } = await supabase
             .from("projects")
             .select("id")
             .eq("name", projectName.trim())
             .eq("owner_id", user.id)
+            .eq("is_deleted", false)
             .limit(1);
-            
-          if (projects && projects.length > 0) {
-            toast.success("Project processed successfully");
-            onProjectCreated(projects[0].id);
+          
+          if (findError) {
+            throw findError;
+          }
+          
+          if (existingProjects && existingProjects.length > 0) {
+            toast.success("Project already exists");
+            onProjectCreated(existingProjects[0].id);
             return;
+          } else {
+            // If we can't find the existing project despite getting a duplicate error
+            throw new Error("Project with this name already exists but couldn't be retrieved");
           }
         }
         
@@ -73,12 +81,12 @@ export function CreateProjectInline({ onProjectCreated, onCancel }: CreateProjec
         throw new Error("Failed to create project: No project ID returned");
       }
 
-      toast.success("Project created successfully!");
+      toast.success("Project created successfully");
       
       onProjectCreated(data as string);
     } catch (error) {
       console.error("Error creating project:", error);
-      toast.error("Failed to create project");
+      toast.error("Failed to create project: " + (error.message || "Please try again"));
     } finally {
       setIsLoading(false);
     }
