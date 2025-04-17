@@ -16,66 +16,59 @@ export function AgentUsage({ agent }: AgentUsageProps) {
         <CardTitle>Using {agent.name}</CardTitle>
         <CardDescription>How to integrate this agent in your workflows</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col space-y-3">
-        <div className="flex-grow">
-          <Tabs defaultValue="rooms">
-            <TabsList className="mb-3">
+      <CardContent>
+        <div className="flex flex-col space-y-4">
+          {/* Tabs content with reduced height */}
+          <Tabs defaultValue="rooms" className="w-full">
+            <TabsList className="mb-2">
               <TabsTrigger value="rooms">In Rooms</TabsTrigger>
               <TabsTrigger value="standalone">Standalone</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="rooms" className="space-y-3 min-h-[100px]">
+            <TabsContent value="rooms" className="space-y-2 min-h-[80px]">
               <div className="flex items-start gap-2">
                 <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                 <p>
                   Add {agent.name} to any room by selecting it from the agent selector 
-                  in the smart bar. Once added, it will be available in that room's conversation.
+                  in the smart bar.
                 </p>
               </div>
               
               <div className="flex items-start gap-2">
                 <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                 <p>
-                  Mention @{agent.name.toLowerCase().replace(/\s+/g, '_')} in your prompt to 
-                  specifically target this agent in a multi-agent room.
-                </p>
-              </div>
-              
-              <div className="flex items-start gap-2">
-                <Info className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
-                <p className="text-sm text-muted-foreground">
-                  This agent works best in combination with research agents for fact-checking
-                  and data analysis tools for visualization.
+                  Mention @{agent.name.toLowerCase().replace(/\s+/g, '_')} to 
+                  target this agent in a multi-agent room.
                 </p>
               </div>
             </TabsContent>
             
-            <TabsContent value="standalone" className="space-y-3 min-h-[100px]">
+            <TabsContent value="standalone" className="space-y-2 min-h-[80px]">
               <div className="flex items-start gap-2">
                 <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                 <p>
-                  Create a dedicated room with only {agent.name} for focused work sessions.
+                  Create a dedicated room with only {agent.name} for focused work.
                 </p>
               </div>
               
               <div className="flex items-start gap-2">
                 <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                 <p>
-                  Use the standalone mode from your dashboard to quickly access {agent.name} 
-                  without creating a new room.
+                  Use standalone mode from your dashboard to quickly access {agent.name}.
                 </p>
               </div>
             </TabsContent>
           </Tabs>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-          <Button size="lg" className="w-full">
-            Activate Agent
-          </Button>
-          <Button variant="outline" size="lg" className="w-full">
-            Create Room with {agent.name}
-          </Button>
+          
+          {/* Action buttons with minimal vertical spacing */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
+            <Button size="lg" className="w-full">
+              Activate Agent
+            </Button>
+            <Button variant="outline" size="lg" className="w-full">
+              Create Room with {agent.name}
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

@@ -88,12 +88,12 @@ const AgentDetail = () => {
           
           <Separator className="my-5" />
           
-          {/* Main content section - optimized layout with reduced spacing */}
-          <div className="space-y-4">
-            {/* Capabilities section with example prompts on the right */}
+          {/* Main content section with better spacing */}
+          <div className="space-y-5">
+            {/* Capabilities section first */}
             <AgentCapabilities agent={agent} />
             
-            {/* Usage section - below capabilities with reduced spacing */}
+            {/* Usage section directly below with minimal spacing */}
             <AgentUsage agent={agent} />
             
             {/* Agent pairings section */}
