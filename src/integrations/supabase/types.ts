@@ -1184,6 +1184,7 @@ export type Database = {
       }
       rooms: {
         Row: {
+          color: string | null
           created_at: string | null
           created_by: string | null
           description: string | null
@@ -1194,6 +1195,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          color?: string | null
           created_at?: string | null
           created_by?: string | null
           description?: string | null
@@ -1204,6 +1206,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          color?: string | null
           created_at?: string | null
           created_by?: string | null
           description?: string | null
@@ -1436,6 +1439,21 @@ export type Database = {
       check_token_quota: {
         Args: { p_project_id: string; p_tokens_needed: number }
         Returns: boolean
+      }
+      create_room_with_agents: {
+        Args: {
+          _project_id: string
+          _name: string
+          _agent_ids: string[]
+          _description?: string
+          _color?: string
+        }
+        Returns: {
+          room_id: string
+          name: string
+          project_id: string
+          color: string
+        }[]
       }
       get_personalized_agents: {
         Args: { p_user_id: string; p_room_id: string }
