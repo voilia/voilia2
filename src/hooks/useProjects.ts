@@ -9,6 +9,7 @@ export function useProjects() {
   const [projects, setProjects] = useState<Project[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const location = useLocation();
 
   const fetchProjects = async () => {
@@ -61,7 +62,7 @@ export function useProjects() {
         return dateB - dateA; // Descending order (newest first)
       });
       
-      console.log(`Fetched ${projectsData.length || 0} projects`);
+      console.log(`Fetched ${projectsData.length} projects`);
       
       setProjects(projectsData);
     } catch (err) {
@@ -75,11 +76,22 @@ export function useProjects() {
 
   useEffect(() => {
     fetchProjects();
-  }, [location.key]); // Refetch when location changes
+  }, [refreshTrigger]); // Only depend on refreshTrigger, not location.key
+
+  // Separate effect to handle location.state refresh
+  useEffect(() => {
+    if (location.state?.refresh) {
+      console.log("Refresh triggered from navigation state");
+      // Clear the state to prevent infinite refresh
+      window.history.replaceState(null, "", location.pathname);
+      setRefreshTrigger(prev => prev + 1);
+    }
+  }, [location.state?.refresh, location.pathname]);
 
   // Add a manual refresh function that can be called
-  const refreshProjects = async () => {
-    await fetchProjects();
+  const refreshProjects = () => {
+    console.log("Manual refresh requested");
+    setRefreshTrigger(prev => prev + 1);
   };
 
   return { projects, isLoading, error, refreshProjects };

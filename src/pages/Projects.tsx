@@ -19,21 +19,13 @@ const Projects = () => {
   
   const { projects, isLoading, error, refreshProjects } = useProjects();
 
-  // Effect to handle forced refresh from navigation state
+  // Show empty state message only once, not repeatedly
   useEffect(() => {
-    if (location.state?.refresh) {
-      console.log("Forced refresh of projects triggered");
-      refreshProjects();
-      
-      // Clear the location state to prevent infinite refreshes
-      history.replaceState(null, "", location.pathname);
-    }
-  }, [location.state?.refresh, refreshProjects]);
-
-  useEffect(() => {
-    // If the projects are empty but not loading, show a warning
     if (!isLoading && projects?.length === 0 && !error) {
-      toast.info("Your projects list is empty. Create your first project!");
+      toast.info("Your projects list is empty. Create your first project!", {
+        id: "empty-projects", // Use an ID to prevent duplicate toasts
+        duration: 5000,       // Show for 5 seconds only
+      });
     }
   }, [projects, isLoading, error]);
 
@@ -47,10 +39,8 @@ const Projects = () => {
   };
 
   const handleCreateProject = () => {
-    // Force refresh projects list after creation
-    setTimeout(() => {
-      refreshProjects();
-    }, 500);
+    // Refresh projects list after creation
+    refreshProjects();
   };
 
   return (

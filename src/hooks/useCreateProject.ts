@@ -59,7 +59,7 @@ export function useCreateProject(onSuccess?: () => void) {
         toast.info("A project with this name already exists");
         
         if (onSuccess) onSuccess();
-        navigate(`/projects/${existingProjects[0].id}`, { replace: true });
+        navigate(`/projects/${existingProjects[0].id}`);
         return;
       }
 
@@ -71,41 +71,6 @@ export function useCreateProject(onSuccess?: () => void) {
       });
       
       if (error) {
-        // If it's a unique constraint violation or other conflict error
-        if (error.code === '23505' || error.code === '409') {
-          // Wait a moment to allow for database consistency
-          await new Promise(resolve => setTimeout(resolve, 500));
-          
-          // Try to find the project that may have been created
-          const { data: latestProject, error: findError } = await supabase
-            .from("projects")
-            .select("id")
-            .eq("name", values.name)
-            .eq("owner_id", user.id)
-            .eq("is_deleted", false)
-            .order("created_at", { ascending: false })
-            .limit(1);
-            
-          if (findError) {
-            console.error("Error finding latest project:", findError);
-            throw findError;
-          }
-          
-          if (latestProject && latestProject.length > 0) {
-            console.log("Found project after conflict:", latestProject[0].id);
-            toast.success("Navigating to your project");
-            
-            if (onSuccess) onSuccess();
-            navigate(`/projects/${latestProject[0].id}`, { replace: true });
-            return;
-          }
-          
-          toast.error("Could not create project: Name may be already in use");
-          if (onSuccess) onSuccess();
-          navigate("/projects", { replace: true, state: { refresh: Date.now() } });
-          return;
-        }
-        
         console.error("Project creation error:", error);
         throw error;
       }
@@ -122,9 +87,9 @@ export function useCreateProject(onSuccess?: () => void) {
         onSuccess();
       }
       
-      // Navigate to the new project
-      navigate(`/projects/${projectId}`, { replace: true });
-    } catch (error) {
+      // Navigate to the new project (without replace:true to allow going back)
+      navigate(`/projects/${projectId}`);
+    } catch (error: any) {
       console.error("Error creating project:", error);
       toast.error(`Failed to create project: ${error.message || "Please try again"}`);
     } finally {

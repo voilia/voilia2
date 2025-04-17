@@ -70,36 +70,6 @@ export function CreateProjectInline({ onProjectCreated, onCancel }: CreateProjec
       });
 
       if (error) {
-        // If it's a unique constraint violation or other conflict error
-        if (error.code === '23505' || error.code === '409') {
-          // Wait a moment to allow for database consistency
-          await new Promise(resolve => setTimeout(resolve, 500));
-          
-          // Try to find the project that may have been created
-          const { data: latestProject, error: findError } = await supabase
-            .from("projects")
-            .select("id")
-            .eq("name", projectName.trim())
-            .eq("owner_id", user.id)
-            .eq("is_deleted", false)
-            .order("created_at", { ascending: false })
-            .limit(1);
-            
-          if (findError) {
-            console.error("Error finding latest project:", findError);
-            throw findError;
-          }
-          
-          if (latestProject && latestProject.length > 0) {
-            console.log("Found project after conflict:", latestProject[0].id);
-            toast.success("Project created");
-            onProjectCreated(latestProject[0].id);
-            return;
-          }
-          
-          throw new Error("Could not create project: Name may be already in use");
-        }
-        
         console.error("Project creation error:", error);
         throw error;
       }
@@ -112,7 +82,7 @@ export function CreateProjectInline({ onProjectCreated, onCancel }: CreateProjec
       toast.success("Project created successfully");
       
       onProjectCreated(data as string);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating project:", error);
       toast.error(`Failed to create project: ${error.message || "Please try again"}`);
     } finally {
