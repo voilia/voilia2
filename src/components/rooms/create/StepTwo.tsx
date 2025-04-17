@@ -31,11 +31,14 @@ export function StepTwo({
   publicAgents
 }: StepTwoProps) {
   return (
-    <div className="space-y-5 py-4">
+    <div className="space-y-6 py-2">
       <ComingSoonMembers />
       
-      <div className="space-y-4">
-        <Label>Select Agents (optional)</Label>
+      <div className="space-y-3">
+        <Label className="text-base font-medium">Select Agents (optional)</Label>
+        <p className="text-sm text-muted-foreground -mt-1 mb-3">
+          Choose the AI agents that will collaborate in this room
+        </p>
         <AgentSelector
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}

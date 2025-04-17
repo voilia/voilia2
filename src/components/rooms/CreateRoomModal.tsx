@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { projectColors, ProjectColor, Project } from "@/components/projects/types";
@@ -206,7 +207,7 @@ export function CreateRoomModal({
       // Get the hex color value
       const colorHex = projectColors[color];
       
-      // Call the RPC function
+      // Use the second overloaded function that has parameters in the correct order
       const { data, error } = await supabase.rpc('create_room_with_agents', {
         _project_id: selectedProjectId,
         _name: name.trim(),
@@ -221,8 +222,8 @@ export function CreateRoomModal({
       onOpenChange(false);
       
       // Navigate to the new room
-      if (data && data[0] && data[0].room_id) {
-        navigate(`/rooms/${data[0].room_id}`);
+      if (data) {
+        navigate(`/rooms/${data}`);
       }
       
     } catch (error) {
@@ -255,17 +256,17 @@ export function CreateRoomModal({
   
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-hidden flex flex-col">
-        <DialogHeader>
-          <DialogTitle>Create New Room</DialogTitle>
-          <DialogDescription>
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-hidden flex flex-col p-6 rounded-xl">
+        <DialogHeader className="pb-4 border-b mb-4">
+          <DialogTitle className="text-2xl font-bold">Create New Room</DialogTitle>
+          <DialogDescription className="text-base mt-1">
             Create a collaborative space with AI agents
           </DialogDescription>
           {renderStepIndicator()}
         </DialogHeader>
         
         <div className="flex-1 overflow-hidden">
-          <ScrollArea className="pr-4 h-[calc(80vh-180px)]">
+          <ScrollArea className="pr-4 h-[calc(60vh-140px)]">
             {currentStep === 1 ? (
               <StepOne
                 name={name}
@@ -299,24 +300,24 @@ export function CreateRoomModal({
           </ScrollArea>
         </div>
         
-        <DialogFooter className="flex flex-row justify-between sm:justify-between gap-2">
+        <DialogFooter className="flex flex-row justify-between sm:justify-between gap-2 pt-4 border-t mt-4">
           {currentStep === 1 ? (
             <>
-              <Button variant="outline" onClick={() => onOpenChange(false)}>
+              <Button variant="outline" onClick={() => onOpenChange(false)} className="px-6">
                 Cancel
               </Button>
-              <Button onClick={() => setCurrentStep(2)}>
+              <Button onClick={() => setCurrentStep(2)} className="px-6">
                 Next
                 <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
             </>
           ) : (
             <>
-              <Button variant="outline" onClick={() => setCurrentStep(1)}>
+              <Button variant="outline" onClick={() => setCurrentStep(1)} className="px-6">
                 <ChevronLeft className="mr-2 h-4 w-4" />
                 Back
               </Button>
-              <Button onClick={handleSubmit} disabled={isLoading}>
+              <Button onClick={handleSubmit} disabled={isLoading} className="px-6">
                 {isLoading ? <Loader size="sm" className="mr-2" /> : null}
                 Create Room
               </Button>

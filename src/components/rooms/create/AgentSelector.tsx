@@ -36,8 +36,9 @@ export function AgentSelector({
 }: AgentSelectorProps) {
   if (isLoadingAgents) {
     return (
-      <div className="flex items-center justify-center p-6">
-        <Loader />
+      <div className="flex items-center justify-center p-10">
+        <Loader className="mr-2" />
+        <span className="text-muted-foreground">Loading agents...</span>
       </div>
     );
   }
@@ -67,7 +68,7 @@ export function AgentSelector({
         <Button
           variant="outline"
           size="sm"
-          className="w-full mt-2"
+          className="w-full mt-4"
           onClick={() => setShowAllAgents(true)}
         >
           Show All Agents ({filteredAgents.length})
