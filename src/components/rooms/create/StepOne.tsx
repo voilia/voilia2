@@ -1,4 +1,3 @@
-
 import { Project, ProjectColor } from "@/components/projects/types";
 import { ProjectSelector } from "./room-info/ProjectSelector";
 import { RoomBasicInfo } from "./room-info/RoomBasicInfo";

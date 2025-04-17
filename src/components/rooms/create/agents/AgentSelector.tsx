@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Agent } from "@/components/agents/types";
@@ -36,8 +35,9 @@ export function AgentSelector({
 }: AgentSelectorProps) {
   if (isLoadingAgents) {
     return (
-      <div className="flex items-center justify-center p-6">
-        <Loader />
+      <div className="flex items-center justify-center p-10">
+        <Loader className="mr-2" />
+        <span className="text-muted-foreground">Loading agents...</span>
       </div>
     );
   }
@@ -47,6 +47,9 @@ export function AgentSelector({
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
+          id="agent-search"
+          name="agent-search"
+          aria-label="Search agents"
           placeholder="Search agents..."
           className="pl-10"
           value={searchQuery}

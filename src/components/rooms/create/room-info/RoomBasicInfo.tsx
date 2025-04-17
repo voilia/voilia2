@@ -30,6 +30,7 @@ export function RoomBasicInfo({
         </Label>
         <Input
           id="room-name"
+          name="room-name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Enter room name"
@@ -43,6 +44,7 @@ export function RoomBasicInfo({
         </Label>
         <Textarea
           id="room-description"
+          name="room-description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Describe the purpose of this room"
@@ -62,3 +64,4 @@ export function RoomBasicInfo({
     </div>
   );
 }
+
