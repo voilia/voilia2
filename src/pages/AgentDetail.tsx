@@ -29,17 +29,17 @@ const AgentDetail = () => {
               </Link>
             </Button>
           </div>
-          <div className="animate-pulse space-y-8">
-            <div className="flex items-start gap-4">
+          <div className="animate-pulse space-y-8 flex flex-col items-center">
+            <div className="flex flex-col items-center gap-4 text-center">
               <Skeleton className="w-16 h-16 rounded-full" />
-              <div className="space-y-3 flex-1">
-                <Skeleton className="h-8 w-1/3" />
-                <Skeleton className="h-4 w-1/2" />
-                <Skeleton className="h-4 w-full" />
+              <div className="space-y-3 w-full max-w-md">
+                <Skeleton className="h-8 w-1/3 mx-auto" />
+                <Skeleton className="h-4 w-1/2 mx-auto" />
+                <Skeleton className="h-4 w-full mx-auto" />
               </div>
             </div>
-            <Separator className="my-6" />
-            <div className="grid grid-cols-1 gap-6">
+            <Separator className="my-6 w-full" />
+            <div className="grid grid-cols-1 gap-6 w-full max-w-screen-lg">
               <Skeleton className="h-[300px] rounded-xl" />
               <Skeleton className="h-[200px] rounded-xl" />
               <Skeleton className="h-[150px] rounded-xl" />

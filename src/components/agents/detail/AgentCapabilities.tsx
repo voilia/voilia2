@@ -100,9 +100,9 @@ export function AgentCapabilities({ agent }: AgentCapabilitiesProps) {
   
   return (
     <Card>
-      <CardHeader className="pb-2">
-        <CardTitle>Capabilities</CardTitle>
-        <CardDescription>What this agent can do for you</CardDescription>
+      <CardHeader className="pb-2 text-center">
+        <CardTitle className="text-center">Capabilities</CardTitle>
+        <CardDescription className="text-center">What this agent can do for you</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Capabilities section */}
@@ -135,10 +135,10 @@ export function AgentCapabilities({ agent }: AgentCapabilitiesProps) {
           onOpenChange={setIsPromptsOpen}
           className="w-full"
         >
-          <div className="flex items-center justify-between cursor-pointer py-2">
-            <h3 className="text-lg font-medium">Example prompts</h3>
+          <div className="flex flex-col items-center justify-center cursor-pointer py-2">
+            <h3 className="text-lg font-medium text-center">Example prompts</h3>
             <CollapsibleTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 ml-2">
                 {isPromptsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
               </Button>
             </CollapsibleTrigger>
