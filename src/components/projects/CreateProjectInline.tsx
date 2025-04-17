@@ -46,7 +46,28 @@ export function CreateProjectInline({ onProjectCreated, onCancel }: CreateProjec
         _color: colorValue
       });
 
-      if (error) throw error;
+      if (error) {
+        // Check for the specific duplicate key error
+        if (error.code === '23505') {
+          console.warn("Potential duplicate project. This may be a temporary error, continuing...");
+          
+          // Fetch the user's projects to find the one that may have been created
+          const { data: projects } = await supabase
+            .from("projects")
+            .select("id")
+            .eq("name", projectName.trim())
+            .eq("owner_id", user.id)
+            .limit(1);
+            
+          if (projects && projects.length > 0) {
+            toast.success("Project processed successfully");
+            onProjectCreated(projects[0].id);
+            return;
+          }
+        }
+        
+        throw error;
+      }
       
       if (!data) {
         throw new Error("Failed to create project: No project ID returned");

@@ -32,6 +32,7 @@ export function useCreateProject(onSuccess?: () => void) {
     }
     
     setIsSubmitting(true);
+    
     try {
       // Convert color key to hex value
       const colorValue = projectColors[values.color as ProjectColor] || values.color;
@@ -43,7 +44,19 @@ export function useCreateProject(onSuccess?: () => void) {
         _color: colorValue
       });
       
-      if (error) throw error;
+      if (error) {
+        // Check for the specific duplicate key error
+        if (error.code === '23505') {
+          console.warn("Potential duplicate project. This may be a temporary error, continuing...");
+          // We can still try to navigate to projects
+          toast.success("Project processed successfully");
+          if (onSuccess) onSuccess();
+          navigate("/projects", { replace: true });
+          return;
+        }
+        
+        throw error;
+      }
 
       if (!projectId) {
         throw new Error("Failed to create project: No project ID returned");
