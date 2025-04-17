@@ -10,21 +10,39 @@ export interface Room {
   project_id: string;
   created_at: string;
   updated_at: string;
+  project?: {
+    name: string;
+    color: string;
+  };
 }
 
 export function useRooms(projectId: string) {
   return useQuery({
     queryKey: ["rooms", projectId],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("rooms")
-        .select("*")
-        .eq("project_id", projectId)
-        .eq("is_archived", false)
-        .order("updated_at", { ascending: false });
+      try {
+        let query = supabase
+          .from("rooms")
+          .select("*, projects(name, color)")
+          .eq("is_archived", false)
+          .order("updated_at", { ascending: false });
+        
+        // If not "all", filter by project_id
+        if (projectId !== "all") {
+          query = query.eq("project_id", projectId);
+        }
 
-      if (error) throw error;
-      return data as Room[];
+        const { data, error } = await query;
+
+        if (error) throw error;
+        
+        return data as Room[];
+      } catch (error) {
+        console.error("Error fetching rooms:", error);
+        toast.error("Failed to load rooms");
+        return [];
+      }
     },
+    enabled: true,
   });
 }

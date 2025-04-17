@@ -12,6 +12,7 @@ import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
 import RoomDetail from "./pages/RoomDetail";
 import Agents from "./pages/Agents";
+import Rooms from "./pages/Rooms";
 import AuthProvider, { useAuth } from "./components/auth/AuthProvider";
 
 // Create the query client instance outside of the component
@@ -72,6 +73,14 @@ const App = () => {
                   element={
                     <ProtectedRoute>
                       <ProjectDetail />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/rooms"
+                  element={
+                    <ProtectedRoute>
+                      <Rooms />
                     </ProtectedRoute>
                   }
                 />
