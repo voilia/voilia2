@@ -34,10 +34,10 @@ export function SidebarNavItemSimple({
           "flex w-full justify-start px-3 py-2",
           "animate-fade-in",
           isSpecialSection 
-            ? "text-sm font-semibold text-muted-foreground" 
+            ? "text-sm font-bold text-foreground/90" // Increased contrast and weight
             : isAllSection 
-              ? "text-xs font-normal text-muted-foreground/70" 
-              : "text-xs font-normal text-muted-foreground/80"
+              ? "text-xs font-medium text-muted-foreground/80" // Softer color for 'All' sections
+              : "text-xs font-normal text-muted-foreground/90" // Slight increase in contrast
         )}
         onClick={onItemClick}
       >
@@ -53,12 +53,12 @@ export function SidebarNavItemSimple({
               )
             }
           >
-            {Icon && <Icon className="h-4 w-4" />}
+            {Icon && <Icon className="h-4 w-4 opacity-80" />}
             <span>{title}</span>
           </NavLink>
         ) : (
           <div className="flex items-center gap-3">
-            {Icon && <Icon className="h-4 w-4" />}
+            {Icon && <Icon className="h-4 w-4 opacity-80" />}
             <span>{title}</span>
           </div>
         )}
@@ -78,7 +78,7 @@ export function SidebarNavItemSimple({
             console.log(`Create new ${title}`);
           }}
         >
-          <Plus className="h-3.5 w-3.5" />
+          <Plus className="h-3.5 w-3.5 opacity-70" />
           <span className="sr-only">Add new {title}</span>
         </Button>
       )}
