@@ -60,10 +60,10 @@ export function AgentUsage({ agent }: AgentUsageProps) {
           </Tabs>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
-            <Button size="lg" className="w-full">
+            <Button size="lg" className="w-full h-12">
               Activate Agent
             </Button>
-            <Button variant="outline" size="lg" className="w-full">
+            <Button variant="outline" size="lg" className="w-full h-12">
               Create Room with {agent.name}
             </Button>
           </div>
@@ -72,4 +72,3 @@ export function AgentUsage({ agent }: AgentUsageProps) {
     </Card>
   );
 }
-

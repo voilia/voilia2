@@ -76,4 +76,3 @@ export function AgentHeader({ agent }: AgentHeaderProps) {
     </div>
   );
 }
-
