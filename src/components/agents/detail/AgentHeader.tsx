@@ -42,9 +42,9 @@ export function AgentHeader({ agent }: AgentHeaderProps) {
   };
 
   return (
-    <div className="space-y-6 flex flex-col items-start">
+    <div className="flex flex-col sm:flex-row items-start gap-6">
       <div 
-        className="rounded-full p-4 self-start"
+        className="rounded-full p-4 shrink-0"
         style={{ 
           backgroundColor: `${agent.color}20`,
           color: agent.color 
@@ -53,11 +53,11 @@ export function AgentHeader({ agent }: AgentHeaderProps) {
         <AgentIcon className="h-8 w-8" />
       </div>
       
-      <div className="flex-1 w-full">
+      <div className="flex-1 min-w-0">
         <div className="flex flex-wrap items-center gap-2 mb-2">
-          <h1 className="text-3xl font-bold">{agent.name}</h1>
+          <h1 className="text-3xl font-bold truncate">{agent.name}</h1>
           {agent.badges && agent.badges.length > 0 && (
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex flex-wrap gap-2">
               {agent.badges.map((badge) => (
                 <Badge key={badge} variant={getBadgeVariant(badge)}>
                   {getBadgeLabel(badge)}
@@ -67,7 +67,7 @@ export function AgentHeader({ agent }: AgentHeaderProps) {
           )}
         </div>
         
-        <div className="mt-2 max-w-2xl">
+        <div className="mt-2">
           <p className="text-lg text-muted-foreground">
             {agent.description}
           </p>
