@@ -1,4 +1,3 @@
-
 import { RoomMessage } from "@/hooks/useRoomMessages";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { formatDistanceToNow } from "date-fns";
@@ -12,9 +11,12 @@ interface MessageGroupProps {
 export function MessageGroup({ messages, isUserGroup }: MessageGroupProps) {
   const { user } = useAuth();
   
-  // Double-check isUserGroup by comparing with current user ID
-  // This ensures consistency even when coming back to conversations
+  // If this is already marked as a user group, keep it that way
+  // Otherwise, double-check by comparing with the current user ID
   const isCurrentUserMessages = messages.length > 0 && messages[0].user_id === user?.id;
+  
+  // The final determination: either it was already marked as user's message, 
+  // or we determined it is the current user's message
   const finalIsUserGroup = isUserGroup || isCurrentUserMessages;
   
   if (!messages.length) return null;

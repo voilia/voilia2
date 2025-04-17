@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -66,7 +67,9 @@ export function useRoomMessages(roomId: string | undefined) {
           setMessages((prev) => {
             // If this is a confirmed version of our optimistic message, replace it
             const pendingIndex = prev.findIndex(msg => 
-              msg.isPending && msg.message_text === newMessage.message_text && msg.user_id === newMessage.user_id
+              msg.isPending && 
+              msg.message_text === newMessage.message_text && 
+              (msg.user_id === newMessage.user_id || (!msg.user_id && newMessage.user_id === user?.id))
             );
             
             if (pendingIndex >= 0) {
@@ -85,7 +88,7 @@ export function useRoomMessages(roomId: string | undefined) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [roomId]);
+  }, [roomId, user?.id]);
 
   // Function to send a new message with optimistic updates
   const sendMessage = async (text: string) => {
@@ -95,7 +98,7 @@ export function useRoomMessages(roomId: string | undefined) {
     const optimisticMessage: RoomMessage = {
       id: uuidv4(), // Temporary ID
       room_id: roomId,
-      user_id: user.id,
+      user_id: user.id, // Make sure this is set to the current user's ID
       agent_id: null,
       message_text: text,
       created_at: new Date().toISOString(),

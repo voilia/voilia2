@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useRoom } from "@/hooks/useRoom";
@@ -42,23 +43,33 @@ export default function RoomDetail() {
     let currentGroup: { userId: string | null; messages: RoomMessage[] } | null = null;
 
     messages.forEach((message) => {
+      // Explicitly determine if this message is from the current user
       const isFromCurrentUser = message.user_id === user?.id;
       
+      // Start a new group if:
+      // 1. This is the first message
+      // 2. The previous group was from a different sender (user vs non-user)
       if (!currentGroup || 
           (isFromCurrentUser && currentGroup.userId !== user?.id) || 
           (!isFromCurrentUser && currentGroup.userId !== message.user_id)) {
+        
+        // Push the current group if it exists
         if (currentGroup) {
           groups.push(currentGroup);
         }
+        
+        // Create a new group
         currentGroup = { 
           userId: isFromCurrentUser ? user?.id : message.user_id, 
           messages: [message] 
         };
       } else {
+        // Add to the current group
         currentGroup.messages.push(message);
       }
     });
 
+    // Don't forget to add the last group
     if (currentGroup) {
       groups.push(currentGroup);
     }
