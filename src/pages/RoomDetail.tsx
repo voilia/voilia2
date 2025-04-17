@@ -184,6 +184,8 @@ export default function RoomDetail() {
             isDisabled={isLoading} 
             projectId={room?.project_id || null}
             addLocalMessage={addLocalMessage}
+            room={room}
+            isLoading={isLoading}
           />
         </div>
       </SmartBarProvider>
