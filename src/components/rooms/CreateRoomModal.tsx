@@ -8,7 +8,7 @@ import { useCreateRoom } from "@/hooks/useCreateRoom";
 import { StepIndicator } from "./create/navigation/StepIndicator";
 import { CreateRoomFooter } from "./create/navigation/CreateRoomFooter";
 import { Project } from "@/components/projects/types";
-import { supabase } from "@/integrations/supabase/client";
+import { useProjects } from "@/hooks/useProjects";
 import { toast } from "sonner";
 
 interface CreateRoomModalProps {
@@ -47,8 +47,7 @@ export function CreateRoomModal({
     resetForm
   } = useCreateRoom(initialProjectId);
 
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [isLoadingProjects, setIsLoadingProjects] = useState(true);
+  const { projects, isLoading: isLoadingProjects } = useProjects();
   
   // Reset form when modal closes or opens
   useEffect(() => {
@@ -56,41 +55,6 @@ export function CreateRoomModal({
       resetForm();
     }
   }, [isOpen]);
-  
-  // Fetch projects on mount
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        setIsLoadingProjects(true);
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        if (!user) throw new Error("User not authenticated");
-
-        const { data, error } = await supabase
-          .from("projects")
-          .select("*")
-          .eq("owner_id", user.id)
-          .eq("is_deleted", false)
-          .order("updated_at", { ascending: false });
-
-        if (error) throw error;
-        setProjects(data);
-        
-        if (data.length > 0 && !selectedProjectId) {
-          setSelectedProjectId(data[0].id);
-        }
-      } catch (err) {
-        console.error("Error fetching projects:", err);
-        toast.error("Failed to load projects");
-      } finally {
-        setIsLoadingProjects(false);
-      }
-    };
-
-    if (isOpen) {
-      fetchProjects();
-    }
-  }, [isOpen, selectedProjectId]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -115,7 +79,7 @@ export function CreateRoomModal({
                 setColor={setColor}
                 selectedProjectId={selectedProjectId}
                 setSelectedProjectId={setSelectedProjectId}
-                projects={projects}
+                projects={projects || []}
                 isLoadingProjects={isLoadingProjects}
                 isCreatingProject={isCreatingProject}
                 setIsCreatingProject={setIsCreatingProject}
@@ -125,14 +89,9 @@ export function CreateRoomModal({
               <StepTwo
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
-                visibleAgents={visibleAgents}
                 selectedAgentIds={selectedAgentIds}
-                toggleAgentSelection={toggleAgentSelection}
                 showAllAgents={showAllAgents}
                 setShowAllAgents={setShowAllAgents}
-                filteredAgents={filteredAgents}
-                isLoadingAgents={isLoadingAgents}
-                publicAgents={publicAgents}
               />
             )}
           </ScrollArea>

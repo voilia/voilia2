@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { ProjectColor } from "@/components/projects/types";
+import { ProjectColor, projectColors } from "@/components/projects/types";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +17,6 @@ export function useCreateRoom(initialProjectId?: string) {
   const [showAllAgents, setShowAllAgents] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Reset form when modal closes or opens with initialProjectId
   const resetForm = () => {
     setName("");
     setDescription("");
@@ -33,13 +31,11 @@ export function useCreateRoom(initialProjectId?: string) {
     setIsCreatingProject(false);
   };
 
-  // Handle project creation completion
   const handleProjectCreated = (newProjectId: string) => {
     setSelectedProjectId(newProjectId);
     setIsCreatingProject(false);
   };
 
-  // Handle form submission
   const handleSubmit = async () => {
     try {
       if (!selectedProjectId) {
