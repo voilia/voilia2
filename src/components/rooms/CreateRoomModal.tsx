@@ -1,9 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { projectColors } from "@/components/projects/types";
+import { projectColors, ProjectColor, Project } from "@/components/projects/types";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { Loader } from "@/components/ui/loader";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +12,7 @@ import { useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { StepOne } from "./create/StepOne";
 import { StepTwo } from "./create/StepTwo";
+import { cn } from "@/lib/utils";
 
 interface CreateRoomModalProps {
   isOpen: boolean;

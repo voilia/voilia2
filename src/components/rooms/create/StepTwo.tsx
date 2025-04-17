@@ -1,8 +1,9 @@
 
-import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Agent } from "@/components/agents/types";
 import { AgentSelector } from "./AgentSelector";
+import { ComingSoonMembers } from "./members/ComingSoonMembers";
+import { ComingSoonBlueprint } from "./blueprint/ComingSoonBlueprint";
 
 interface StepTwoProps {
   searchQuery: string;
@@ -31,18 +32,8 @@ export function StepTwo({
 }: StepTwoProps) {
   return (
     <div className="space-y-5 py-4">
-      {/* Add Members (Coming Soon) */}
-      <div className="space-y-2 opacity-60">
-        <Label className="flex items-center gap-2" htmlFor="members">
-          Add Members
-          <Badge variant="outline" className="text-xs">Coming Soon</Badge>
-        </Label>
-        <div className="p-3 border rounded-lg bg-muted/50 text-sm text-muted-foreground">
-          You'll be able to invite collaborators after Room creation
-        </div>
-      </div>
+      <ComingSoonMembers />
       
-      {/* Select Agents */}
       <div className="space-y-4">
         <Label>Select Agents (optional)</Label>
         <AgentSelector
@@ -59,22 +50,7 @@ export function StepTwo({
         />
       </div>
       
-      {/* Coming Soon Features */}
-      {/* Blueprint Selection */}
-      <div className="space-y-2 opacity-60">
-        <Label className="flex items-center gap-2" htmlFor="blueprint">
-          Start from Blueprint
-          <Badge variant="outline" className="text-xs">Coming Soon</Badge>
-        </Label>
-        <Select disabled>
-          <SelectTrigger>
-            <SelectValue placeholder="Choose a blueprint" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="disabled">Choose a blueprint</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+      <ComingSoonBlueprint />
     </div>
   );
 }
