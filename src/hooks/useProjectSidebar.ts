@@ -23,6 +23,7 @@ export function useProjectSidebar() {
           return;
         }
 
+        // Get projects where user is the owner
         const { data, error } = await supabase
           .from("projects")
           .select("id, name")

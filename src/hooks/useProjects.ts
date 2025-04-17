@@ -24,21 +24,43 @@ export function useProjects() {
 
       console.log("Fetching projects for user:", user.id);
 
-      // Get projects where user is a member (including owner)
-      const { data, error } = await supabase
+      // Get projects the user is a member of (including those they own)
+      const { data: memberProjects, error: memberError } = await supabase
         .from("project_members")
-        .select("project_id, projects(*)")
+        .select(`
+          project_id,
+          projects (
+            id,
+            name,
+            description,
+            color,
+            owner_id,
+            created_at,
+            updated_at,
+            is_personal,
+            is_deleted
+          )
+        `)
         .eq("user_id", user.id)
-        .eq("projects.is_deleted", false)
-        .order("projects.updated_at", { ascending: false });
+        .eq("projects.is_deleted", false);
 
-      if (error) {
-        console.error("Error fetching projects:", error);
-        throw error;
+      if (memberError) {
+        console.error("Error fetching project memberships:", memberError);
+        throw memberError;
       }
       
       // Transform the data structure to match the Project type
-      const projectsData = data?.map(item => item.projects) as Project[] || [];
+      const projectsData = memberProjects
+        ?.filter(item => item.projects !== null)
+        .map(item => item.projects) as Project[] || [];
+      
+      // Sort projects by updated_at in memory (client-side)
+      projectsData.sort((a, b) => {
+        const dateA = new Date(a.updated_at || a.created_at || 0).getTime();
+        const dateB = new Date(b.updated_at || b.created_at || 0).getTime();
+        return dateB - dateA; // Descending order (newest first)
+      });
+      
       console.log(`Fetched ${projectsData.length || 0} projects`);
       
       setProjects(projectsData);
