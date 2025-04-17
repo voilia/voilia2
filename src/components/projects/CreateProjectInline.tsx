@@ -51,9 +51,9 @@ export function CreateProjectInline({ onProjectCreated, onCancel }: CreateProjec
         throw checkError;
       }
       
-      // If project already exists, navigate to it
+      // If project already exists, use it
       if (existingProjects && existingProjects.length > 0) {
-        console.log("Project already exists, navigating to it:", existingProjects[0].id);
+        console.log("Project already exists, using it:", existingProjects[0].id);
         toast.info("A project with this name already exists");
         onProjectCreated(existingProjects[0].id);
         return;
@@ -70,35 +70,34 @@ export function CreateProjectInline({ onProjectCreated, onCancel }: CreateProjec
       });
 
       if (error) {
-        // Handle the specific conflict errors for duplicate projects
+        // If it's a unique constraint violation or other conflict error
         if (error.code === '23505' || error.code === '409') {
-          console.log("Duplicate project detected after creation attempt, fetching existing project");
-          
-          // Delay slightly to allow for potential database consistency issues
+          // Wait a moment to allow for database consistency
           await new Promise(resolve => setTimeout(resolve, 500));
           
-          // Try to find the existing project with this name
-          const { data: conflictedProjects, error: findError } = await supabase
+          // Try to find the project that may have been created
+          const { data: latestProject, error: findError } = await supabase
             .from("projects")
             .select("id")
             .eq("name", projectName.trim())
             .eq("owner_id", user.id)
             .eq("is_deleted", false)
+            .order("created_at", { ascending: false })
             .limit(1);
-          
+            
           if (findError) {
-            console.error("Error finding conflicted project:", findError);
+            console.error("Error finding latest project:", findError);
             throw findError;
           }
           
-          if (conflictedProjects && conflictedProjects.length > 0) {
-            console.log("Found conflicted project:", conflictedProjects[0].id);
-            toast.success("Navigating to your existing project");
-            onProjectCreated(conflictedProjects[0].id);
+          if (latestProject && latestProject.length > 0) {
+            console.log("Found project after conflict:", latestProject[0].id);
+            toast.success("Project created");
+            onProjectCreated(latestProject[0].id);
             return;
-          } else {
-            throw new Error("Could not create or find your project. Please try again with a different name.");
           }
+          
+          throw new Error("Could not create project: Name may be already in use");
         }
         
         console.error("Project creation error:", error);

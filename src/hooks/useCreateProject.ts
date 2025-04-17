@@ -71,43 +71,39 @@ export function useCreateProject(onSuccess?: () => void) {
       });
       
       if (error) {
-        // Handle the specific 409 conflict error for duplicate projects
+        // If it's a unique constraint violation or other conflict error
         if (error.code === '23505' || error.code === '409') {
-          console.log("Duplicate project detected after creation attempt, fetching existing project");
-          
-          // Delay slightly to allow for potential database consistency issues
+          // Wait a moment to allow for database consistency
           await new Promise(resolve => setTimeout(resolve, 500));
           
-          // Try to find the existing project with this name
-          const { data: conflictedProjects, error: findError } = await supabase
+          // Try to find the project that may have been created
+          const { data: latestProject, error: findError } = await supabase
             .from("projects")
             .select("id")
             .eq("name", values.name)
             .eq("owner_id", user.id)
             .eq("is_deleted", false)
+            .order("created_at", { ascending: false })
             .limit(1);
-          
+            
           if (findError) {
-            console.error("Error finding conflicted project:", findError);
+            console.error("Error finding latest project:", findError);
             throw findError;
           }
           
-          if (conflictedProjects && conflictedProjects.length > 0) {
-            console.log("Found conflicted project:", conflictedProjects[0].id);
-            toast.success("Navigating to your existing project");
+          if (latestProject && latestProject.length > 0) {
+            console.log("Found project after conflict:", latestProject[0].id);
+            toast.success("Navigating to your project");
             
             if (onSuccess) onSuccess();
-            navigate(`/projects/${conflictedProjects[0].id}`, { replace: true });
-            return;
-          } else {
-            // Force a refresh of the projects page as a fallback
-            console.log("Could not find conflicted project, refreshing projects page");
-            toast.info("Please check your projects list");
-            
-            if (onSuccess) onSuccess();
-            navigate("/projects", { replace: true, state: { refresh: true } });
+            navigate(`/projects/${latestProject[0].id}`, { replace: true });
             return;
           }
+          
+          toast.error("Could not create project: Name may be already in use");
+          if (onSuccess) onSuccess();
+          navigate("/projects", { replace: true, state: { refresh: Date.now() } });
+          return;
         }
         
         console.error("Project creation error:", error);

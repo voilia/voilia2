@@ -9,6 +9,7 @@ import { CreateProjectDialog } from "@/components/projects/CreateProjectDialog";
 import { ViewToggle, ViewMode, SortOption } from "@/components/projects/ViewToggle";
 import { Search } from "@/components/Search";
 import { useLocation } from "react-router-dom";
+import { toast } from "sonner";
 
 const Projects = () => {
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
@@ -23,16 +24,33 @@ const Projects = () => {
     if (location.state?.refresh) {
       console.log("Forced refresh of projects triggered");
       refreshProjects();
+      
+      // Clear the location state to prevent infinite refreshes
+      history.replaceState(null, "", location.pathname);
     }
   }, [location.state?.refresh, refreshProjects]);
 
+  useEffect(() => {
+    // If the projects are empty but not loading, show a warning
+    if (!isLoading && projects?.length === 0 && !error) {
+      toast.info("Your projects list is empty. Create your first project!");
+    }
+  }, [projects, isLoading, error]);
+
   const filteredProjects = projects?.filter(
-    project => project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (project.description && project.description.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+    project => project?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (project?.description && project.description.toLowerCase().includes(searchQuery.toLowerCase()))
+  ) || [];
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
+  };
+
+  const handleCreateProject = () => {
+    // Force refresh projects list after creation
+    setTimeout(() => {
+      refreshProjects();
+    }, 500);
   };
 
   return (
@@ -42,7 +60,7 @@ const Projects = () => {
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold">
-                Your Projects {filteredProjects && `(${filteredProjects.length})`}
+                Your Projects {!isLoading && filteredProjects && `(${filteredProjects.length})`}
               </h1>
               <p className="text-muted-foreground mt-1">Manage your AI spaces</p>
             </div>
@@ -56,7 +74,10 @@ const Projects = () => {
                   name="project-search-query"
                 />
               </div>
-              <CreateProjectDialog key="project-dialog" />
+              <CreateProjectDialog 
+                key="project-dialog" 
+                onProjectCreated={handleCreateProject}
+              />
             </div>
           </div>
 

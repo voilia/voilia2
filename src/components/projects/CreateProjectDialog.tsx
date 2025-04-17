@@ -28,11 +28,21 @@ import { useNavigate } from "react-router-dom";
 interface CreateProjectDialogProps {
   variant?: "icon" | "default";
   className?: string;
+  onProjectCreated?: () => void;
 }
 
-export function CreateProjectDialog({ variant = "default", className }: CreateProjectDialogProps) {
+export function CreateProjectDialog({ 
+  variant = "default", 
+  className,
+  onProjectCreated 
+}: CreateProjectDialogProps) {
   const [open, setOpen] = useState(false);
-  const { form, isSubmitting, onSubmit } = useCreateProject(() => setOpen(false));
+  const { form, isSubmitting, onSubmit } = useCreateProject(() => {
+    setOpen(false);
+    if (onProjectCreated) {
+      onProjectCreated();
+    }
+  });
   const { user } = useAuth();
   const navigate = useNavigate();
 
