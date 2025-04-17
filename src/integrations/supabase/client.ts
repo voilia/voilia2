@@ -16,24 +16,5 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
   auth: {
     persistSession: true,
     autoRefreshToken: true,
-  },
-  global: {
-    // Add custom headers for RPC calls that are not formally defined in the types file
-    headers: { 
-      'x-custom-header': 'custom-value'
-    },
-  },
-});
-
-// Add runtime extension to support extra RPCs not in the types
-export type CustomRPC = 'create_project_with_owner';
-const rpcProxy = new Proxy(supabase.rpc, {
-  apply: (target, thisArg, args) => {
-    // Allow all RPCs to be called
-    return Reflect.apply(target, thisArg, args);
   }
 });
-
-// Replace the original rpc method with our proxied version
-// @ts-ignore - we're intentionally extending the functionality
-supabase.rpc = rpcProxy;

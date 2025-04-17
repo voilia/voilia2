@@ -1577,6 +1577,15 @@ export type Database = {
         Args: { p_project_id: string; p_tokens_needed: number }
         Returns: boolean
       }
+      create_project_with_owner: {
+        Args: {
+          _name: string
+          _description: string
+          _color: string
+          _owner_id?: string
+        }
+        Returns: string
+      }
       create_room_with_agents: {
         Args: {
           _project_id: string

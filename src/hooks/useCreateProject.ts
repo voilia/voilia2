@@ -29,7 +29,6 @@ export function useCreateProject(onSuccess?: () => void) {
       const colorValue = projectColors[values.color as ProjectColor] || values.color;
 
       // Create project using the RPC function
-      // @ts-ignore - Using extended RPC functionality
       const { data: projectId, error } = await supabase.rpc('create_project_with_owner', {
         _name: values.name,
         _description: values.description || null,
