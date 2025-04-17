@@ -3,6 +3,7 @@ import { Agent } from "@/components/agents/types";
 import { Bot } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { AgentTags } from "./AgentTags";
 
 interface AgentHeaderProps {
   agent: Agent;
@@ -72,6 +73,8 @@ export function AgentHeader({ agent }: AgentHeaderProps) {
             {agent.description}
           </p>
         </div>
+
+        <AgentTags agent={agent} />
       </div>
     </div>
   );

@@ -194,6 +194,56 @@ export type Database = {
           },
         ]
       }
+      agent_pairings: {
+        Row: {
+          agent_id: string | null
+          id: string
+          paired_agent_id: string | null
+          reason: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          id?: string
+          paired_agent_id?: string | null
+          reason?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          id?: string
+          paired_agent_id?: string | null
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_pairings_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_pairings_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "public_agents_with_tags"
+            referencedColumns: ["agent_id"]
+          },
+          {
+            foreignKeyName: "agent_pairings_paired_agent_id_fkey"
+            columns: ["paired_agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_pairings_paired_agent_id_fkey"
+            columns: ["paired_agent_id"]
+            isOneToOne: false
+            referencedRelation: "public_agents_with_tags"
+            referencedColumns: ["agent_id"]
+          },
+        ]
+      }
       agent_personas: {
         Row: {
           created_at: string | null
@@ -226,6 +276,39 @@ export type Database = {
           style_config?: Json | null
         }
         Relationships: []
+      }
+      agent_prompts: {
+        Row: {
+          agent_id: string | null
+          id: string
+          prompt: string
+        }
+        Insert: {
+          agent_id?: string | null
+          id?: string
+          prompt: string
+        }
+        Update: {
+          agent_id?: string | null
+          id?: string
+          prompt?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_prompts_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_prompts_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "public_agents_with_tags"
+            referencedColumns: ["agent_id"]
+          },
+        ]
       }
       agent_tag_links: {
         Row: {
@@ -303,6 +386,42 @@ export type Database = {
         }
         Relationships: []
       }
+      agent_usage_instructions: {
+        Row: {
+          agent_id: string | null
+          context: string
+          id: string
+          instruction: string
+        }
+        Insert: {
+          agent_id?: string | null
+          context: string
+          id?: string
+          instruction: string
+        }
+        Update: {
+          agent_id?: string | null
+          context?: string
+          id?: string
+          instruction?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_usage_instructions_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_usage_instructions_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "public_agents_with_tags"
+            referencedColumns: ["agent_id"]
+          },
+        ]
+      }
       agent_versions: {
         Row: {
           agent_id: string | null
@@ -355,6 +474,7 @@ export type Database = {
           is_public: boolean | null
           name: string
           persona: string | null
+          supported_languages: string[] | null
           system_prompt: string | null
           updated_at: string | null
         }
@@ -367,6 +487,7 @@ export type Database = {
           is_public?: boolean | null
           name: string
           persona?: string | null
+          supported_languages?: string[] | null
           system_prompt?: string | null
           updated_at?: string | null
         }
@@ -379,6 +500,7 @@ export type Database = {
           is_public?: boolean | null
           name?: string
           persona?: string | null
+          supported_languages?: string[] | null
           system_prompt?: string | null
           updated_at?: string | null
         }

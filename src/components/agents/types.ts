@@ -14,4 +14,6 @@ export interface Agent {
   icon?: LucideIcon;
   color?: string;
   isPublic?: boolean;
+  supported_languages?: string[];
+  uses_tools?: boolean;
 }
