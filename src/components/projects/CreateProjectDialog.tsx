@@ -22,6 +22,8 @@ import {
 import { Plus } from "lucide-react";
 import { ColorSwatch } from "./ColorSwatch";
 import { useCreateProject } from "@/hooks/useCreateProject";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 interface CreateProjectDialogProps {
   variant?: "icon" | "default";
@@ -31,6 +33,8 @@ interface CreateProjectDialogProps {
 export function CreateProjectDialog({ variant = "default", className }: CreateProjectDialogProps) {
   const [open, setOpen] = useState(false);
   const { form, isSubmitting, onSubmit } = useCreateProject(() => setOpen(false));
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   // Handle Enter key press
   useEffect(() => {
@@ -52,8 +56,17 @@ export function CreateProjectDialog({ variant = "default", className }: CreatePr
     }
   }, [open, form]);
 
+  const handleOpenChange = (newOpenState: boolean) => {
+    if (newOpenState && !user) {
+      // Redirect to auth page if trying to open dialog while not logged in
+      navigate('/auth');
+      return;
+    }
+    setOpen(newOpenState);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {variant === "icon" ? (
           <Button

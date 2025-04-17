@@ -6,10 +6,12 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { CreateProjectFormValues, createProjectSchema, projectColors, ProjectColor } from "@/components/projects/types";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 export function useCreateProject(onSuccess?: () => void) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const form = useForm<CreateProjectFormValues>({
     resolver: zodResolver(createProjectSchema),
@@ -22,6 +24,12 @@ export function useCreateProject(onSuccess?: () => void) {
 
   const onSubmit = async (values: CreateProjectFormValues) => {
     if (isSubmitting) return;
+    
+    if (!user) {
+      toast.error("You must be logged in to create a project");
+      navigate("/auth");
+      return;
+    }
     
     setIsSubmitting(true);
     try {
@@ -36,6 +44,10 @@ export function useCreateProject(onSuccess?: () => void) {
       });
       
       if (error) throw error;
+
+      if (!projectId) {
+        throw new Error("Failed to create project: No project ID returned");
+      }
 
       toast.success("Project created successfully!");
       

@@ -1,13 +1,15 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ColorSwatch } from "@/components/projects/ColorSwatch";
-import { ProjectColor } from "@/components/projects/types";
+import { ProjectColor, projectColors } from "@/components/projects/types";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader } from "@/components/ui/loader";
 import { ArrowLeft } from "lucide-react";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 interface CreateProjectInlineProps {
   onProjectCreated: (projectId: string) => void;
@@ -18,6 +20,7 @@ export function CreateProjectInline({ onProjectCreated, onCancel }: CreateProjec
   const [projectName, setProjectName] = useState("");
   const [selectedColor, setSelectedColor] = useState<ProjectColor>("indigo");
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
 
   const handleCreateProject = async () => {
     if (!projectName.trim()) {
@@ -25,33 +28,33 @@ export function CreateProjectInline({ onProjectCreated, onCancel }: CreateProjec
       return;
     }
 
+    if (!user) {
+      toast.error("You must be signed in to create a project");
+      return;
+    }
+
     try {
       setIsLoading(true);
 
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        toast.error("You must be signed in to create a project");
-        return;
-      }
+      // Get the color hex value
+      const colorValue = projectColors[selectedColor];
 
-      const { data, error } = await supabase
-        .from("projects")
-        .insert({
-          name: projectName.trim(),
-          owner_id: user.id,
-          color: selectedColor
-        })
-        .select()
-        .single();
+      // Create project using the RPC function
+      const { data, error } = await supabase.rpc('create_project_with_owner', {
+        _name: projectName.trim(),
+        _description: null,
+        _color: colorValue
+      });
 
       if (error) throw error;
+      
+      if (!data) {
+        throw new Error("Failed to create project: No project ID returned");
+      }
 
       toast.success("Project created successfully!");
       
-      if (data && data.id) {
-        onProjectCreated(data.id);
-      }
+      onProjectCreated(data as string);
     } catch (error) {
       console.error("Error creating project:", error);
       toast.error("Failed to create project");
