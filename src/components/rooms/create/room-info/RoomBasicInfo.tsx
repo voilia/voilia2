@@ -23,36 +23,42 @@ export function RoomBasicInfo({
   setColor,
 }: RoomBasicInfoProps) {
   return (
-    <>
-      <div className="space-y-2">
-        <Label htmlFor="room-name">Room Name*</Label>
+    <div className="space-y-4">
+      <div className="space-y-2.5">
+        <Label htmlFor="room-name" className="font-medium">
+          Room Name<span className="text-destructive ml-0.5">*</span>
+        </Label>
         <Input
           id="room-name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Enter room name"
+          className="h-11 px-3.5"
         />
       </div>
       
-      <div className="space-y-2">
-        <Label htmlFor="room-description">Description (optional)</Label>
+      <div className="space-y-2.5">
+        <Label htmlFor="room-description" className="font-medium">
+          Description <span className="text-muted-foreground font-normal">(optional)</span>
+        </Label>
         <Textarea
           id="room-description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Describe the purpose of this room"
-          rows={3}
+          rows={2}
+          className="resize-none px-3.5"
         />
       </div>
       
-      <div className="space-y-2">
-        <Label htmlFor="room-color">Room Color</Label>
+      <div className="space-y-2.5">
+        <Label htmlFor="room-color" className="font-medium">Room Color</Label>
         <ColorSwatch
           id="room-color"
           value={color}
           onChange={setColor}
         />
       </div>
-    </>
+    </div>
   );
 }

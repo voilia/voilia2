@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { Loader } from "@/components/ui/loader";
 
 interface CreateRoomFooterProps {
@@ -18,30 +18,28 @@ export function CreateRoomFooter({
   onCancel,
   isLoading
 }: CreateRoomFooterProps) {
-  if (currentStep === 1) {
-    return (
-      <>
-        <Button variant="outline" onClick={onCancel} className="px-6">
-          Cancel
-        </Button>
-        <Button onClick={onNext} className="px-6">
-          Next
-          <ChevronRight className="ml-2 h-4 w-4" />
-        </Button>
-      </>
-    );
-  }
-
   return (
-    <>
-      <Button variant="outline" onClick={onBack} className="px-6">
-        <ChevronLeft className="mr-2 h-4 w-4" />
-        Back
-      </Button>
-      <Button onClick={onNext} disabled={isLoading} className="px-6">
+    <div className="flex justify-between w-full">
+      <div>
+        {currentStep === 2 ? (
+          <Button variant="ghost" onClick={onBack} size="lg">
+            <ChevronLeft className="mr-2 h-4 w-4" />
+            Back
+          </Button>
+        ) : (
+          <Button variant="ghost" onClick={onCancel} size="lg">
+            Cancel
+          </Button>
+        )}
+      </div>
+      <Button 
+        onClick={onNext} 
+        size="lg"
+        disabled={isLoading}
+      >
         {isLoading && <Loader size="sm" className="mr-2" />}
-        Create Room
+        {currentStep === 1 ? 'Next' : 'Create Room'}
       </Button>
-    </>
+    </div>
   );
 }

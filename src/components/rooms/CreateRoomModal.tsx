@@ -1,7 +1,5 @@
 
-import { useEffect } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { StepOne } from "./create/StepOne";
 import { StepTwo } from "./create/StepTwo";
 import { useCreateRoom } from "@/hooks/useCreateRoom";
@@ -47,56 +45,49 @@ export function CreateRoomModal({
 
   const { projects, isLoading: isLoadingProjects } = useProjects();
   
-  // Reset form when modal closes or opens
-  useEffect(() => {
-    if (!isOpen) {
-      resetForm();
-    }
-  }, [isOpen]);
-
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-hidden flex flex-col p-6 rounded-xl">
-        <DialogHeader className="pb-4 border-b mb-4">
-          <DialogTitle className="text-2xl font-bold">Create New Room</DialogTitle>
-          <DialogDescription className="text-base mt-1">
-            Create a collaborative space with AI agents
-          </DialogDescription>
+      <DialogContent className="sm:max-w-[600px] p-0 gap-0 overflow-hidden rounded-xl">
+        <div className="border-b p-6 pb-4">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold tracking-tight">Create New Room</DialogTitle>
+            <DialogDescription className="text-base mt-1.5">
+              Create a collaborative space with AI agents
+            </DialogDescription>
+          </DialogHeader>
           <StepIndicator currentStep={currentStep} />
-        </DialogHeader>
-        
-        <div className="flex-1 overflow-hidden">
-          <ScrollArea className="pr-4 h-[calc(60vh-140px)]">
-            {currentStep === 1 ? (
-              <StepOne
-                name={name}
-                setName={setName}
-                description={description}
-                setDescription={setDescription}
-                color={color}
-                setColor={setColor}
-                selectedProjectId={selectedProjectId}
-                setSelectedProjectId={setSelectedProjectId}
-                projects={projects || []}
-                isLoadingProjects={isLoadingProjects}
-                isCreatingProject={isCreatingProject}
-                setIsCreatingProject={setIsCreatingProject}
-                handleProjectCreated={handleProjectCreated}
-              />
-            ) : (
-              <StepTwo
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                selectedAgentIds={selectedAgentIds}
-                toggleAgentSelection={toggleAgentSelection}
-                showAllAgents={showAllAgents}
-                setShowAllAgents={setShowAllAgents}
-              />
-            )}
-          </ScrollArea>
         </div>
         
-        <DialogFooter className="flex flex-row justify-between sm:justify-between gap-2 pt-4 border-t mt-4">
+        <div className="p-6 space-y-6">
+          {currentStep === 1 ? (
+            <StepOne
+              name={name}
+              setName={setName}
+              description={description}
+              setDescription={setDescription}
+              color={color}
+              setColor={setColor}
+              selectedProjectId={selectedProjectId}
+              setSelectedProjectId={setSelectedProjectId}
+              projects={projects || []}
+              isLoadingProjects={isLoadingProjects}
+              isCreatingProject={isCreatingProject}
+              setIsCreatingProject={setIsCreatingProject}
+              handleProjectCreated={handleProjectCreated}
+            />
+          ) : (
+            <StepTwo
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              selectedAgentIds={selectedAgentIds}
+              toggleAgentSelection={toggleAgentSelection}
+              showAllAgents={showAllAgents}
+              setShowAllAgents={setShowAllAgents}
+            />
+          )}
+        </div>
+        
+        <div className="border-t p-4">
           <CreateRoomFooter
             currentStep={currentStep}
             onBack={() => setCurrentStep(1)}
@@ -104,7 +95,7 @@ export function CreateRoomModal({
             onCancel={() => onOpenChange(false)}
             isLoading={isLoading}
           />
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );

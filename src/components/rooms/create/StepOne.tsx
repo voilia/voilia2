@@ -35,7 +35,7 @@ export function StepOne({
   handleProjectCreated,
 }: StepOneProps) {
   return (
-    <div className="space-y-5 py-4">
+    <div className="space-y-6">
       <ProjectSelector
         selectedProjectId={selectedProjectId}
         setSelectedProjectId={setSelectedProjectId}
