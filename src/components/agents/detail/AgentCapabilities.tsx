@@ -5,6 +5,7 @@ import { BrainCircuit, Sparkles, Code, Bot, MessageSquare, Layers, Zap, ChevronD
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 
 interface AgentCapabilitiesProps {
@@ -129,18 +130,21 @@ export function AgentCapabilities({ agent }: AgentCapabilitiesProps) {
         </div>
         
         {/* Example prompts section - collapsible */}
-        <div>
-          <div 
-            className="flex items-center justify-between cursor-pointer py-2"
-            onClick={() => setIsPromptsOpen(!isPromptsOpen)}
-          >
+        <Collapsible 
+          open={isPromptsOpen} 
+          onOpenChange={setIsPromptsOpen}
+          className="w-full"
+        >
+          <div className="flex items-center justify-between cursor-pointer py-2">
             <h3 className="text-lg font-medium">Example prompts</h3>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-              {isPromptsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-            </Button>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                {isPromptsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </Button>
+            </CollapsibleTrigger>
           </div>
           
-          {isPromptsOpen && (
+          <CollapsibleContent>
             <div className="mt-2 space-y-2">
               <Separator className="my-2" />
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
@@ -155,8 +159,8 @@ export function AgentCapabilities({ agent }: AgentCapabilitiesProps) {
                 </div>
               </div>
             </div>
-          )}
-        </div>
+          </CollapsibleContent>
+        </Collapsible>
       </CardContent>
     </Card>
   );
