@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,32 +15,36 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing session
-    supabase.auth.getSession().then(({
-      data: {
-        session
+    // First, set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth state changed in Auth page:", event);
+      setSession(session);
+      
+      if (session) {
+        // Allow a small delay for the session to be fully established
+        setTimeout(() => {
+          if (event === "SIGNED_IN") {
+            toast.success("Successfully signed in");
+          }
+          navigate("/home");
+        }, 100);
       }
-    }) => {
+    });
+
+    // Then check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log("Getting session in Auth page:", session?.user?.email || "No session");
       setSession(session);
       setIsLoading(false);
+      
       if (session) {
         navigate("/home");
       }
     });
 
-    // Listen for auth changes
-    const {
-      data: {
-        subscription
-      }
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      setSession(session);
-      if (event === "SIGNED_IN") {
-        toast.success("Successfully signed in");
-        navigate("/home");
-      }
-    });
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
   if (isLoading) {

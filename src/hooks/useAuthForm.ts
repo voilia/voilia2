@@ -23,29 +23,37 @@ export const useAuthForm = () => {
     
     try {
       if (isPasswordMode && data.password) {
+        // First try to sign in
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email: data.email,
           password: data.password,
         });
 
-        if (signInError && signInError.message.includes("Invalid login credentials")) {
-          const { error: signUpError } = await supabase.auth.signUp({
-            email: data.email,
-            password: data.password,
-            options: {
-              emailRedirectTo: `${window.location.origin}/home`,
-            },
-          });
+        if (signInError) {
+          console.log("Sign in error:", signInError.message);
+          
+          if (signInError.message.includes("Invalid login credentials")) {
+            // If sign in fails with invalid credentials, try to sign up
+            const { error: signUpError } = await supabase.auth.signUp({
+              email: data.email,
+              password: data.password,
+              options: {
+                emailRedirectTo: `${window.location.origin}/home`,
+              },
+            });
 
-          if (signUpError) {
-            toast.error(signUpError.message);
+            if (signUpError) {
+              console.error("Sign up error:", signUpError);
+              toast.error(signUpError.message);
+            } else {
+              toast.success("Check your email to confirm your account");
+            }
           } else {
-            toast.success("Check your email to confirm your account");
+            toast.error(signInError.message);
           }
-        } else if (signInError) {
-          toast.error(signInError.message);
         }
       } else {
+        // Magic link flow
         const { error } = await supabase.auth.signInWithOtp({
           email: data.email,
           options: {
@@ -54,14 +62,15 @@ export const useAuthForm = () => {
         });
 
         if (error) {
+          console.error("OTP error:", error);
           toast.error(error.message);
         } else {
           toast.success("Check your email for the login link");
         }
       }
     } catch (error) {
+      console.error("Unexpected auth error:", error);
       toast.error("An unexpected error occurred");
-      console.error(error);
     } finally {
       setIsSubmitting(false);
     }
@@ -80,11 +89,13 @@ export const useAuthForm = () => {
       });
 
       if (error) {
+        console.error("Password reset error:", error);
         toast.error(error.message);
       } else {
         toast.success("Check your email for password reset instructions");
       }
     } catch (error) {
+      console.error("Unexpected password reset error:", error);
       toast.error("Failed to send password reset email");
     }
   };
