@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { ProjectColor, projectColors } from "@/components/projects/types";
 import { supabase } from "@/integrations/supabase/client";
@@ -34,6 +35,14 @@ export function useCreateRoom(initialProjectId?: string) {
   const handleProjectCreated = (newProjectId: string) => {
     setSelectedProjectId(newProjectId);
     setIsCreatingProject(false);
+  };
+  
+  const toggleAgentSelection = (id: string) => {
+    setSelectedAgentIds(prev => 
+      prev.includes(id) 
+        ? prev.filter(agentId => agentId !== id) 
+        : [...prev, id]
+    );
   };
 
   const handleSubmit = async () => {
@@ -92,6 +101,7 @@ export function useCreateRoom(initialProjectId?: string) {
     setSelectedProjectId,
     selectedAgentIds,
     setSelectedAgentIds,
+    toggleAgentSelection,
     isCreatingProject,
     setIsCreatingProject,
     searchQuery,

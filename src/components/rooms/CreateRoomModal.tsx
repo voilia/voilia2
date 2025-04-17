@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { StepOne } from "./create/StepOne";
@@ -7,9 +7,7 @@ import { StepTwo } from "./create/StepTwo";
 import { useCreateRoom } from "@/hooks/useCreateRoom";
 import { StepIndicator } from "./create/navigation/StepIndicator";
 import { CreateRoomFooter } from "./create/navigation/CreateRoomFooter";
-import { Project } from "@/components/projects/types";
 import { useProjects } from "@/hooks/useProjects";
-import { toast } from "sonner";
 
 interface CreateRoomModalProps {
   isOpen: boolean;
@@ -34,7 +32,7 @@ export function CreateRoomModal({
     selectedProjectId,
     setSelectedProjectId,
     selectedAgentIds,
-    setSelectedAgentIds,
+    toggleAgentSelection,
     isCreatingProject,
     setIsCreatingProject,
     searchQuery,
@@ -90,6 +88,7 @@ export function CreateRoomModal({
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
                 selectedAgentIds={selectedAgentIds}
+                toggleAgentSelection={toggleAgentSelection}
                 showAllAgents={showAllAgents}
                 setShowAllAgents={setShowAllAgents}
               />
