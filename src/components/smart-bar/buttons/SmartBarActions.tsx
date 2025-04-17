@@ -37,6 +37,9 @@ export function SmartBarActions({ className }: SmartBarActionsProps) {
         <button 
           className="flex items-center justify-center h-8 w-8 rounded-md transition-colors hover:bg-accent/80 focus:outline-none"
           style={{ color: colorValue }}
+          type="button" 
+          aria-label="Select Mode"
+          onClick={(e) => e.preventDefault()} // Prevent form submission
         >
           <ModeIcon className="h-5 w-5" />
           <span className="sr-only">Select Mode</span>

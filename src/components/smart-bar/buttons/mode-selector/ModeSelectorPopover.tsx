@@ -1,3 +1,4 @@
+
 import { BotMessageSquare, Palette, Wrench, Vault } from "lucide-react";
 import { useSmartBar } from "../../context/SmartBarContext";
 import type { SmartBarMode } from "../../types/smart-bar-types";
@@ -28,8 +29,10 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
   const popoverRef = useRef<HTMLDivElement>(null);
   const modeRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
+  // This is a critical function that calculates the position of the popover
+  // relative to the smart bar form
   const updatePosition = useCallback(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || animationState === 'exited') return;
     
     const smartBarForm = document.querySelector('form.rounded-2xl');
     if (smartBarForm) {
@@ -41,10 +44,11 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
         left: rect.left
       });
     }
-  }, []);
+  }, [animationState]);
 
   const throttledUpdatePosition = useThrottle(updatePosition, 100);
 
+  // Animation state management
   useEffect(() => {
     if (popoverOpen) {
       setAnimationState('entering');
@@ -53,21 +57,30 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
       setAnimationState('exiting');
       setTimeout(() => setAnimationState('exited'), 200);
     }
-  }, [popoverOpen]);
+  }, [popoverOpen, animationState]);
 
+  // Position calculation and update
   useEffect(() => {
-    if (animationState === 'entering') {
-      updatePosition();
-      window.addEventListener('resize', throttledUpdatePosition);
-      window.addEventListener('scroll', throttledUpdatePosition);
-      
-      return () => {
-        window.removeEventListener('resize', throttledUpdatePosition);
-        window.removeEventListener('scroll', throttledUpdatePosition);
-      };
-    }
+    // Only run when popover is visible
+    if (animationState === 'exited') return;
+    
+    // Initial position calculation
+    updatePosition();
+    
+    // Set up event listeners for repositioning
+    window.addEventListener('resize', throttledUpdatePosition);
+    window.addEventListener('scroll', throttledUpdatePosition);
+    
+    // Force recalculation on animation frame for more reliable positioning
+    requestAnimationFrame(updatePosition);
+    
+    return () => {
+      window.removeEventListener('resize', throttledUpdatePosition);
+      window.removeEventListener('scroll', throttledUpdatePosition);
+    };
   }, [animationState, throttledUpdatePosition, updatePosition]);
 
+  // Focus management
   useEffect(() => {
     if (animationState === 'entered') {
       setTimeout(() => {
@@ -97,6 +110,7 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
   };
 
   const handleTriggerClick = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     setPopoverOpen(!popoverOpen);
   };
@@ -147,8 +161,9 @@ export function ModeSelectorPopover({ children }: { children: React.ReactNode })
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    // Use capture phase to get the events before they're stopped
+    document.addEventListener('mousedown', handleClickOutside, true);
+    return () => document.removeEventListener('mousedown', handleClickOutside, true);
   }, [popoverOpen]);
 
   const prefersReducedMotion = typeof window !== 'undefined' 

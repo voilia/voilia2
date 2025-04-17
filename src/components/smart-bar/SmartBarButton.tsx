@@ -46,6 +46,7 @@ export function SmartBarButton({
             onMouseEnter={() => setTooltipOpen(true)}
             onMouseLeave={() => setTooltipOpen(false)}
             onClick={(e) => {
+              e.preventDefault(); // Prevent form submission
               setTooltipOpen(false);
               if (props.onClick) props.onClick(e);
             }}
