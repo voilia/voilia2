@@ -68,11 +68,11 @@ export function useCreateRoom(initialProjectId?: string) {
       setIsLoading(true);
       
       const { data, error } = await supabase.rpc('create_room_with_agents', {
-        project_id: selectedProjectId,
-        name: name.trim(),
-        description: description.trim() || null,
-        color: projectColors[color],
-        agent_ids: selectedAgentIds
+        _project_id: selectedProjectId,
+        _name: name.trim(),
+        _description: description.trim() || null,
+        _color: projectColors[color],
+        _agent_ids: selectedAgentIds
       });
       
       if (error) throw error;

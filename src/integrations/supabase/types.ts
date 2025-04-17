@@ -1618,6 +1618,14 @@ export type Database = {
         Args: { p_project_id: string; p_user_id: string; p_role?: string }
         Returns: string
       }
+      update_room_members: {
+        Args: { _room_id: string; _user_ids: string[] }
+        Returns: undefined
+      }
+      update_room_with_agents: {
+        Args: { _room_id: string; _agent_ids: string[] }
+        Returns: undefined
+      }
     }
     Enums: {
       project_role: "owner" | "admin" | "member" | "viewer"
