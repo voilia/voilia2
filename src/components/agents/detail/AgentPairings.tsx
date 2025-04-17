@@ -16,7 +16,7 @@ export function AgentPairings({ agent }: AgentPairingsProps) {
           <Users className="h-5 w-5" />
           This agent pairs well with...
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-center">
           Recommended agent combinations for optimal workflows
         </CardDescription>
       </CardHeader>

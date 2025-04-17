@@ -13,8 +13,8 @@ export function AgentUsage({ agent }: AgentUsageProps) {
   return (
     <Card>
       <CardHeader className="pb-2 text-center">
-        <CardTitle>Using {agent.name}</CardTitle>
-        <CardDescription>How to integrate this agent in your workflows</CardDescription>
+        <CardTitle className="text-center">Using {agent.name}</CardTitle>
+        <CardDescription className="text-center">How to integrate this agent in your workflows</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col space-y-4 items-center">
