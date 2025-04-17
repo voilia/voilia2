@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Agent } from "@/components/agents/types";
 import { BrainCircuit, Sparkles, Code, Bot, MessageSquare, Layers, Zap, ChevronDown, ChevronUp, Plug, Play } from "lucide-react";
@@ -15,7 +14,6 @@ interface AgentCapabilitiesProps {
 export function AgentCapabilities({ agent }: AgentCapabilitiesProps) {
   const [isPromptsOpen, setIsPromptsOpen] = useState(false);
   
-  // Define capability data based on agent type
   const getCapabilities = () => {
     switch (agent.type) {
       case "llm":
@@ -94,18 +92,15 @@ export function AgentCapabilities({ agent }: AgentCapabilitiesProps) {
   };
 
   const capabilities = getCapabilities();
-  
-  // Always show 3 capabilities (or all if less than 3)
   const visibleCapabilities = capabilities.slice(0, 3);
   
   return (
     <Card>
-      <CardHeader className="pb-2 text-center">
-        <CardTitle className="text-center">Capabilities</CardTitle>
-        <CardDescription className="text-center">What this agent can do for you</CardDescription>
+      <CardHeader className="pb-2">
+        <CardTitle>Capabilities</CardTitle>
+        <CardDescription>What this agent can do for you</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Capabilities section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {visibleCapabilities.map((capability, index) => (
             <div 
@@ -129,19 +124,20 @@ export function AgentCapabilities({ agent }: AgentCapabilitiesProps) {
           ))}
         </div>
         
-        {/* Example prompts section - collapsible */}
         <Collapsible 
           open={isPromptsOpen} 
           onOpenChange={setIsPromptsOpen}
           className="w-full"
         >
-          <div className="flex flex-col items-center justify-center cursor-pointer py-2">
-            <h3 className="text-lg font-medium text-center">Example prompts</h3>
-            <CollapsibleTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 ml-2">
-                {isPromptsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-              </Button>
-            </CollapsibleTrigger>
+          <div className="flex flex-col items-start justify-start cursor-pointer py-2">
+            <div className="flex items-center">
+              <h3 className="text-lg font-medium">Example prompts</h3>
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 ml-2">
+                  {isPromptsOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                </Button>
+              </CollapsibleTrigger>
+            </div>
           </div>
           
           <CollapsibleContent>
