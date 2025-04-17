@@ -4,6 +4,7 @@ import { useRooms } from "@/hooks/useRooms";
 import { RoomsHeader } from "@/components/rooms/RoomsHeader";
 import { RoomsContent } from "@/components/rooms/RoomsContent";
 import { useState } from "react";
+import { CreateRoomModal } from "@/components/rooms/CreateRoomModal";
 
 export type RoomViewType = "my-rooms" | "smart-starts";
 
@@ -26,6 +27,11 @@ export default function Rooms() {
         rooms={allRooms || []}
         isLoading={isLoading}
         activeView={activeView}
+      />
+
+      <CreateRoomModal
+        isOpen={isCreateDialogOpen}
+        onOpenChange={setIsCreateDialogOpen}
       />
     </MainLayout>
   );

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -143,7 +144,7 @@ export function CreateRoomModal({
     if (isOpen) {
       fetchProjects();
     }
-  }, [isOpen, toast, selectedProjectId]);
+  }, [isOpen, selectedProjectId]);
   
   // Toggle agent selection
   const toggleAgentSelection = (agentId: string) => {
@@ -168,6 +169,8 @@ export function CreateRoomModal({
         return;
       }
       
+      let finalAgentIds = selectedAgentIds;
+      
       if (selectedAgentIds.length === 0) {
         // Auto-add VOILIA ONE and a fallback LLM if available
         const voiliaOneAgent = publicAgents.find(a => 
@@ -184,6 +187,7 @@ export function CreateRoomModal({
         ];
         
         if (defaultAgents.length > 0) {
+          finalAgentIds = defaultAgents;
           setSelectedAgentIds(defaultAgents);
         } else {
           toast.error("Please select at least one agent");
@@ -202,7 +206,7 @@ export function CreateRoomModal({
         _name: name.trim(),
         _description: description.trim() || null,
         _color: colorHex,
-        _agent_ids: selectedAgentIds
+        _agent_ids: finalAgentIds
       });
       
       if (error) throw error;
