@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { ProjectColor, projectColors } from "@/components/projects/types";
 import { supabase } from "@/integrations/supabase/client";
@@ -55,24 +56,23 @@ export function useCreateRoom(initialProjectId?: string) {
       if (!selectedProjectId) {
         toast.error("Please select a project");
         setCurrentStep(1);
-        return;
+        return false;
       }
       
       if (!name.trim()) {
         toast.error("Room name is required");
         setCurrentStep(1);
-        return;
+        return false;
       }
       
       setIsLoading(true);
-      const colorHex = projectColors[color];
       
       const { data, error } = await supabase.rpc('create_room_with_agents', {
-        _project_id: selectedProjectId,
-        _name: name.trim(),
-        _description: description.trim() || null,
-        _color: colorHex,
-        _agent_ids: selectedAgentIds
+        project_id: selectedProjectId,
+        name: name.trim(),
+        description: description.trim() || null,
+        color: projectColors[color],
+        agent_ids: selectedAgentIds
       });
       
       if (error) throw error;

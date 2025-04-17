@@ -1578,27 +1578,14 @@ export type Database = {
         Returns: boolean
       }
       create_room_with_agents: {
-        Args:
-          | {
-              _project_id: string
-              _name: string
-              _agent_ids: string[]
-              _description?: string
-              _color?: string
-            }
-          | {
-              _project_id: string
-              _name: string
-              _description?: string
-              _color?: string
-              _agent_ids?: string[]
-            }
-        Returns: {
-          room_id: string
-          name: string
-          project_id: string
-          color: string
-        }[]
+        Args: {
+          _project_id: string
+          _name: string
+          _description: string
+          _color: string
+          _agent_ids?: string[]
+        }
+        Returns: string
       }
       get_personalized_agents: {
         Args: { p_user_id: string; p_room_id: string }
