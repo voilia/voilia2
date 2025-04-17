@@ -1,12 +1,13 @@
-
 import { useState, useEffect } from "react";
 import { ProjectColor, projectColors } from "@/components/projects/types";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { useProjects } from "@/hooks/useProjects";
 
 export function useCreateRoom(initialProjectId?: string) {
   const navigate = useNavigate();
+  const { projects } = useProjects();
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -19,10 +20,19 @@ export function useCreateRoom(initialProjectId?: string) {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (initialProjectId) {
-      setSelectedProjectId(initialProjectId);
+    if (selectedProjectId && projects) {
+      const selectedProject = projects.find(p => p.id === selectedProjectId);
+      if (selectedProject?.color) {
+        const colorKey = Object.entries(projectColors).find(
+          ([_, value]) => value === selectedProject.color
+        )?.[0] as ProjectColor;
+        
+        if (colorKey) {
+          setColor(colorKey);
+        }
+      }
     }
-  }, [initialProjectId]);
+  }, [selectedProjectId, projects]);
 
   const resetForm = () => {
     setName("");
@@ -67,8 +77,6 @@ export function useCreateRoom(initialProjectId?: string) {
       
       setIsLoading(true);
       
-      // Instead of using the RPC function that relies on project_room_members,
-      // we'll insert directly into the rooms table
       const { data: roomData, error: roomError } = await supabase
         .from('rooms')
         .insert({
@@ -86,7 +94,6 @@ export function useCreateRoom(initialProjectId?: string) {
         throw new Error("Failed to create room");
       }
       
-      // Now add the selected agents to the room_agents table if any were selected
       if (selectedAgentIds.length > 0) {
         const agentInserts = selectedAgentIds.map(agentId => ({
           room_id: roomData.id,

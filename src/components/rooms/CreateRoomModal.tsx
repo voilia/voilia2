@@ -1,4 +1,3 @@
-
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { StepOne } from "./create/StepOne";
 import { StepTwo } from "./create/StepTwo";
@@ -18,6 +17,7 @@ export function CreateRoomModal({
   onOpenChange,
   initialProjectId 
 }: CreateRoomModalProps) {
+  const { projects } = useProjects();
   const {
     currentStep,
     setCurrentStep,
@@ -43,22 +43,20 @@ export function CreateRoomModal({
     resetForm
   } = useCreateRoom(initialProjectId);
 
-  const { projects, isLoading: isLoadingProjects } = useProjects();
-  
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] p-0 gap-0 overflow-hidden rounded-xl">
-        <div className="border-b p-6 pb-4">
+      <DialogContent className="sm:max-w-[500px] p-0 gap-0 overflow-hidden rounded-xl">
+        <div className="border-b p-4 pb-3">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold tracking-tight">Create New Room</DialogTitle>
-            <DialogDescription className="text-base mt-1.5">
+            <DialogDescription className="text-base mt-1">
               Create a collaborative space with AI agents
             </DialogDescription>
           </DialogHeader>
           <StepIndicator currentStep={currentStep} />
         </div>
         
-        <div className="p-6 space-y-6">
+        <div className="p-4 space-y-5">
           {currentStep === 1 ? (
             <StepOne
               name={name}
