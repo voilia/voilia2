@@ -12,21 +12,21 @@ interface AgentUsageProps {
 export function AgentUsage({ agent }: AgentUsageProps) {
   return (
     <Card>
-      <CardHeader className="pb-2 text-center">
-        <CardTitle className="text-center">Using {agent.name}</CardTitle>
-        <CardDescription className="text-center">How to integrate this agent in your workflows</CardDescription>
+      <CardHeader className="pb-2">
+        <CardTitle>Using {agent.name}</CardTitle>
+        <CardDescription>How to integrate this agent in your workflows</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col space-y-4 items-center">
+        <div className="flex flex-col space-y-4">
           {/* Tabs content with reduced height */}
           <Tabs defaultValue="rooms" className="w-full">
-            <TabsList className="mb-2 mx-auto">
+            <TabsList className="mb-2">
               <TabsTrigger value="rooms">In Rooms</TabsTrigger>
               <TabsTrigger value="standalone">Standalone</TabsTrigger>
             </TabsList>
             
             <TabsContent value="rooms" className="space-y-2 min-h-[80px]">
-              <div className="flex items-start gap-2 max-w-md mx-auto">
+              <div className="flex items-start gap-2">
                 <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                 <p>
                   Add {agent.name} to any room by selecting it from the agent selector 
@@ -34,7 +34,7 @@ export function AgentUsage({ agent }: AgentUsageProps) {
                 </p>
               </div>
               
-              <div className="flex items-start gap-2 max-w-md mx-auto">
+              <div className="flex items-start gap-2">
                 <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                 <p>
                   Mention @{agent.name.toLowerCase().replace(/\s+/g, '_')} to 
@@ -44,14 +44,14 @@ export function AgentUsage({ agent }: AgentUsageProps) {
             </TabsContent>
             
             <TabsContent value="standalone" className="space-y-2 min-h-[80px]">
-              <div className="flex items-start gap-2 max-w-md mx-auto">
+              <div className="flex items-start gap-2">
                 <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                 <p>
                   Create a dedicated room with only {agent.name} for focused work.
                 </p>
               </div>
               
-              <div className="flex items-start gap-2 max-w-md mx-auto">
+              <div className="flex items-start gap-2">
                 <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                 <p>
                   Use standalone mode from your dashboard to quickly access {agent.name}.
@@ -61,7 +61,7 @@ export function AgentUsage({ agent }: AgentUsageProps) {
           </Tabs>
           
           {/* Action buttons with minimal vertical spacing */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1 max-w-md mx-auto w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
             <Button size="lg" className="w-full">
               Activate Agent
             </Button>
