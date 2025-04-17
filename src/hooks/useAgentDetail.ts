@@ -47,7 +47,7 @@ export function useAgentDetail() {
 
   return {
     agent,
-    isLoading,
+    isLoading: isLoading || isLoadingAllAgents,
     error
   };
 }

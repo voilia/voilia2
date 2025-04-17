@@ -11,20 +11,20 @@ interface AgentUsageProps {
 
 export function AgentUsage({ agent }: AgentUsageProps) {
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader>
         <CardTitle>Using {agent.name}</CardTitle>
         <CardDescription>How to integrate this agent in your workflows</CardDescription>
       </CardHeader>
-      <CardContent>
-        <Tabs defaultValue="rooms">
-          <TabsList className="mb-4">
-            <TabsTrigger value="rooms">In Rooms</TabsTrigger>
-            <TabsTrigger value="standalone">Standalone</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="rooms">
-            <div className="space-y-4">
+      <CardContent className="flex flex-col h-full">
+        <div className="flex-grow">
+          <Tabs defaultValue="rooms">
+            <TabsList className="mb-4">
+              <TabsTrigger value="rooms">In Rooms</TabsTrigger>
+              <TabsTrigger value="standalone">Standalone</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="rooms" className="space-y-4 min-h-[180px]">
               <div className="flex items-start gap-2">
                 <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                 <p>
@@ -48,11 +48,9 @@ export function AgentUsage({ agent }: AgentUsageProps) {
                   and data analysis tools for visualization.
                 </p>
               </div>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="standalone">
-            <div className="space-y-4">
+            </TabsContent>
+            
+            <TabsContent value="standalone" className="space-y-4 min-h-[180px]">
               <div className="flex items-start gap-2">
                 <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                 <p>
@@ -67,15 +65,15 @@ export function AgentUsage({ agent }: AgentUsageProps) {
                   without creating a new room.
                 </p>
               </div>
-            </div>
-          </TabsContent>
-        </Tabs>
+            </TabsContent>
+          </Tabs>
+        </div>
         
-        <div className="mt-6 flex flex-col sm:flex-row gap-3">
-          <Button size="lg" className="w-full sm:w-auto">
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3">
+          <Button size="lg" className="w-full">
             Activate Agent
           </Button>
-          <Button variant="outline" size="lg" className="w-full sm:w-auto">
+          <Button variant="outline" size="lg" className="w-full">
             Create Room with {agent.name}
           </Button>
         </div>

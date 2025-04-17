@@ -6,11 +6,13 @@ import { AgentHeader } from "@/components/agents/detail/AgentHeader";
 import { AgentCapabilities } from "@/components/agents/detail/AgentCapabilities";
 import { AgentUsage } from "@/components/agents/detail/AgentUsage";
 import { AgentNotFound } from "@/components/agents/detail/AgentNotFound";
+import { AgentPairings } from "@/components/agents/detail/AgentPairings";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const AgentDetail = () => {
   const { agent, isLoading, error } = useAgentDetail();
@@ -21,17 +23,32 @@ const AgentDetail = () => {
     return (
       <MainLayout>
         <ContentContainer>
+          <div className="mb-6">
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/agents" className="flex items-center gap-1">
+                <ArrowLeft className="h-4 w-4" />
+                Back to Agents
+              </Link>
+            </Button>
+          </div>
           <div className="animate-pulse space-y-8">
             <div className="flex items-start gap-4">
-              <div className="w-16 h-16 rounded-full bg-muted"></div>
+              <Skeleton className="w-16 h-16 rounded-full" />
               <div className="space-y-3 flex-1">
-                <div className="h-8 bg-muted rounded w-1/3"></div>
-                <div className="h-4 bg-muted rounded w-1/2"></div>
-                <div className="h-4 bg-muted rounded w-full"></div>
+                <Skeleton className="h-8 w-1/3" />
+                <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-4 w-full" />
               </div>
             </div>
-            <div className="h-[300px] bg-muted rounded-xl"></div>
-            <div className="h-[400px] bg-muted rounded-xl"></div>
+            <Separator className="my-6" />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                <Skeleton className="h-[400px] rounded-xl" />
+              </div>
+              <div className="lg:col-span-1">
+                <Skeleton className="h-[400px] rounded-xl" />
+              </div>
+            </div>
           </div>
         </ContentContainer>
       </MainLayout>
@@ -60,7 +77,7 @@ const AgentDetail = () => {
   return (
     <MainLayout>
       <ContentContainer>
-        <div className="space-y-6">
+        <div className="max-w-screen-lg mx-auto space-y-6">
           {/* Back button */}
           <div className="mb-4">
             <Button variant="ghost" size="sm" asChild>
@@ -84,10 +101,13 @@ const AgentDetail = () => {
             </div>
             
             {/* Usage sidebar - takes 1/3 of the space on larger screens */}
-            <div className="lg:col-span-1 space-y-6">
+            <div className="lg:col-span-1 space-y-6 lg:sticky lg:top-6 self-start">
               <AgentUsage agent={agent} />
             </div>
           </div>
+          
+          {/* Agent pairings section */}
+          <AgentPairings agent={agent} />
         </div>
       </ContentContainer>
     </MainLayout>
