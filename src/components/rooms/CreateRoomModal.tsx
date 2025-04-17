@@ -1,3 +1,4 @@
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { StepOne } from "./create/StepOne";
 import { StepTwo } from "./create/StepTwo";
@@ -17,7 +18,7 @@ export function CreateRoomModal({
   onOpenChange,
   initialProjectId 
 }: CreateRoomModalProps) {
-  const { projects } = useProjects();
+  const { projects, isLoading: isLoadingProjects } = useProjects();
   const {
     currentStep,
     setCurrentStep,
