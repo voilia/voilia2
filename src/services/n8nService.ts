@@ -38,6 +38,11 @@ interface SubmitSmartBarMessageOptions {
   onResponseReceived?: (response: any) => void;
 }
 
+// Helper to validate UUID format
+const isValidUUID = (id: string): boolean => {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+};
+
 export async function submitSmartBarMessage({
   message,
   roomId,
@@ -73,6 +78,11 @@ export async function submitSmartBarMessage({
       url: file.preview || 'mock-url-for-' + file.name // In real implementation: actual URL
     }));
 
+    // Validate agent IDs to ensure they're valid UUIDs
+    const validAgentIds = agentIds
+      ? agentIds.filter(id => id && typeof id === 'string' && isValidUUID(id))
+      : [];
+
     // Prepare payload
     const payload: WebhookPayload = {
       user_id: user.id,
@@ -82,7 +92,7 @@ export async function submitSmartBarMessage({
       mode,
       language,
       files: processedFiles,
-      agent_ids: agentIds,
+      agent_ids: validAgentIds,
     };
 
     if (voiceUrl) payload.voice_url = voiceUrl;
@@ -158,9 +168,7 @@ export async function addAiResponseToRoom(
     
     // Ensure agentId is either a valid UUID or null
     // This fixes the "=voilia-one" error by ensuring we never send invalid UUIDs
-    const validAgentId = agentId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(agentId) 
-      ? agentId 
-      : null;
+    const validAgentId = agentId && isValidUUID(agentId) ? agentId : null;
     
     const { data, error } = await supabase
       .from("room_messages")

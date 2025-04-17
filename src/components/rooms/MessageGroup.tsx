@@ -11,30 +11,27 @@ interface MessageGroupProps {
 export function MessageGroup({ messages, isUserGroup }: MessageGroupProps) {
   const { user } = useAuth();
   
-  // If this is already marked as a user group, keep it that way
-  // Otherwise, double-check by comparing with the current user ID
-  const isCurrentUserMessages = messages.length > 0 && messages[0].user_id === user?.id;
-  
-  // The final determination: either it was already marked as user's message, 
-  // or we determined it is the current user's message
-  const finalIsUserGroup = isUserGroup || isCurrentUserMessages;
-  
+  // Early exit for empty messages
   if (!messages.length) return null;
-
+  
+  // If we explicitly know this is a user group, trust that
+  // Otherwise, verify based on the first message's user_id
+  const isCurrentUserMessages = isUserGroup || (messages[0].user_id === user?.id);
+  
   return (
     <div className={cn(
       "flex flex-col gap-1 py-2",
-      finalIsUserGroup ? "items-end" : "items-start"
+      isCurrentUserMessages ? "items-end" : "items-start"
     )}>
       <div className={cn(
         "flex flex-col max-w-[80%] space-y-1",
-        finalIsUserGroup ? "items-end" : "items-start"
+        isCurrentUserMessages ? "items-end" : "items-start"
       )}>
         {messages.map((message) => (
           <Message 
             key={message.id} 
             message={message} 
-            isUser={finalIsUserGroup} 
+            isUser={isCurrentUserMessages} 
           />
         ))}
       </div>

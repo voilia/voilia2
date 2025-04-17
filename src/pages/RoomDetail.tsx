@@ -26,13 +26,14 @@ export default function RoomDetail() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { data: room, isLoading: isRoomLoading } = useRoom(id);
-  const { messages, isLoading: isMessagesLoading, sendMessage } = useRoomMessages(id);
+  const { messages, isLoading: isMessagesLoading, sendMessage, addLocalMessage } = useRoomMessages(id);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [messageGroups, setMessageGroups] = useState<{ userId: string | null; messages: RoomMessage[] }[]>([]);
   const isMobile = useIsMobile();
   
   useMobileScroll();
   
+  // Group messages by sender with consistent ownership determination
   useEffect(() => {
     if (!messages?.length) {
       setMessageGroups([]);
@@ -43,16 +44,14 @@ export default function RoomDetail() {
     let currentGroup: { userId: string | null; messages: RoomMessage[] } | null = null;
 
     messages.forEach((message) => {
-      // Explicitly determine if this message is from the current user
-      const isFromCurrentUser = message.user_id === user?.id;
+      // Determine message ownership consistently - if user_id matches current user, it's from current user
+      const isFromCurrentUser = (message.user_id === user?.id);
+      const senderId = isFromCurrentUser ? user?.id : message.user_id || message.agent_id;
       
       // Start a new group if:
       // 1. This is the first message
-      // 2. The previous group was from a different sender (user vs non-user)
-      if (!currentGroup || 
-          (isFromCurrentUser && currentGroup.userId !== user?.id) || 
-          (!isFromCurrentUser && currentGroup.userId !== message.user_id)) {
-        
+      // 2. The sender ID is different from the current group's ID
+      if (!currentGroup || currentGroup.userId !== senderId) {
         // Push the current group if it exists
         if (currentGroup) {
           groups.push(currentGroup);
@@ -60,7 +59,7 @@ export default function RoomDetail() {
         
         // Create a new group
         currentGroup = { 
-          userId: isFromCurrentUser ? user?.id : message.user_id, 
+          userId: senderId, 
           messages: [message] 
         };
       } else {
@@ -77,6 +76,7 @@ export default function RoomDetail() {
     setMessageGroups(groups);
   }, [messages, user?.id]);
 
+  // Scroll to bottom on new messages
   const scrollToBottom = useThrottle(() => {
     if (scrollAreaRef.current) {
       const scrollElement = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
@@ -183,6 +183,7 @@ export default function RoomDetail() {
             onSendMessage={handleSendMessage} 
             isDisabled={isLoading} 
             projectId={room?.project_id || null}
+            addLocalMessage={addLocalMessage}
           />
         </div>
       </SmartBarProvider>

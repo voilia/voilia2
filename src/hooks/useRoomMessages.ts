@@ -63,15 +63,19 @@ export function useRoomMessages(roomId: string | undefined) {
         (payload) => {
           const newMessage = payload.new as RoomMessage;
           
-          // Only add server messages or replace pending messages with confirmed ones
+          // Process incoming message
           setMessages((prev) => {
             // If this is a confirmed version of our optimistic message, replace it
+            // We identify matching optimistic messages using combined criteria
             const pendingIndex = prev.findIndex(msg => 
               msg.isPending && 
-              msg.message_text === newMessage.message_text && 
-              (msg.user_id === newMessage.user_id || (!msg.user_id && newMessage.user_id === user?.id))
+              (msg.message_text === newMessage.message_text) && 
+              // Match either by user_id directly or check if this is a user message that matches current user
+              ((msg.user_id === newMessage.user_id) || 
+               (msg.user_id === user?.id && newMessage.user_id === user?.id))
             );
             
+            // If we found a matching pending message, replace it
             if (pendingIndex >= 0) {
               const updatedMessages = [...prev];
               updatedMessages[pendingIndex] = newMessage;
@@ -89,6 +93,11 @@ export function useRoomMessages(roomId: string | undefined) {
       supabase.removeChannel(channel);
     };
   }, [roomId, user?.id]);
+
+  // Function to add a message locally without waiting for Supabase
+  const addLocalMessage = (message: RoomMessage) => {
+    setMessages(prev => [...prev, message]);
+  };
 
   // Function to send a new message with optimistic updates
   const sendMessage = async (text: string) => {
@@ -138,5 +147,6 @@ export function useRoomMessages(roomId: string | undefined) {
     isLoading,
     error,
     sendMessage,
+    addLocalMessage, // New function to add messages locally
   };
 }
