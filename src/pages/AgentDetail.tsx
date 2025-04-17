@@ -1,4 +1,3 @@
-
 import { MainLayout } from "@/app/layout/MainLayout";
 import { ContentContainer } from "@/components/ui/ContentContainer";
 import { useAgentDetail } from "@/hooks/useAgentDetail";
@@ -16,7 +15,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 const AgentDetail = () => {
   const { agent, isLoading, error } = useAgentDetail();
 
-  // Loading state
   if (isLoading) {
     return (
       <MainLayout>
@@ -50,7 +48,6 @@ const AgentDetail = () => {
     );
   }
 
-  // Error or not found state
   if (error || !agent) {
     return (
       <MainLayout>
@@ -73,7 +70,6 @@ const AgentDetail = () => {
     <MainLayout>
       <ContentContainer>
         <div className="max-w-screen-lg mx-auto">
-          {/* Back button */}
           <div className="mb-4">
             <Button variant="ghost" size="sm" asChild>
               <Link to="/agents" className="flex items-center gap-1">
@@ -83,20 +79,13 @@ const AgentDetail = () => {
             </Button>
           </div>
           
-          {/* Agent header */}
           <AgentHeader agent={agent} />
           
-          <Separator className="my-5" />
-          
-          {/* Main content section with better spacing */}
-          <div className="space-y-5">
-            {/* Capabilities section first */}
+          <div className="space-y-5 mt-5">
             <AgentCapabilities agent={agent} />
             
-            {/* Usage section directly below with minimal spacing */}
             <AgentUsage agent={agent} />
             
-            {/* Agent pairings section */}
             <AgentPairings agent={agent} />
           </div>
         </div>
