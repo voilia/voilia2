@@ -4,30 +4,27 @@ import { Agent } from "@/components/agents/types";
 import { Check, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AgentUsageProps {
   agent: Agent;
 }
 
 export function AgentUsage({ agent }: AgentUsageProps) {
-  const isMobile = useIsMobile();
-  
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="pb-2">
         <CardTitle>Using {agent.name}</CardTitle>
         <CardDescription>How to integrate this agent in your workflows</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col">
-        <div className="flex-grow mb-6">
+      <CardContent className="flex flex-col space-y-4">
+        <div className="flex-grow mb-2">
           <Tabs defaultValue="rooms">
-            <TabsList className="mb-4">
+            <TabsList className="mb-3">
               <TabsTrigger value="rooms">In Rooms</TabsTrigger>
               <TabsTrigger value="standalone">Standalone</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="rooms" className="space-y-4 min-h-[180px]">
+            <TabsContent value="rooms" className="space-y-3 min-h-[120px]">
               <div className="flex items-start gap-2">
                 <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                 <p>
@@ -53,7 +50,7 @@ export function AgentUsage({ agent }: AgentUsageProps) {
               </div>
             </TabsContent>
             
-            <TabsContent value="standalone" className="space-y-4 min-h-[180px]">
+            <TabsContent value="standalone" className="space-y-3 min-h-[120px]">
               <div className="flex items-start gap-2">
                 <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                 <p>
@@ -72,7 +69,7 @@ export function AgentUsage({ agent }: AgentUsageProps) {
           </Tabs>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
           <Button size="lg" className="w-full">
             Activate Agent
           </Button>

@@ -10,13 +10,11 @@ import { AgentPairings } from "@/components/agents/detail/AgentPairings";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const AgentDetail = () => {
   const { agent, isLoading, error } = useAgentDetail();
-  const isMobile = useIsMobile();
 
   // Loading state
   if (isLoading) {
@@ -74,7 +72,7 @@ const AgentDetail = () => {
   return (
     <MainLayout>
       <ContentContainer>
-        <div className="max-w-screen-lg mx-auto space-y-6">
+        <div className="max-w-screen-lg mx-auto">
           {/* Back button */}
           <div className="mb-4">
             <Button variant="ghost" size="sm" asChild>
@@ -88,14 +86,14 @@ const AgentDetail = () => {
           {/* Agent header */}
           <AgentHeader agent={agent} />
           
-          <Separator className="my-6" />
+          <Separator className="my-5" />
           
-          {/* Main content section */}
-          <div className="space-y-8">
-            {/* Capabilities section */}
+          {/* Main content section - simplified vertical layout with reduced spacing */}
+          <div className="space-y-5">
+            {/* Capabilities section - now with example prompts on the right */}
             <AgentCapabilities agent={agent} />
             
-            {/* Usage section - now below capabilities */}
+            {/* Usage section - now below capabilities with reduced spacing */}
             <AgentUsage agent={agent} />
             
             {/* Agent pairings section */}

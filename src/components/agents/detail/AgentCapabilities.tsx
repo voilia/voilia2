@@ -1,17 +1,14 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Agent } from "@/components/agents/types";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { BrainCircuit, Sparkles, Code, Bot, MessageSquare, Layers, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AgentCapabilitiesProps {
   agent: Agent;
 }
 
 export function AgentCapabilities({ agent }: AgentCapabilitiesProps) {
-  const isMobile = useIsMobile();
-  
   // Define capability data based on agent type
   const getCapabilities = () => {
     switch (agent.type) {
@@ -73,14 +70,15 @@ export function AgentCapabilities({ agent }: AgentCapabilitiesProps) {
   const capabilities = getCapabilities();
   
   return (
-    <Card className="mb-2">
+    <Card>
       <CardHeader>
         <CardTitle>Capabilities</CardTitle>
         <CardDescription>What this agent can do for you</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Capabilities section - now explicitly on the left */}
+          <div className="flex-1">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {capabilities.map((capability, index) => (
                 <div 
@@ -105,20 +103,25 @@ export function AgentCapabilities({ agent }: AgentCapabilitiesProps) {
             </div>
           </div>
           
-          {/* Example prompts - now always on the right on desktop */}
-          <div className="lg:col-span-1">
-            <h3 className="text-sm font-medium mb-3">Example prompts</h3>
-            <ul className="space-y-2 list-disc pl-6">
-              <li className="text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
-                "Help me draft a professional email about project delays"
-              </li>
-              <li className="text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
-                "Generate 5 creative ideas for my marketing campaign"
-              </li>
-              <li className="text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
-                "Explain how this technology works to a non-technical person"
-              </li>
-            </ul>
+          {/* Example prompts - now consistently on the right with better styling */}
+          <div className="w-full lg:w-80 flex-shrink-0">
+            <div className="h-full p-4 rounded-lg border">
+              <h3 className="text-sm font-medium mb-3 flex items-center justify-between">
+                Example prompts
+                <span className="text-xs text-muted-foreground">⌘ Click to use</span>
+              </h3>
+              <ul className="space-y-3">
+                <li className="text-muted-foreground hover:text-foreground cursor-pointer transition-colors p-2 hover:bg-accent/10 rounded-md">
+                  "Help me draft a professional email about project delays"
+                </li>
+                <li className="text-muted-foreground hover:text-foreground cursor-pointer transition-colors p-2 hover:bg-accent/10 rounded-md">
+                  "Generate 5 creative ideas for my marketing campaign"
+                </li>
+                <li className="text-muted-foreground hover:text-foreground cursor-pointer transition-colors p-2 hover:bg-accent/10 rounded-md">
+                  "Explain how this technology works to a non-technical person"
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </CardContent>
