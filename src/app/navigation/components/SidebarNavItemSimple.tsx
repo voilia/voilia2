@@ -36,8 +36,8 @@ export function SidebarNavItemSimple({
           isSpecialSection 
             ? "text-sm font-semibold text-muted-foreground" 
             : isAllSection 
-              ? "text-xs font-normal text-muted-foreground/80" 
-              : "text-xs font-normal"
+              ? "text-xs font-normal text-muted-foreground/70" 
+              : "text-xs font-normal text-muted-foreground/80"
         )}
         onClick={onItemClick}
       >
