@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Agent } from "@/components/agents/types";
@@ -27,8 +28,6 @@ export function AgentSelector({
   visibleAgents,
   selectedAgentIds,
   toggleAgentSelection,
-  showAllAgents,
-  setShowAllAgents,
   filteredAgents,
   isLoadingAgents,
   publicAgents
@@ -53,10 +52,7 @@ export function AgentSelector({
           placeholder="Search agents..."
           className="pl-10"
           value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            setShowAllAgents(true);
-          }}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
 
@@ -65,17 +61,6 @@ export function AgentSelector({
         selectedAgentIds={selectedAgentIds}
         onAgentSelect={toggleAgentSelection}
       />
-      
-      {!showAllAgents && filteredAgents.length > 6 && (
-        <Button
-          variant="outline"
-          size="sm"
-          className="w-full mt-2"
-          onClick={() => setShowAllAgents(true)}
-        >
-          Show All Agents ({filteredAgents.length})
-        </Button>
-      )}
       
       <SelectedAgentBadges 
         selectedAgentIds={selectedAgentIds}

@@ -18,8 +18,6 @@ export function StepTwo({
   setSearchQuery,
   selectedAgentIds,
   toggleAgentSelection: externalToggleAgentSelection,
-  showAllAgents,
-  setShowAllAgents
 }: StepTwoProps) {
   const { agents: allAgents, isLoading: isLoadingAgents } = useAgents();
   const [filteredAgents, setFilteredAgents] = useState(allAgents);
@@ -40,7 +38,8 @@ export function StepTwo({
     }
   }, [searchQuery, allAgents]);
   
-  const visibleAgents = showAllAgents ? filteredAgents : filteredAgents.slice(0, 6);
+  // Always show only first 4 agents
+  const visibleAgents = filteredAgents.slice(0, 4);
   const publicAgents = allAgents.filter(agent => agent.isPublic !== false);
 
   return (
@@ -72,8 +71,8 @@ export function StepTwo({
           visibleAgents={visibleAgents}
           selectedAgentIds={selectedAgentIds}
           toggleAgentSelection={handleToggleAgentSelection}
-          showAllAgents={showAllAgents}
-          setShowAllAgents={setShowAllAgents}
+          showAllAgents={false}
+          setShowAllAgents={() => {}}
           filteredAgents={filteredAgents}
           isLoadingAgents={isLoadingAgents}
           publicAgents={publicAgents}
