@@ -27,7 +27,8 @@ export function useMobileScroll() {
       const scrollableElements = document.querySelectorAll('[data-radix-scroll-area-viewport]');
       scrollableElements.forEach(element => {
         if (element instanceof HTMLElement) {
-          element.style.WebkitOverflowScrolling = 'touch';
+          // Use string indexer to set webkit property (TypeScript-safe approach)
+          element.style['WebkitOverflowScrolling' as any] = 'touch';
         }
       });
     };
