@@ -32,8 +32,8 @@ export function ProjectListItem({ project }: ProjectListItemProps) {
       to={`/projects/${project.id}`}
       className={({ isActive }) =>
         cn(
-          "group relative flex items-center justify-between gap-4 rounded-lg border p-4 transition-all",
-          "glassmorphic-card",
+          "group relative flex items-center justify-between gap-4 rounded-xl border p-4 transition-all",
+          "neuglass-card",
           "hover:scale-[1.01] hover:shadow-sm dark:hover:border-[#9b87f5]/30",
           isActive && "border-l-4 border-l-primary"
         )

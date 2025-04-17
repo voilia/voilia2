@@ -19,7 +19,7 @@ export function MemberCard({ member, projectId, onUpdate }: MemberCardProps) {
   const { isChangingRole, updateMemberRole, removeMember } = useMemberRoleManagement(projectId, onUpdate);
 
   return (
-    <Card className="p-4 flex items-center justify-between glassmorphic-card">
+    <Card className="p-4 flex items-center justify-between">
       <div className="flex items-center gap-3">
         <Avatar className="h-10 w-10">
           <AvatarImage src="/placeholder.svg" alt={member.user_name} />

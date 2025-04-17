@@ -23,7 +23,7 @@ export function RoomCard({ room }: RoomCardProps) {
 
   return (
     <Card 
-      className="hover:shadow-md transition-shadow group relative cursor-pointer glassmorphic-card"
+      className="hover:shadow-md transition-all group relative cursor-pointer"
       onClick={() => navigate(`/rooms/${room.id}`)}
     >
       <CardHeader className="pb-2">

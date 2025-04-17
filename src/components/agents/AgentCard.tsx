@@ -57,8 +57,7 @@ export function AgentCard({ agent }: AgentCardProps) {
         "group relative flex flex-col justify-between",
         "w-full max-w-[300px] h-[280px]",
         "rounded-xl border p-5",
-        "transition-all duration-300",
-        "glassmorphic-card",
+        "neuglass-card",
         "hover:shadow-lg hover:-translate-y-1",
         "dark:hover:border-primary/30",
       )}
