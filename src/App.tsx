@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,18 +14,17 @@ import Agents from "./pages/Agents";
 import AgentDetail from "./pages/AgentDetail";
 import Rooms from "./pages/Rooms";
 import AuthProvider, { useAuth } from "./components/auth/AuthProvider";
+import { Loader } from "@/components/ui/loader";
 
-// Create the query client instance outside of the component
 const queryClient = new QueryClient();
 
-// Protected route component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-pulse">Loading...</div>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-background via-background to-secondary/20">
+        <Loader size="lg" />
       </div>
     );
   }

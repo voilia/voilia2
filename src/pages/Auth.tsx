@@ -6,10 +6,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Session } from "@supabase/supabase-js";
 import { toast } from "sonner";
+import { Loader } from "@/components/ui/loader";
+
 const Auth = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     // Check for existing session
     supabase.auth.getSession().then(({
@@ -38,14 +41,19 @@ const Auth = () => {
     });
     return () => subscription.unsubscribe();
   }, [navigate]);
+
   if (isLoading) {
-    return <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-pulse">Loading...</div>
-      </div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-background via-background to-secondary/20">
+        <Loader size="lg" />
+      </div>
+    );
   }
+
   if (session) {
     return null; // Will redirect in useEffect
   }
+
   return <div className="flex min-h-screen flex-col items-center justify-center p-4 md:p-8 bg-gradient-to-b from-background via-background to-secondary/20">
       <div className="absolute top-4 right-4">
         <ThemeToggle />
@@ -70,4 +78,5 @@ you agree to VOILIA's Terms of Service and Privacy Policy.</p>
       </div>
     </div>;
 };
+
 export default Auth;
