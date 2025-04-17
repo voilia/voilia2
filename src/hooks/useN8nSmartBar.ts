@@ -32,6 +32,12 @@ export function useN8nSmartBar(options: UseN8nSmartBarOptions = {}) {
     setError(null);
 
     try {
+      // Validate agent IDs to ensure they're valid UUIDs
+      const validAgentIds = agentIds.filter(id => 
+        typeof id === 'string' && 
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)
+      );
+
       const result = await submitSmartBarMessage({
         message,
         roomId,
@@ -40,13 +46,20 @@ export function useN8nSmartBar(options: UseN8nSmartBarOptions = {}) {
         uploadedFiles,
         voiceUrl,
         threadId,
-        agentIds,
+        agentIds: validAgentIds,
         onResponseReceived: async (response) => {
           // Handle AI response - add it to the conversation
           if (response.message) {
+            // Get a valid agent ID if available
+            const agentId = response.agent_id && 
+              typeof response.agent_id === 'string' && 
+              /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(response.agent_id) 
+                ? response.agent_id 
+                : null;
+                
             await addAiResponseToRoom(
               roomId, 
-              response.agent_id || null, 
+              agentId, 
               response.message
             );
           }

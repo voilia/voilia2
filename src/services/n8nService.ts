@@ -143,7 +143,7 @@ export async function addAiResponseToRoom(
     const { data: { session } } = await supabase.auth.getSession();
     
     if (!session) {
-      console.warn("No active session for AI response insertion");
+      console.error("No active session for AI response insertion");
       // Return a mock message object so UI doesn't break
       return {
         id: `temp-${Date.now()}`,
@@ -156,11 +156,17 @@ export async function addAiResponseToRoom(
       };
     }
     
+    // Ensure agentId is either a valid UUID or null
+    // This fixes the "=voilia-one" error by ensuring we never send invalid UUIDs
+    const validAgentId = agentId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(agentId) 
+      ? agentId 
+      : null;
+    
     const { data, error } = await supabase
       .from("room_messages")
       .insert({
         room_id: roomId,
-        agent_id: agentId,
+        agent_id: validAgentId,
         message_text: message,
         user_id: null // Indicates this is an AI message
       })
@@ -176,14 +182,13 @@ export async function addAiResponseToRoom(
   } catch (error) {
     console.error("Error adding AI response:", error);
     // Don't show toast to avoid UI clutter after error
-    // toast.error("Failed to display AI response");
     
     // Return a temporary message object so the UI can still display something
     return {
       id: `temp-${Date.now()}`,
       room_id: roomId,
       user_id: null,
-      agent_id: agentId,
+      agent_id: null, // Set to null instead of potentially invalid agent_id
       message_text: message,
       created_at: new Date().toISOString(),
       updated_at: null

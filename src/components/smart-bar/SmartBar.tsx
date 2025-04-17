@@ -76,9 +76,16 @@ export function SmartBar({ onSendMessage, isDisabled = false, projectId = null }
             try {
               if (responseData?.data?.response?.text && roomId) {
                 // Add AI response to the database so it shows in the chat
+                const agentId = responseData.data.agent?.id || null;
+                
+                // Make sure the agentId is a valid UUID if provided
+                const validAgentId = agentId && typeof agentId === 'string' && 
+                  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(agentId) 
+                  ? agentId : null;
+                
                 addAiResponseToRoom(
                   roomId, 
-                  responseData.data.agent?.id || null, 
+                  validAgentId, 
                   responseData.data.response.text
                 ).catch(err => {
                   console.error("Failed to add AI response to room:", err);
@@ -141,6 +148,7 @@ export function SmartBar({ onSendMessage, isDisabled = false, projectId = null }
             "backdrop-blur-lg shadow-sm",
             "min-h-[90px] md:min-h-24"
           )}
+          aria-label="Message input form"
         >
           <ColoredModeIndicator mode={mode} />
           
@@ -151,6 +159,8 @@ export function SmartBar({ onSendMessage, isDisabled = false, projectId = null }
               onKeyDown={handleKeyDown}
               isDisabled={isDisabled}
               isSubmitting={isSubmitting}
+              id="message-input"
+              name="message"
             />
           </div>
           
@@ -162,6 +172,7 @@ export function SmartBar({ onSendMessage, isDisabled = false, projectId = null }
               <AnimatedSubmitButton 
                 disabled={!canSubmit}
                 mode={mode}
+                aria-label="Send message"
               />
             </div>
           </div>
