@@ -23,6 +23,7 @@ export function SidebarNavItemSimple({
   
   // Check if this is one of the special sections that need a "+" button
   const isSpecialSection = title === "Projects" || title === "Rooms" || title === "Agents";
+  const isAllSection = title.startsWith("All ");
 
   return (
     <div className="relative group">
@@ -30,8 +31,13 @@ export function SidebarNavItemSimple({
         variant="ghost"
         asChild={!!path}
         className={cn(
-          "flex w-full justify-start px-3 py-2 text-base font-medium",
-          "animate-fade-in"
+          "flex w-full justify-start px-3 py-2",
+          "animate-fade-in",
+          isSpecialSection 
+            ? "text-sm font-semibold text-muted-foreground" 
+            : isAllSection 
+              ? "text-xs font-normal text-muted-foreground/80" 
+              : "text-xs font-normal"
         )}
         onClick={onItemClick}
       >
@@ -47,12 +53,12 @@ export function SidebarNavItemSimple({
               )
             }
           >
-            {Icon && <Icon className="h-5 w-5" />}
+            {Icon && <Icon className="h-4 w-4" />}
             <span>{title}</span>
           </NavLink>
         ) : (
           <div className="flex items-center gap-3">
-            {Icon && <Icon className="h-5 w-5" />}
+            {Icon && <Icon className="h-4 w-4" />}
             <span>{title}</span>
           </div>
         )}
@@ -63,7 +69,7 @@ export function SidebarNavItemSimple({
           variant="ghost"
           size="icon"
           className={cn(
-            "absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0",
+            "absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 p-0",
             isMobile ? "opacity-100" : "opacity-0 group-hover:opacity-100",
             "transition-opacity duration-200"
           )}
@@ -72,7 +78,7 @@ export function SidebarNavItemSimple({
             console.log(`Create new ${title}`);
           }}
         >
-          <Plus className="h-4 w-4" />
+          <Plus className="h-3.5 w-3.5" />
           <span className="sr-only">Add new {title}</span>
         </Button>
       )}
