@@ -4,6 +4,7 @@ import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SidebarNavItemCollapsed } from "./components/SidebarNavItemCollapsed";
 import { SidebarNavItemWithChildren } from "./components/SidebarNavItemWithChildren";
+import { useLocation } from "react-router-dom";
 
 interface SidebarNavItemProps {
   title: string;
@@ -12,6 +13,10 @@ interface SidebarNavItemProps {
     title: string;
     path: string;
   }[];
+  actionButton?: {
+    type: "project" | "room" | "generic";
+    tooltipText?: string;
+  };
   isCollapsed: boolean;
   onItemClick?: () => void;
 }
@@ -20,9 +25,14 @@ export function SidebarNavItem({
   title,
   icon,
   children,
+  actionButton,
   isCollapsed,
   onItemClick,
 }: SidebarNavItemProps) {
+  const location = useLocation();
+  const currentPath = location.pathname;
+  const projectId = currentPath.startsWith('/projects/') ? currentPath.split('/')[2] : undefined;
+  
   return (
     <div className={cn("mb-1", isCollapsed ? "px-2" : "")}>
       {isCollapsed ? (
@@ -37,7 +47,9 @@ export function SidebarNavItem({
           title={title}
           icon={icon}
           childItems={children}
+          actionButton={actionButton}
           onItemClick={onItemClick}
+          projectId={projectId}
         />
       )}
     </div>

@@ -7,10 +7,27 @@ import {
 } from "lucide-react";
 
 import { useProjectSidebar } from "@/hooks/useProjectSidebar";
-import { NavActionButton } from "@/app/navigation/components/buttons/NavActionButton";
+import { useLocation } from "react-router-dom";
 
-export const useSidebarNavItems = () => {
+// Define navigation item type for better type safety
+interface NavItem {
+  title: string;
+  icon: LucideIcon;
+  children: {
+    title: string;
+    path: string;
+  }[];
+  actionButton?: {
+    type: "project" | "room" | "generic";
+    tooltipText?: string;
+  };
+}
+
+export const useSidebarNavItems = (): NavItem[] => {
   const { projects, isLoading } = useProjectSidebar();
+  const location = useLocation();
+  const currentPath = location.pathname;
+  const projectId = currentPath.startsWith('/projects/') ? currentPath.split('/')[2] : undefined;
   
   return [
     {
@@ -30,14 +47,10 @@ export const useSidebarNavItems = () => {
     {
       title: "Rooms",
       icon: MessageSquare,
-      actionButton: (isMobile: boolean, projectId?: string) => (
-        <NavActionButton 
-          type="room" 
-          isMobile={isMobile} 
-          tooltipText="Create New Room"
-          projectId={projectId}
-        />
-      ),
+      actionButton: {
+        type: "room",
+        tooltipText: "Create New Room"
+      },
       children: [
         { title: "All Rooms", path: "/rooms" },
       ],

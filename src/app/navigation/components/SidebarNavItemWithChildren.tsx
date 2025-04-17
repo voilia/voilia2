@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -16,17 +16,25 @@ interface SidebarNavItemWithChildrenProps {
     title: string;
     path: string;
   }[];
+  actionButton?: {
+    type: "project" | "room" | "generic";
+    tooltipText?: string;
+  };
   onItemClick?: () => void;
+  projectId?: string;
 }
 
 export function SidebarNavItemWithChildren({
   title,
   icon,
   childItems,
-  onItemClick
+  actionButton,
+  onItemClick,
+  projectId
 }: SidebarNavItemWithChildrenProps) {
   const [isOpen, setIsOpen] = useState(true);
   const isMobile = useIsMobile();
+  const location = useLocation();
   
   return (
     <div className="animate-fade-in">
@@ -66,11 +74,12 @@ export function SidebarNavItemWithChildren({
                 </NavLink>
               </Button>
               
-              {child.title.startsWith("All") && (
+              {child.title.startsWith("All") && actionButton && (
                 <NavActionButton
-                  type={child.title === "All Projects" ? "project" : "room"}
+                  type={actionButton.type}
                   isMobile={isMobile}
-                  tooltipText={child.title === "All Rooms" ? "New Room" : undefined}
+                  tooltipText={actionButton.tooltipText}
+                  projectId={projectId}
                 />
               )}
             </div>

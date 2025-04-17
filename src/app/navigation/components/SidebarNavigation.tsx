@@ -10,6 +10,10 @@ interface NavItem {
     title: string;
     path: string;
   }[];
+  actionButton?: {
+    type: "project" | "room" | "generic";
+    tooltipText?: string;
+  };
 }
 
 interface SidebarNavigationProps {
@@ -30,6 +34,7 @@ export function SidebarNavigation({ isCollapsed, onNavItemClick, navItems }: Sid
           title={item.title}
           icon={item.icon}
           children={item.children}
+          actionButton={item.actionButton}
           isCollapsed={isCollapsed}
           onItemClick={onNavItemClick}
         />

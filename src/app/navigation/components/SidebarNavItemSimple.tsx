@@ -13,6 +13,10 @@ interface SidebarNavItemSimpleProps {
     title: string;
     path: string;
   }[];
+  actionButton?: {
+    type: "project" | "room" | "generic";
+    tooltipText?: string;
+  };
   isCollapsed: boolean;
   onItemClick?: () => void;
 }
@@ -21,6 +25,7 @@ export function SidebarNavItem({
   title,
   icon,
   children,
+  actionButton,
   isCollapsed,
   onItemClick,
 }: SidebarNavItemSimpleProps) {
@@ -42,6 +47,7 @@ export function SidebarNavItem({
           title={title}
           icon={icon}
           childItems={children}
+          actionButton={actionButton}
           onItemClick={onItemClick}
           projectId={projectId}
         />
