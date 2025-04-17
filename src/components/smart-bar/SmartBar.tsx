@@ -33,7 +33,7 @@ export function SmartBar({
   const isMobile = useIsMobile();
 
   return (
-    <div className="fixed z-20 w-full px-2 md:px-4 pb-2">
+    <div className="fixed bottom-0 left-0 right-0 z-20 w-full px-2 md:px-4 pb-2">
       <SmartBarForm
         onSendMessage={onSendMessage}
         isDisabled={isDisabled}

@@ -17,7 +17,7 @@ export function SmartBarForm({ onSendMessage, isDisabled = false }: SmartBarForm
   });
 
   return (
-    <form onSubmit={handleSubmit} className="relative rounded-xl md:rounded-2xl overflow-hidden border transition-colors duration-200 min-h-[90px] md:min-h-24">
+    <form onSubmit={handleSubmit} className="relative rounded-xl md:rounded-2xl overflow-hidden border transition-colors duration-200 min-h-[90px] md:min-h-24 max-w-3xl mx-auto">
       <SmartBarInput
         value={message}
         onChange={setMessage}

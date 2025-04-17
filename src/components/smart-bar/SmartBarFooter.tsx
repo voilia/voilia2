@@ -12,7 +12,7 @@ export function SmartBarFooter({ enterSends, onToggleEnterSends, className }: Sm
   const isMobile = useIsMobile();
 
   return (
-    <div className={`fixed z-10 w-full ${className}`} style={{
+    <div className={cn("fixed z-10 w-full", className)} style={{
       left: isMobile ? 0 : 'var(--sidebar-width, 0px)',
       right: 0,
       maxWidth: isMobile ? '100%' : '48rem',
