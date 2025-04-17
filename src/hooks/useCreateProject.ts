@@ -34,8 +34,34 @@ export function useCreateProject(onSuccess?: () => void) {
     setIsSubmitting(true);
     
     try {
+      console.log("Creating project:", values.name);
+      
       // Convert color key to hex value
       const colorValue = projectColors[values.color as ProjectColor] || values.color;
+
+      // First, check if a project with this name already exists
+      const { data: existingProjects, error: checkError } = await supabase
+        .from("projects")
+        .select("id")
+        .eq("name", values.name)
+        .eq("owner_id", user.id)
+        .eq("is_deleted", false)
+        .limit(1);
+      
+      if (checkError) {
+        console.error("Error checking for existing project:", checkError);
+        throw checkError;
+      }
+      
+      // If project already exists, navigate to it
+      if (existingProjects && existingProjects.length > 0) {
+        console.log("Project already exists, navigating to it:", existingProjects[0].id);
+        toast.info("A project with this name already exists");
+        
+        if (onSuccess) onSuccess();
+        navigate(`/projects/${existingProjects[0].id}`, { replace: true });
+        return;
+      }
 
       // Create project using the RPC function
       const { data: projectId, error } = await supabase.rpc('create_project_with_owner', {
@@ -47,10 +73,13 @@ export function useCreateProject(onSuccess?: () => void) {
       if (error) {
         // Handle the specific 409 conflict error for duplicate projects
         if (error.code === '23505' || error.code === '409') {
-          console.log("Duplicate project detected, attempting to find existing project");
+          console.log("Duplicate project detected after creation attempt, fetching existing project");
+          
+          // Delay slightly to allow for potential database consistency issues
+          await new Promise(resolve => setTimeout(resolve, 500));
           
           // Try to find the existing project with this name
-          const { data: existingProjects, error: findError } = await supabase
+          const { data: conflictedProjects, error: findError } = await supabase
             .from("projects")
             .select("id")
             .eq("name", values.name)
@@ -59,25 +88,29 @@ export function useCreateProject(onSuccess?: () => void) {
             .limit(1);
           
           if (findError) {
+            console.error("Error finding conflicted project:", findError);
             throw findError;
           }
           
-          if (existingProjects && existingProjects.length > 0) {
-            toast.success("Project already exists");
+          if (conflictedProjects && conflictedProjects.length > 0) {
+            console.log("Found conflicted project:", conflictedProjects[0].id);
+            toast.success("Navigating to your existing project");
+            
             if (onSuccess) onSuccess();
-            // Navigate to the existing project instead
-            navigate(`/projects/${existingProjects[0].id}`, { replace: true });
+            navigate(`/projects/${conflictedProjects[0].id}`, { replace: true });
             return;
           } else {
-            // If we can't find the existing project despite getting a duplicate error
-            // This is likely a temporary database conflict that will resolve
-            toast.success("Project processed");
+            // Force a refresh of the projects page as a fallback
+            console.log("Could not find conflicted project, refreshing projects page");
+            toast.info("Please check your projects list");
+            
             if (onSuccess) onSuccess();
-            navigate("/projects", { replace: true });
+            navigate("/projects", { replace: true, state: { refresh: true } });
             return;
           }
         }
         
+        console.error("Project creation error:", error);
         throw error;
       }
 
@@ -85,6 +118,7 @@ export function useCreateProject(onSuccess?: () => void) {
         throw new Error("Failed to create project: No project ID returned");
       }
 
+      console.log("Project created successfully:", projectId);
       toast.success("Project created successfully");
       
       // Call the onSuccess callback to close the modal
@@ -96,7 +130,7 @@ export function useCreateProject(onSuccess?: () => void) {
       navigate(`/projects/${projectId}`, { replace: true });
     } catch (error) {
       console.error("Error creating project:", error);
-      toast.error("Failed to create project. Please try again.");
+      toast.error(`Failed to create project: ${error.message || "Please try again"}`);
     } finally {
       setIsSubmitting(false);
     }

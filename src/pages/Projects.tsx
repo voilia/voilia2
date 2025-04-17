@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { MainLayout } from "@/app/layout/MainLayout";
 import { ContentContainer } from "@/components/ui/ContentContainer";
 import { ProjectsList } from "@/components/projects/ProjectsList";
@@ -7,13 +8,23 @@ import { EmptyProjectsState } from "@/components/projects/EmptyProjectsState";
 import { CreateProjectDialog } from "@/components/projects/CreateProjectDialog";
 import { ViewToggle, ViewMode, SortOption } from "@/components/projects/ViewToggle";
 import { Search } from "@/components/Search";
+import { useLocation } from "react-router-dom";
 
 const Projects = () => {
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [sortOption, setSortOption] = useState<SortOption>("updated_at");
   const [searchQuery, setSearchQuery] = useState("");
+  const location = useLocation();
   
-  const { projects, isLoading, error } = useProjects();
+  const { projects, isLoading, error, refreshProjects } = useProjects();
+
+  // Effect to handle forced refresh from navigation state
+  useEffect(() => {
+    if (location.state?.refresh) {
+      console.log("Forced refresh of projects triggered");
+      refreshProjects();
+    }
+  }, [location.state?.refresh, refreshProjects]);
 
   const filteredProjects = projects?.filter(
     project => project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

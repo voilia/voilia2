@@ -22,6 +22,8 @@ export function useProjects() {
           throw new Error("User not authenticated");
         }
 
+        console.log("Fetching projects for user:", user.id);
+
         // Get projects where user is owner
         const { data, error } = await supabase
           .from("projects")
@@ -30,8 +32,12 @@ export function useProjects() {
           .eq("is_deleted", false)
           .order("updated_at", { ascending: false });
 
-        if (error) throw error;
+        if (error) {
+          console.error("Error fetching projects:", error);
+          throw error;
+        }
         
+        console.log(`Fetched ${data?.length || 0} projects`);
         setProjects(data as Project[]);
       } catch (err) {
         console.error("Error fetching projects:", err);
@@ -43,7 +49,44 @@ export function useProjects() {
     }
 
     fetchProjects();
-  }, [location.key]); // Refetch when location key changes (on navigation)
+  }, [location.key, location.state?.refresh]); // Also refetch when location.state.refresh changes
 
-  return { projects, isLoading, error };
+  // Add a manual refresh function that can be called
+  const refreshProjects = async () => {
+    try {
+      setIsLoading(true);
+      
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
+
+      console.log("Manually refreshing projects for user:", user.id);
+
+      // Get projects where user is owner
+      const { data, error } = await supabase
+        .from("projects")
+        .select("*")
+        .eq("owner_id", user.id)
+        .eq("is_deleted", false)
+        .order("updated_at", { ascending: false });
+
+      if (error) {
+        console.error("Error refreshing projects:", error);
+        throw error;
+      }
+      
+      console.log(`Refreshed ${data?.length || 0} projects`);
+      setProjects(data as Project[]);
+    } catch (err) {
+      console.error("Error refreshing projects:", err);
+      setError(err as Error);
+      toast.error("Failed to refresh projects");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return { projects, isLoading, error, refreshProjects };
 }

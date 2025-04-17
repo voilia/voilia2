@@ -35,6 +35,29 @@ export function CreateProjectInline({ onProjectCreated, onCancel }: CreateProjec
 
     try {
       setIsLoading(true);
+      console.log("Creating project:", projectName);
+
+      // First, check if a project with this name already exists
+      const { data: existingProjects, error: checkError } = await supabase
+        .from("projects")
+        .select("id")
+        .eq("name", projectName.trim())
+        .eq("owner_id", user.id)
+        .eq("is_deleted", false)
+        .limit(1);
+      
+      if (checkError) {
+        console.error("Error checking for existing project:", checkError);
+        throw checkError;
+      }
+      
+      // If project already exists, navigate to it
+      if (existingProjects && existingProjects.length > 0) {
+        console.log("Project already exists, navigating to it:", existingProjects[0].id);
+        toast.info("A project with this name already exists");
+        onProjectCreated(existingProjects[0].id);
+        return;
+      }
 
       // Get the color hex value
       const colorValue = projectColors[selectedColor];
@@ -49,10 +72,13 @@ export function CreateProjectInline({ onProjectCreated, onCancel }: CreateProjec
       if (error) {
         // Handle the specific conflict errors for duplicate projects
         if (error.code === '23505' || error.code === '409') {
-          console.log("Duplicate project detected, attempting to find existing project");
+          console.log("Duplicate project detected after creation attempt, fetching existing project");
+          
+          // Delay slightly to allow for potential database consistency issues
+          await new Promise(resolve => setTimeout(resolve, 500));
           
           // Try to find the existing project with this name
-          const { data: existingProjects, error: findError } = await supabase
+          const { data: conflictedProjects, error: findError } = await supabase
             .from("projects")
             .select("id")
             .eq("name", projectName.trim())
@@ -61,19 +87,21 @@ export function CreateProjectInline({ onProjectCreated, onCancel }: CreateProjec
             .limit(1);
           
           if (findError) {
+            console.error("Error finding conflicted project:", findError);
             throw findError;
           }
           
-          if (existingProjects && existingProjects.length > 0) {
-            toast.success("Project already exists");
-            onProjectCreated(existingProjects[0].id);
+          if (conflictedProjects && conflictedProjects.length > 0) {
+            console.log("Found conflicted project:", conflictedProjects[0].id);
+            toast.success("Navigating to your existing project");
+            onProjectCreated(conflictedProjects[0].id);
             return;
           } else {
-            // If we can't find the existing project despite getting a duplicate error
-            throw new Error("Project with this name already exists but couldn't be retrieved");
+            throw new Error("Could not create or find your project. Please try again with a different name.");
           }
         }
         
+        console.error("Project creation error:", error);
         throw error;
       }
       
@@ -81,12 +109,13 @@ export function CreateProjectInline({ onProjectCreated, onCancel }: CreateProjec
         throw new Error("Failed to create project: No project ID returned");
       }
 
+      console.log("Project created successfully:", data);
       toast.success("Project created successfully");
       
       onProjectCreated(data as string);
     } catch (error) {
       console.error("Error creating project:", error);
-      toast.error("Failed to create project: " + (error.message || "Please try again"));
+      toast.error(`Failed to create project: ${error.message || "Please try again"}`);
     } finally {
       setIsLoading(false);
     }
