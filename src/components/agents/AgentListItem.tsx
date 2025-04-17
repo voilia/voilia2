@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 interface AgentListItemProps {
   agent: Agent;
@@ -50,7 +51,10 @@ export function AgentListItem({ agent }: AgentListItemProps) {
         "hover:shadow-md hover:scale-[1.005] transition-all duration-300"
       )}
     >
-      <div className="flex items-center gap-4">
+      <Link 
+        to={`/agents/${agent.id}`} 
+        className="flex items-center gap-4 flex-1"
+      >
         <div 
           className="rounded-full p-2 flex-shrink-0"
           style={{ 
@@ -80,9 +84,16 @@ export function AgentListItem({ agent }: AgentListItemProps) {
             {agent.description}
           </p>
         </div>
-      </div>
+      </Link>
       
-      <Button variant="outline" size="sm">
+      <Button 
+        variant="outline" 
+        size="sm" 
+        onClick={(e) => {
+          e.preventDefault();
+          // Activation logic would go here
+        }}
+      >
         Activate
       </Button>
     </div>

@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 interface AgentCardProps {
   agent: Agent;
@@ -64,6 +65,10 @@ export function AgentCard({ agent }: AgentCardProps) {
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
+      <Link to={`/agents/${agent.id}`} className="absolute inset-0 z-10">
+        <span className="sr-only">View {agent.name} details</span>
+      </Link>
+      
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div 
@@ -101,7 +106,7 @@ export function AgentCard({ agent }: AgentCardProps) {
         </div>
       </div>
       
-      <div className="pt-4 pb-1">
+      <div className="pt-4 pb-1 relative z-20">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -113,6 +118,10 @@ export function AgentCard({ agent }: AgentCardProps) {
                 )}
                 variant={isHovering ? "default" : "outline"}
                 aria-label={`Activate ${agent.name}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  // Activation logic would go here
+                }}
               >
                 Activate
               </Button>

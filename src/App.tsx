@@ -12,6 +12,7 @@ import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
 import RoomDetail from "./pages/RoomDetail";
 import Agents from "./pages/Agents";
+import AgentDetail from "./pages/AgentDetail";
 import Rooms from "./pages/Rooms";
 import AuthProvider, { useAuth } from "./components/auth/AuthProvider";
 
@@ -97,6 +98,14 @@ const App = () => {
                   element={
                     <ProtectedRoute>
                       <Agents />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/agents/:id"
+                  element={
+                    <ProtectedRoute>
+                      <AgentDetail />
                     </ProtectedRoute>
                   }
                 />
