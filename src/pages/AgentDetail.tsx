@@ -88,12 +88,12 @@ const AgentDetail = () => {
           
           <Separator className="my-5" />
           
-          {/* Main content section - simplified vertical layout with reduced spacing */}
-          <div className="space-y-5">
-            {/* Capabilities section - now with example prompts on the right */}
+          {/* Main content section - optimized layout with reduced spacing */}
+          <div className="space-y-4">
+            {/* Capabilities section with example prompts on the right */}
             <AgentCapabilities agent={agent} />
             
-            {/* Usage section - now below capabilities with reduced spacing */}
+            {/* Usage section - below capabilities with reduced spacing */}
             <AgentUsage agent={agent} />
             
             {/* Agent pairings section */}
@@ -103,6 +103,6 @@ const AgentDetail = () => {
       </ContentContainer>
     </MainLayout>
   );
-};
+}
 
 export default AgentDetail;

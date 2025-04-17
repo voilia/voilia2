@@ -16,15 +16,15 @@ export function AgentUsage({ agent }: AgentUsageProps) {
         <CardTitle>Using {agent.name}</CardTitle>
         <CardDescription>How to integrate this agent in your workflows</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col space-y-4">
-        <div className="flex-grow mb-2">
+      <CardContent className="flex flex-col space-y-3">
+        <div className="flex-grow">
           <Tabs defaultValue="rooms">
             <TabsList className="mb-3">
               <TabsTrigger value="rooms">In Rooms</TabsTrigger>
               <TabsTrigger value="standalone">Standalone</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="rooms" className="space-y-3 min-h-[120px]">
+            <TabsContent value="rooms" className="space-y-3 min-h-[100px]">
               <div className="flex items-start gap-2">
                 <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                 <p>
@@ -50,7 +50,7 @@ export function AgentUsage({ agent }: AgentUsageProps) {
               </div>
             </TabsContent>
             
-            <TabsContent value="standalone" className="space-y-3 min-h-[120px]">
+            <TabsContent value="standalone" className="space-y-3 min-h-[100px]">
               <div className="flex items-start gap-2">
                 <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                 <p>
@@ -69,7 +69,7 @@ export function AgentUsage({ agent }: AgentUsageProps) {
           </Tabs>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
           <Button size="lg" className="w-full">
             Activate Agent
           </Button>
