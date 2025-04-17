@@ -41,13 +41,10 @@ const AgentDetail = () => {
               </div>
             </div>
             <Separator className="my-6" />
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
-                <Skeleton className="h-[400px] rounded-xl" />
-              </div>
-              <div className="lg:col-span-1">
-                <Skeleton className="h-[400px] rounded-xl" />
-              </div>
+            <div className="grid grid-cols-1 gap-6">
+              <Skeleton className="h-[300px] rounded-xl" />
+              <Skeleton className="h-[200px] rounded-xl" />
+              <Skeleton className="h-[150px] rounded-xl" />
             </div>
           </div>
         </ContentContainer>
@@ -94,20 +91,16 @@ const AgentDetail = () => {
           <Separator className="my-6" />
           
           {/* Main content section */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Agent capabilities - takes 2/3 of the space on larger screens */}
-            <div className="lg:col-span-2 space-y-6">
-              <AgentCapabilities agent={agent} />
-            </div>
+          <div className="space-y-6">
+            {/* Capabilities section */}
+            <AgentCapabilities agent={agent} />
             
-            {/* Usage sidebar - takes 1/3 of the space on larger screens */}
-            <div className="lg:col-span-1 space-y-6 lg:sticky lg:top-6 self-start">
-              <AgentUsage agent={agent} />
-            </div>
+            {/* Usage section - now below capabilities */}
+            <AgentUsage agent={agent} />
+            
+            {/* Agent pairings section */}
+            <AgentPairings agent={agent} />
           </div>
-          
-          {/* Agent pairings section */}
-          <AgentPairings agent={agent} />
         </div>
       </ContentContainer>
     </MainLayout>

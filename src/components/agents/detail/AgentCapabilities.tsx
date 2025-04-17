@@ -4,12 +4,15 @@ import { Agent } from "@/components/agents/types";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { BrainCircuit, Sparkles, Code, Bot, MessageSquare, Layers, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AgentCapabilitiesProps {
   agent: Agent;
 }
 
 export function AgentCapabilities({ agent }: AgentCapabilitiesProps) {
+  const isMobile = useIsMobile();
+  
   // Define capability data based on agent type
   const getCapabilities = () => {
     switch (agent.type) {
@@ -100,24 +103,36 @@ export function AgentCapabilities({ agent }: AgentCapabilitiesProps) {
           ))}
         </div>
         
-        <Accordion type="single" collapsible className="mt-6">
-          <AccordionItem value="example-prompts">
-            <AccordionTrigger>Example prompts</AccordionTrigger>
-            <AccordionContent>
-              <ul className="space-y-2 list-disc pl-6">
-                <li className="text-muted-foreground hover:text-foreground cursor-pointer">
-                  "Help me draft a professional email about project delays"
-                </li>
-                <li className="text-muted-foreground hover:text-foreground cursor-pointer">
-                  "Generate 5 creative ideas for my marketing campaign"
-                </li>
-                <li className="text-muted-foreground hover:text-foreground cursor-pointer">
-                  "Explain how this technology works to a non-technical person"
-                </li>
-              </ul>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+        {/* Example prompts - different layout on mobile vs desktop */}
+        <div className={cn(
+          "mt-6",
+          isMobile ? "" : "grid grid-cols-1 lg:grid-cols-3 gap-6"
+        )}>
+          <div className={isMobile ? "" : "lg:col-span-2"}></div>
+          <div className={isMobile ? "" : "lg:col-span-1"}>
+            <Accordion type="single" collapsible>
+              <AccordionItem value="example-prompts" className="border-none">
+                <AccordionTrigger className={cn(
+                  "py-2 px-0",
+                  isMobile ? "" : "text-left justify-start"
+                )}>Example prompts</AccordionTrigger>
+                <AccordionContent>
+                  <ul className="space-y-2 list-disc pl-6">
+                    <li className="text-muted-foreground hover:text-foreground cursor-pointer">
+                      "Help me draft a professional email about project delays"
+                    </li>
+                    <li className="text-muted-foreground hover:text-foreground cursor-pointer">
+                      "Generate 5 creative ideas for my marketing campaign"
+                    </li>
+                    <li className="text-muted-foreground hover:text-foreground cursor-pointer">
+                      "Explain how this technology works to a non-technical person"
+                    </li>
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

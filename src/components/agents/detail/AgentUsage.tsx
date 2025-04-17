@@ -11,13 +11,13 @@ interface AgentUsageProps {
 
 export function AgentUsage({ agent }: AgentUsageProps) {
   return (
-    <Card className="h-full">
+    <Card>
       <CardHeader>
         <CardTitle>Using {agent.name}</CardTitle>
         <CardDescription>How to integrate this agent in your workflows</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col h-full">
-        <div className="flex-grow">
+      <CardContent className="flex flex-col">
+        <div className="flex-grow mb-6">
           <Tabs defaultValue="rooms">
             <TabsList className="mb-4">
               <TabsTrigger value="rooms">In Rooms</TabsTrigger>
@@ -69,7 +69,7 @@ export function AgentUsage({ agent }: AgentUsageProps) {
           </Tabs>
         </div>
         
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <Button size="lg" className="w-full">
             Activate Agent
           </Button>
