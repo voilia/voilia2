@@ -11,8 +11,8 @@ interface AgentPairingsProps {
 export function AgentPairings({ agent }: AgentPairingsProps) {
   return (
     <Card className="my-6">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+      <CardHeader className="text-center">
+        <CardTitle className="flex items-center justify-center gap-2">
           <Users className="h-5 w-5" />
           This agent pairs well with...
         </CardTitle>
