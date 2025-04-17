@@ -122,15 +122,36 @@
   
   .neuglass-card {
     @apply rounded-xl;
-    @apply bg-gradient-to-br from-white/80 to-white/60 dark:from-gray-900/60 dark:to-black/60;
+    @apply bg-gradient-to-br from-white/90 to-white/70 dark:from-gray-900/60 dark:to-black/60;
     @apply backdrop-blur-xl;
-    @apply border border-white/40 dark:border-white/10;
-    @apply shadow-[5px_5px_15px_rgba(0,0,0,0.08),-5px_-5px_15px_rgba(255,255,255,0.6),inset_0px_1px_1px_rgba(255,255,255,1)] 
+    @apply border border-white/50 dark:border-white/10;
+    /* Enhanced shadows for light mode visibility */
+    @apply shadow-[0px_10px_20px_rgba(0,0,0,0.1),0px_-6px_16px_rgba(255,255,255,0.8),inset_0px_1px_1px_rgba(255,255,255,1),0px_2px_3px_rgba(0,0,0,0.03),0px_0px_0px_1px_rgba(0,0,0,0.05)] 
            dark:shadow-[5px_5px_15px_rgba(0,0,0,0.3),-5px_-5px_10px_rgba(255,255,255,0.02),inset_0px_1px_1px_rgba(255,255,255,0.05)];
-    @apply hover:shadow-[8px_8px_20px_rgba(0,0,0,0.1),-8px_-8px_20px_rgba(255,255,255,0.7)] 
+    /* Enhanced hover effects */
+    @apply hover:shadow-[0px_15px_25px_rgba(0,0,0,0.12),0px_-8px_20px_rgba(255,255,255,0.85),inset_0px_1px_1px_rgba(255,255,255,1),0px_3px_5px_rgba(0,0,0,0.04),0px_0px_0px_1px_rgba(0,0,0,0.03)] 
            dark:hover:shadow-[8px_8px_20px_rgba(0,0,0,0.4),-8px_-8px_20px_rgba(255,255,255,0.03)];
-    @apply hover:border-white/50 dark:hover:border-white/15;
+    @apply hover:border-white/60 dark:hover:border-white/15;
     @apply hover:translate-y-[-2px];
+    @apply transition-all duration-300;
+  }
+  
+  /* New enhanced card class specifically for project/room/agent cards */
+  .modern-card {
+    @apply rounded-xl;
+    /* Distinct background gradient */
+    @apply bg-gradient-to-br from-white/95 via-gray-50/90 to-gray-100/95 dark:from-gray-900/80 dark:via-gray-800/70 dark:to-black/75;
+    @apply backdrop-blur-xl;
+    /* Distinct border with higher opacity for visibility */
+    @apply border border-gray-200/80 dark:border-white/10;
+    /* More visible shadow in light mode */
+    @apply shadow-[0px_15px_30px_-10px_rgba(0,0,0,0.15),0px_5px_10px_-3px_rgba(0,0,0,0.05),inset_0px_1px_0px_rgba(255,255,255,0.9),0px_0px_0px_1px_rgba(0,0,0,0.03)] 
+           dark:shadow-[0px_20px_30px_-15px_rgba(0,0,0,0.5),inset_0px_1px_0px_rgba(255,255,255,0.05)];
+    /* Enhanced hover effects */
+    @apply hover:shadow-[0px_20px_40px_-15px_rgba(75,0,130,0.1),0px_10px_15px_-5px_rgba(0,0,0,0.05),inset_0px_1px_0px_rgba(255,255,255,1),0px_0px_0px_1px_rgba(75,0,130,0.05)] 
+           dark:hover:shadow-[0px_25px_35px_-18px_rgba(0,0,0,0.6),inset_0px_1px_0px_rgba(255,255,255,0.07)];
+    @apply hover:border-primary/20 dark:hover:border-primary/20;
+    @apply hover:translate-y-[-3px];
     @apply transition-all duration-300;
   }
   
