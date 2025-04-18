@@ -12,8 +12,8 @@ export function SmartBarFooter({ enterSends, onToggleEnterSends, className }: Sm
   const isMobile = useIsMobile();
 
   return (
-    <div className={cn("fixed z-40 w-full", className)}>
-      <div className="px-2 md:px-4 py-1 flex items-center justify-center text-xs text-muted-foreground">
+    <div className={cn("w-full text-center bg-background/80 backdrop-blur-[2px] py-1", className)}>
+      <div className="px-2 md:px-4 flex items-center justify-center text-xs text-muted-foreground">
         <span>AI can make mistakes. Verify important information.</span>
         {!isMobile && (
           <button 

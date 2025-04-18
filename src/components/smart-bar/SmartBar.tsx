@@ -55,7 +55,7 @@ export function SmartBar({
         <SmartBarFooter 
           enterSends={enterSends}
           onToggleEnterSends={() => setEnterSends(!enterSends)}
-          className={isMobile ? "bottom-[86px]" : "bottom-0"}
+          className=""
         />
       </div>
     </div>

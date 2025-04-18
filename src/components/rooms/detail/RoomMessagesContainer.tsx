@@ -25,7 +25,7 @@ export const RoomMessagesContainer = forwardRef<HTMLDivElement, RoomMessagesCont
       <ScrollArea className="h-full relative" ref={ref}>
         <ContentContainer className={cn(
           "py-4",
-          isMobile ? "pb-[128px]" : "pb-[160px]",
+          isMobile ? "pb-[180px]" : "pb-[200px]",
           "relative"
         )}>
           {isLoading && messages.length === 0 ? (
