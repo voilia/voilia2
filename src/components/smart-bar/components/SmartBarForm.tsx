@@ -2,9 +2,7 @@
 import { useSmartBarForm } from "../hooks/useSmartBarForm";
 import { SmartBarInput } from "../SmartBarInput";
 import { AnimatedSubmitButton } from "../buttons/submit/AnimatedSubmitButton";
-import { SmartBarModeSelector } from "../SmartBarModeSelector";
-import { SmartBarFileButton } from "../buttons/SmartBarFileButton";
-import { SmartBarVoiceButton } from "../buttons/SmartBarVoiceButton";
+import { SmartBarActions } from "../buttons/SmartBarActions";
 import { cn } from "@/lib/utils";
 import { useSmartBar } from "../context/SmartBarContext";
 
@@ -35,18 +33,12 @@ export function SmartBarForm({
         />
         
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <SmartBarModeSelector />
-            <SmartBarFileButton disabled={isDisabled} />
-          </div>
+          <SmartBarActions disabled={isDisabled} />
           
-          <div className="flex items-center gap-3">
-            <SmartBarVoiceButton disabled={isDisabled} />
-            <AnimatedSubmitButton 
-              disabled={isDisabled || isSubmitting} 
-              mode={mode}
-            />
-          </div>
+          <AnimatedSubmitButton 
+            disabled={isDisabled || isSubmitting} 
+            mode={mode}
+          />
         </div>
       </div>
     </form>

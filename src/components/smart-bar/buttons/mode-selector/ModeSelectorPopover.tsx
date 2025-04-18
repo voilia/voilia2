@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { useSmartBar } from "../../context/SmartBarContext";
-import { SmartBarModeButton } from "../SmartBarModeButton";
 import { BotMessageSquare, Palette, Wrench, Vault } from "lucide-react";
 
 interface ModeSelectorPopoverProps {
@@ -16,11 +15,11 @@ interface ModeSelectorPopoverProps {
 }
 
 export function ModeSelectorPopover({ children, disabled }: ModeSelectorPopoverProps) {
-  const { setMode } = useSmartBar();
+  const { mode, setMode } = useSmartBar();
   
-  const handleModeSelect = (mode: "chat" | "visual" | "assist" | "vault") => {
+  const handleModeSelect = (newMode: "chat" | "visual" | "assist" | "vault") => {
     if (disabled) return;
-    setMode(mode);
+    setMode(newMode);
   };
   
   return (
@@ -30,40 +29,72 @@ export function ModeSelectorPopover({ children, disabled }: ModeSelectorPopoverP
       </PopoverTrigger>
       <PopoverContent 
         className={cn(
-          "w-56 p-1 z-[100]",
+          "p-0 z-[100] w-full max-w-[800px]",
           "border border-white/20 dark:border-slate-700/30",
-          "bg-white/90 dark:bg-background/90 backdrop-blur-lg",
+          "bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg",
           "shadow-[0_8px_32px_rgba(0,0,0,0.1)]",
           "rounded-xl"
         )}
-        align="start"
+        align="center"
+        sideOffset={5}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="grid grid-cols-2 gap-1 bg-transparent">
-          <SmartBarModeButton 
-            icon={BotMessageSquare}
-            label="Chat"
-            color="#8B5CF6"
+        <div className="grid grid-cols-4 divide-x divide-border/40">
+          <button
+            className={cn(
+              "flex flex-col items-center justify-center gap-2 p-4 rounded-l-xl",
+              "transition-all duration-200",
+              "hover:bg-white/50 dark:hover:bg-slate-800/50",
+              mode === "chat" ? "bg-white/30 dark:bg-slate-800/30" : "bg-transparent",
+              mode === "chat" ? "text-foreground" : "text-muted-foreground"
+            )}
             onClick={() => handleModeSelect("chat")}
-          />
-          <SmartBarModeButton 
-            icon={Palette}
-            label="Visual"
-            color="#F97316"
+          >
+            <BotMessageSquare className="h-6 w-6" />
+            <span className="text-sm font-medium">Chat</span>
+          </button>
+          
+          <button
+            className={cn(
+              "flex flex-col items-center justify-center gap-2 p-4",
+              "transition-all duration-200",
+              "hover:bg-white/50 dark:hover:bg-slate-800/50",
+              mode === "visual" ? "bg-white/30 dark:bg-slate-800/30" : "bg-transparent",
+              mode === "visual" ? "text-foreground" : "text-muted-foreground"
+            )}
             onClick={() => handleModeSelect("visual")}
-          />
-          <SmartBarModeButton 
-            icon={Wrench}
-            label="Assist"
-            color="#3B82F6"
+          >
+            <Palette className="h-6 w-6" />
+            <span className="text-sm font-medium">Visual</span>
+          </button>
+          
+          <button
+            className={cn(
+              "flex flex-col items-center justify-center gap-2 p-4",
+              "transition-all duration-200",
+              "hover:bg-white/50 dark:hover:bg-slate-800/50",
+              mode === "assist" ? "bg-white/30 dark:bg-slate-800/30" : "bg-transparent",
+              mode === "assist" ? "text-foreground" : "text-muted-foreground"
+            )}
             onClick={() => handleModeSelect("assist")}
-          />
-          <SmartBarModeButton 
-            icon={Vault}
-            label="Vault"
-            color="#10B981"
+          >
+            <Wrench className="h-6 w-6" />
+            <span className="text-sm font-medium">Assist</span>
+          </button>
+          
+          <button
+            className={cn(
+              "flex flex-col items-center justify-center gap-2 p-4 rounded-r-xl",
+              "transition-all duration-200",
+              "hover:bg-white/50 dark:hover:bg-slate-800/50",
+              mode === "vault" ? "bg-white/30 dark:bg-slate-800/30" : "bg-transparent",
+              mode === "vault" ? "text-foreground" : "text-muted-foreground"
+            )}
             onClick={() => handleModeSelect("vault")}
-          />
+          >
+            <Vault className="h-6 w-6" />
+            <span className="text-sm font-medium">Vault</span>
+          </button>
         </div>
       </PopoverContent>
     </Popover>
