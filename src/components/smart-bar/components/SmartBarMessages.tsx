@@ -25,7 +25,7 @@ export function SmartBarMessages({
 }: SmartBarMessagesProps) {
   return (
     <ScrollArea className="h-full" ref={scrollAreaRef}>
-      <ContentContainer className={`py-4 ${isMobile ? 'pb-[128px]' : 'pb-[160px]'}`}>
+      <ContentContainer className={`py-4 ${isMobile ? 'pb-[180px]' : 'pb-[220px]'}`}>
         {isLoading && messageGroups.length === 0 ? (
           <div className="space-y-4 p-4">
             <Skeleton className="h-12 w-2/3" />
