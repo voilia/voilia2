@@ -37,8 +37,8 @@ export function SmartBar({
   return (
     <div 
       className={cn(
-        "fixed bottom-0 bg-background border-t border-border/40",
-        "w-full transition-all duration-300 ease-out z-40",
+        "fixed bottom-0 bg-white dark:bg-background",
+        "w-full transition-all duration-300 ease-out z-40 border-t border-border/40",
         isMobile ? "px-2" : "px-4"
       )}
       style={{
@@ -47,8 +47,8 @@ export function SmartBar({
         maxWidth: isMobile ? '100%' : 'none'
       }}
     >
-      <div className="relative max-w-3xl mx-auto w-full rounded-t-2xl bg-background/95 backdrop-blur-sm">
-        <ColoredModeIndicator mode={mode} className="absolute -top-px inset-x-0 w-full rounded-t-2xl" />
+      <div className="relative max-w-3xl mx-auto w-full glassmorphic-light rounded-t-2xl">
+        <ColoredModeIndicator mode={mode} className="absolute top-0 inset-x-0 w-full rounded-t-2xl h-[2px]" />
         <SmartBarForm
           onSendMessage={onSendMessage}
           isDisabled={isDisabled}

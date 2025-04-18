@@ -15,7 +15,7 @@ export function ColoredModeIndicator({ mode, className }: ColoredModeIndicatorPr
   return (
     <div 
       className={cn(
-        "h-1 transition-colors duration-300",
+        "transition-colors duration-300",
         mode === "chat" && (isDark ? "bg-[#9333EA]" : "bg-[#8B5CF6]"),
         mode === "visual" && (isDark ? "bg-[#FB923C]" : "bg-[#F97316]"),
         mode === "assist" && (isDark ? "bg-[#60A5FA]" : "bg-[#3B82F6]"),

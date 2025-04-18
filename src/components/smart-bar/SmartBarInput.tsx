@@ -1,3 +1,4 @@
+
 import { useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useSmartBar } from "./context/SmartBarContext";
@@ -25,7 +26,6 @@ export function SmartBarInput({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { uploadedFiles } = useSmartBar();
   
-  // Auto-focus the input when the component mounts
   useEffect(() => {
     if (textareaRef.current && !isDisabled && !isSubmitting) {
       textareaRef.current.focus();
@@ -42,10 +42,11 @@ export function SmartBarInput({
         disabled={isDisabled || isSubmitting}
         placeholder="Ask anything or use @ to mention a model..."
         className={cn(
-          "w-full px-4 py-4 bg-transparent",
+          "w-full px-4 py-3",
           "resize-none outline-none border-0",
+          "bg-transparent",
           "text-base text-foreground/90",
-          "placeholder:text-muted-foreground/70",
+          "placeholder:text-muted-foreground/60",
           "disabled:opacity-50"
         )}
         maxRows={8}
