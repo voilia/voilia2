@@ -26,7 +26,7 @@ export async function addAiResponseToRoom(
         created_at: new Date().toISOString(),
         updated_at: null,
         messageType: 'agent',
-        transaction_id: transactionId
+        transaction_id: transactionId || `temp-${Date.now()}`
       };
     }
     
@@ -39,7 +39,7 @@ export async function addAiResponseToRoom(
         agent_id: validAgentId,
         message_text: message,
         user_id: null,
-        transaction_id: transactionId
+        transaction_id: transactionId || `temp-${Date.now()}`
       })
       .select('*')
       .single();
@@ -64,7 +64,7 @@ export async function addAiResponseToRoom(
       created_at: new Date().toISOString(),
       updated_at: null,
       messageType: 'agent',
-      transaction_id: transactionId
+      transaction_id: transactionId || `temp-${Date.now()}`
     };
   }
 }

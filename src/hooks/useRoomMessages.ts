@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -43,6 +44,9 @@ export function useRoomMessages(roomId: string | undefined) {
           const combinedMessages = [...(data || [])];
           
           pendingMessages.forEach(pendingMsg => {
+            // Make sure we're comparing with a non-null transaction_id
+            if (!pendingMsg.transaction_id) return;
+            
             const existsInData = data?.some(dbMsg => 
               dbMsg.transaction_id === pendingMsg.transaction_id
             );
@@ -80,6 +84,9 @@ export function useRoomMessages(roomId: string | undefined) {
           const newMessage = payload.new as RoomMessage;
           
           setMessages((prev) => {
+            // Skip if the message doesn't have a transaction_id for comparison
+            if (!newMessage.transaction_id) return [...prev, newMessage];
+            
             const pendingIndex = prev.findIndex(msg => 
               msg.isPending && 
               msg.transaction_id === newMessage.transaction_id
@@ -106,6 +113,9 @@ export function useRoomMessages(roomId: string | undefined) {
   const addLocalMessage = (message: RoomMessage) => {
     console.log("Adding local message:", message);
     setMessages(prev => {
+      // Skip comparison if transaction_id is missing
+      if (!message.transaction_id) return [...prev, message];
+      
       const exists = prev.some(m => 
         m.transaction_id === message.transaction_id && 
         m.messageType === message.messageType
