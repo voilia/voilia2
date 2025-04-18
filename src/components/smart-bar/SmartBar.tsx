@@ -34,23 +34,28 @@ export function SmartBar({
   const isMobile = useIsMobile();
 
   return (
-    <div className={cn(
-      "fixed bottom-0 z-20 w-full px-2 md:px-4 pb-2",
-      isMobile ? "left-0 right-0" : "transition-all duration-300",
-    )} 
-    style={{
-      left: isMobile ? 0 : 'var(--sidebar-width, 0px)',
-      right: 0,
-    }}>
-      <SmartBarForm
-        onSendMessage={onSendMessage}
-        isDisabled={isDisabled}
-      />
-      <SmartBarFooter 
-        enterSends={enterSends}
-        onToggleEnterSends={() => setEnterSends(!enterSends)}
-        className={isMobile ? "bottom-[86px]" : "bottom-0"}
-      />
+    <div 
+      className={cn(
+        "fixed z-20 pb-2",
+        isMobile ? "bottom-0 left-0 right-0 px-2" : "bottom-0 px-4"
+      )}
+      style={{
+        left: isMobile ? '0' : 'var(--sidebar-width, 0px)',
+        right: '0',
+        maxWidth: isMobile ? '100%' : 'none',
+      }}
+    >
+      <div className="mx-auto max-w-3xl w-full">
+        <SmartBarForm
+          onSendMessage={onSendMessage}
+          isDisabled={isDisabled}
+        />
+        <SmartBarFooter 
+          enterSends={enterSends}
+          onToggleEnterSends={() => setEnterSends(!enterSends)}
+          className={isMobile ? "bottom-[86px]" : "bottom-0"}
+        />
+      </div>
     </div>
   );
 }
