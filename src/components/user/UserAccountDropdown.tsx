@@ -14,11 +14,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { User, CreditCard, FolderOpen, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 
 export function UserAccountDropdown() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -31,11 +30,10 @@ export function UserAccountDropdown() {
 
   const handleSignOut = async () => {
     try {
-      await supabase.auth.signOut();
+      await signOut();
       navigate("/auth");
-      toast.success("Signed out successfully");
+      // Toast is now handled in AuthProvider.tsx
     } catch (error) {
-      toast.error("Error signing out");
       console.error("Error:", error);
     }
   };

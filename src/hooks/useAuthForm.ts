@@ -57,6 +57,7 @@ export const useAuthForm = () => {
           }
         } else {
           console.log("Password login successful");
+          // No success toast here, will be handled by AuthProvider
         }
       } else {
         // Magic link flow

@@ -25,6 +25,7 @@ const GoogleSignIn = () => {
         toast.error(error.message);
       } else {
         console.log("Google sign in initiated successfully");
+        // No toast here, will be handled by AuthProvider
       }
     } catch (error) {
       console.error("Unexpected Google sign in error:", error);
