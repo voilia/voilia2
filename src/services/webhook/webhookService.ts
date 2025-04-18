@@ -4,16 +4,23 @@ import { WebhookResponse, MessageSubmitOptions } from "./types";
 import { v4 as uuidv4 } from 'uuid';
 import { prepareWebhookPayload } from "./preparePayload";
 import { handleWebhookResponse, handleWebhookError } from "./handleResponse";
+import { toast } from "sonner";
 
 export async function submitSmartBarMessage(options: MessageSubmitOptions): Promise<WebhookResponse> {
   try {
     if (options.onStart) options.onStart();
 
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      throw new Error("No authenticated user found");
+    // Get current user session
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session || !session.user) {
+      const error = new Error("You must be logged in to send messages");
+      toast.error("Authentication required", {
+        description: "Please log in to send messages"
+      });
+      return handleWebhookError(error, options, options.transactionId || uuidv4());
     }
 
+    const user = session.user;
     const msgTransactionId = options.transactionId || uuidv4();
 
     // Add user message to room immediately for optimistic update

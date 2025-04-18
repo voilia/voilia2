@@ -22,10 +22,10 @@ export function useRoomMessages(roomId: string | undefined) {
   const [messages, setMessages] = useState<RoomMessage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
-    if (!roomId) return;
+    if (!roomId || !user) return;
 
     // Initial fetch of messages
     const fetchMessages = async () => {
@@ -94,7 +94,7 @@ export function useRoomMessages(roomId: string | undefined) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [roomId, user?.id]);
+  }, [roomId, user?.id, user]);
 
   // Function to add a message locally without waiting for Supabase
   const addLocalMessage = (message: RoomMessage) => {
@@ -103,7 +103,14 @@ export function useRoomMessages(roomId: string | undefined) {
 
   // Function to send a new message with optimistic updates and transaction ID
   const sendMessage = async (text: string, transactionId?: string) => {
-    if (!roomId || !text.trim() || !user) return;
+    if (!roomId || !text.trim() || !user) {
+      if (!user && !authLoading) {
+        toast.error("Authentication required", {
+          description: "Please log in to send messages"
+        });
+      }
+      return;
+    }
 
     // Generate transaction ID if not provided
     const msgTransactionId = transactionId || uuidv4();
@@ -151,7 +158,7 @@ export function useRoomMessages(roomId: string | undefined) {
 
   return {
     messages,
-    isLoading,
+    isLoading: isLoading || authLoading,
     error,
     sendMessage,
     addLocalMessage,

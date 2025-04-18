@@ -2,11 +2,12 @@
 import { useState, useEffect } from "react";
 import { RoomMessage, useRoomMessages } from "@/hooks/useRoomMessages";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { submitSmartBarMessage, addAiResponseToRoom } from "@/services/n8nService";
+import { submitSmartBarMessage } from "@/services/n8nService";
+import { addAiResponseToRoom } from "@/services/messages/roomMessages";
 import { toast } from "sonner";
 
 export function useRoomDetailMessages(roomId: string | undefined, projectId: string | null) {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
   const [messageGroups, setMessageGroups] = useState<{ userId: string | null; messages: RoomMessage[] }[]>([]);
   const { messages, isLoading, addLocalMessage } = useRoomMessages(roomId);
@@ -52,7 +53,7 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
   }, [messages, user?.id]);
 
   const handleWebhookResponse = async (response: any, transactionId: string) => {
-    if (!roomId) return;
+    if (!roomId || !user) return;
     
     try {
       if (response.message) {
@@ -94,6 +95,14 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
   const handleSendMessage = async (text: string, files?: File[]) => {
     if (!roomId || !text.trim()) return;
     
+    // Check if user is authenticated
+    if (!user && !authLoading) {
+      toast.error("Authentication required", {
+        description: "Please log in to send messages"
+      });
+      return;
+    }
+    
     setIsProcessing(true);
     
     try {
@@ -132,7 +141,7 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
 
   return {
     messageGroups,
-    isLoading: isLoading || isProcessing,
+    isLoading: isLoading || isProcessing || authLoading,
     handleSendMessage,
     addLocalMessage
   };

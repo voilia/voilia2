@@ -10,10 +10,13 @@ import { useThrottle } from "@/components/smart-bar/buttons/mode-selector/hooks/
 import { useRoomDetailMessages } from "@/hooks/useRoomDetailMessages";
 import { RoomDetailHeader } from "@/components/rooms/detail/RoomDetailHeader";
 import { RoomMessagesContainer } from "@/components/rooms/detail/RoomMessagesContainer";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { toast } from "sonner";
 
 export default function RoomDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
   const { data: room, isLoading: isRoomLoading } = useRoom(id);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   
@@ -38,7 +41,32 @@ export default function RoomDetail() {
     scrollToBottom();
   }, [messageGroups, scrollToBottom]);
 
-  const isLoading = isRoomLoading || isMessagesLoading;
+  // Check for authentication
+  useEffect(() => {
+    if (!authLoading && !user) {
+      toast.error("Authentication required", {
+        description: "Please log in to view room details"
+      });
+      navigate('/auth', { replace: true });
+    }
+  }, [user, authLoading, navigate]);
+
+  const isLoading = isRoomLoading || isMessagesLoading || authLoading;
+
+  // Don't render content if not authenticated
+  if (authLoading) {
+    return (
+      <MainLayout>
+        <div className="flex items-center justify-center h-full">
+          <div className="animate-pulse">Loading...</div>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  if (!user) {
+    return null; // Will redirect due to the useEffect above
+  }
 
   return (
     <MainLayout>
