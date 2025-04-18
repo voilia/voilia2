@@ -30,7 +30,7 @@ export function ModeSelectorPopover({ children, disabled }: ModeSelectorPopoverP
       </PopoverTrigger>
       <PopoverContent 
         className={cn(
-          "w-56 p-0",
+          "w-56 p-0 z-[100]", // Added higher z-index
           "border border-border",
           "bg-background/95 backdrop-blur-sm"
         )}

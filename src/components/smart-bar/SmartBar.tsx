@@ -1,8 +1,10 @@
+
 import { SmartBarForm } from "./components/SmartBarForm";
 import { SmartBarFooter } from "./SmartBarFooter";
 import { useSmartBar } from "./context/SmartBarContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { RoomMessage } from "@/types/room-messages";
+import { cn } from "@/lib/utils";
 
 interface SmartBarProps {
   onSendMessage: (message: string, files?: File[]) => Promise<void>;
@@ -32,7 +34,14 @@ export function SmartBar({
   const isMobile = useIsMobile();
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-20 w-full px-2 md:px-4 pb-2">
+    <div className={cn(
+      "fixed bottom-0 z-20 w-full px-2 md:px-4 pb-2",
+      isMobile ? "left-0 right-0" : "transition-all duration-300",
+    )} 
+    style={{
+      left: isMobile ? 0 : 'var(--sidebar-width, 0px)',
+      right: 0,
+    }}>
       <SmartBarForm
         onSendMessage={onSendMessage}
         isDisabled={isDisabled}
