@@ -39,17 +39,22 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
       new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
     );
 
+    // Group messages by sender
     const groups: { userId: string | null; messages: RoomMessage[] }[] = [];
     let currentGroup: { userId: string | null; messages: RoomMessage[] } | null = null;
 
     sortedMessages.forEach((message) => {
       // Skip messages without content
-      if (!message.message_text?.trim()) return;
+      if (!message.message_text?.trim()) {
+        console.log("Skipping message with empty content");
+        return;
+      }
       
       const isFromCurrentUser = message.user_id === user?.id;
       // For user messages, use user_id; for agent messages, use agent_id or null
       const senderId = isFromCurrentUser ? user?.id : message.agent_id || null;
       
+      // Check if we should continue the current group or start a new one
       if (!currentGroup || currentGroup.userId !== senderId) {
         if (currentGroup) {
           groups.push(currentGroup);
@@ -60,10 +65,12 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
       }
     });
 
+    // Add the last group if it exists
     if (currentGroup) {
       groups.push(currentGroup);
     }
 
+    console.log("Grouped messages into", groups.length, "groups");
     setMessageGroups(groups);
   }, [messages, user?.id]);
 
@@ -81,9 +88,12 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
             ? response.agent_id 
             : null;
         
+        // Create unique ID for the optimistic message
+        const messageId = `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+        
         // Create optimistic AI message for immediate display
         const optimisticAiMessage: RoomMessage = {
-          id: `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+          id: messageId,
           room_id: roomId,
           user_id: null,
           agent_id: agentId,
@@ -131,6 +141,7 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
     
     setIsProcessing(true);
     const transactionId = uuidv4();
+    console.log("Creating new message with transaction ID:", transactionId);
     
     // Create and display optimistic user message immediately
     const optimisticUserMessage: RoomMessage = {
