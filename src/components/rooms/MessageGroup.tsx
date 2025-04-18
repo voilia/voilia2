@@ -1,7 +1,8 @@
+
 import { RoomMessage } from "@/hooks/useRoomMessages";
-import { useAuth } from "@/components/auth/AuthProvider";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
+import { MessageStatus } from "@/components/rooms/MessageStatus";
 
 interface MessageGroupProps {
   messages: RoomMessage[];
@@ -9,31 +10,23 @@ interface MessageGroupProps {
 }
 
 export function MessageGroup({ messages, isUserGroup }: MessageGroupProps) {
-  const { user } = useAuth();
-  
   // Early exit for empty messages
   if (!messages.length) return null;
-  
-  // If we explicitly know this is a user group, trust that
-  // Otherwise, determine based on message type or user_id
-  const isCurrentUserMessages = isUserGroup || 
-    (messages[0].messageType === 'user') || 
-    (messages[0].user_id === user?.id && messages[0].user_id !== null);
   
   return (
     <div className={cn(
       "flex flex-col gap-1 py-2",
-      isCurrentUserMessages ? "items-end" : "items-start"
+      isUserGroup ? "items-end" : "items-start"
     )}>
       <div className={cn(
         "flex flex-col max-w-[80%] space-y-1",
-        isCurrentUserMessages ? "items-end" : "items-start"
+        isUserGroup ? "items-end" : "items-start"
       )}>
         {messages.map((message) => (
           <Message 
             key={message.id} 
             message={message} 
-            isUser={isCurrentUserMessages} 
+            isUser={isUserGroup} 
           />
         ))}
       </div>
@@ -53,19 +46,18 @@ function Message({ message, isUser }: MessageProps) {
     <div className="group">
       <div className={cn(
         "px-4 py-2 text-sm rounded-xl",
-        message.isPending && "opacity-70",
         isUser
           ? "bg-primary/10 text-foreground ml-auto rounded-tr-none"
-          : "bg-muted text-foreground mr-auto rounded-tl-none"
+          : "bg-muted text-foreground mr-auto rounded-tl-none",
+        message.isPending && "opacity-70"
       )}>
         {message.message_text}
       </div>
-      <div className={cn(
-        "text-xs text-muted-foreground mt-1",
-        isUser ? "text-right" : "text-left"
-      )}>
-        {time} {message.isPending && "(sending...)"}
-      </div>
+      <MessageStatus 
+        time={time}
+        isPending={message.isPending}
+        align={isUser ? "right" : "left"}
+      />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 
 import { useParams, useNavigate } from "react-router-dom";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { useRoom } from "@/hooks/useRoom";
 import { MainLayout } from "@/app/layout/MainLayout";
 import { SmartBar } from "@/components/smart-bar/SmartBar";
