@@ -48,20 +48,29 @@ export function SmartBar({
       }}
     >
       <div className={cn(
-        "relative max-w-3xl mx-auto w-full rounded-2xl",
-        "backdrop-blur-lg bg-white/90 dark:bg-background/90",
-        "shadow-[0_8px_32px_rgba(0,0,0,0.1)]",
-        "border border-white/20 dark:border-slate-700/30",
-        "transform transition-all duration-300"
+        "relative max-w-3xl mx-auto w-full",
+        "flex flex-col gap-2"
       )}>
-        <ColoredModeIndicator mode={mode} className="absolute top-0 inset-x-0 w-full rounded-t-2xl h-[2px]" />
-        <SmartBarForm
-          onSendMessage={onSendMessage}
-          isDisabled={isDisabled}
-        />
+        <div className={cn(
+          "relative w-full rounded-2xl overflow-hidden",
+          "bg-white/90 dark:bg-background/90",
+          "backdrop-blur-lg shadow-lg",
+          "border border-white/20 dark:border-slate-700/30"
+        )}>
+          <ColoredModeIndicator 
+            mode={mode} 
+            className="absolute top-0 inset-x-0 w-full rounded-t-2xl" 
+          />
+          <SmartBarForm
+            onSendMessage={onSendMessage}
+            isDisabled={isDisabled}
+          />
+        </div>
+
         <SmartBarFooter 
           enterSends={enterSends}
           onToggleEnterSends={() => setEnterSends(!enterSends)}
+          className="max-w-3xl mx-auto"
         />
       </div>
     </div>

@@ -13,13 +13,17 @@ export function SmartBarFooter({ enterSends, onToggleEnterSends, className }: Sm
 
   return (
     <div className={cn(
-      "w-full py-2 px-4 bg-transparent",
-      "flex items-center text-xs text-muted-foreground/70",
-      "border-t border-slate-200/30 dark:border-slate-700/30",
+      "w-full py-2 px-4",
+      "flex items-center text-xs",
+      "bg-white/80 dark:bg-background/80 backdrop-blur-sm",
+      "border border-white/20 dark:border-slate-700/30 rounded-xl",
+      "shadow-sm",
       isMobile ? "justify-center" : "justify-between",
       className
     )}>
-      <span className="text-muted-foreground/60 dark:text-muted-foreground/50">AI can make mistakes. Verify important information.</span>
+      <span className="text-muted-foreground/60 dark:text-muted-foreground/50">
+        AI can make mistakes. Verify important information.
+      </span>
       {!isMobile && (
         <button 
           type="button"
