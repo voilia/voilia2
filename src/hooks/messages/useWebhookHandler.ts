@@ -46,7 +46,6 @@ export function useWebhookHandler(
         // Add AI response immediately to local state
         console.log("Adding optimistic AI response:", optimisticAiMessage);
         addLocalMessage(optimisticAiMessage);
-        
       } else if (response.error) {
         console.error("Error in webhook response:", response.error);
         throw new Error(response.error);

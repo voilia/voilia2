@@ -34,17 +34,8 @@ export function useMessagesStore() {
     console.log("Trying to update message:", message);
     
     setMessages(prev => {
-      // Debug existing messages
-      console.log("Current message count:", prev.length);
-      
       // First check if we have this exact message by ID
       const exactMatch = prev.find(msg => msg.id === message.id);
-      if (exactMatch) {
-        console.log("Found exact match by ID, updating");
-        return prev.map(msg => 
-          msg.id === message.id ? { ...message, isPending: false } : msg
-        );
-      }
       
       // Next check for transaction_id match
       const transactionMatch = prev.find(msg => 
@@ -53,17 +44,20 @@ export function useMessagesStore() {
         msg.transaction_id === message.transaction_id
       );
       
-      if (transactionMatch) {
-        console.log("Found match by transaction_id, updating");
+      // If we have any match, update it
+      if (exactMatch || transactionMatch) {
+        console.log("Found existing message to update");
         return prev.map(msg => 
-          (msg.transaction_id === message.transaction_id) 
+          (msg.id === message.id || 
+            (msg.transaction_id && message.transaction_id && msg.transaction_id === message.transaction_id)) 
             ? { ...message, isPending: false } 
             : msg
         );
       }
       
-      // If we get here, this is a completely new message
-      console.log("No matching message found, adding as new:", message);
+      // If we get here, this is a completely new message from the real-time subscription
+      // We should add it to the list rather than ignoring it
+      console.log("No matching message found, adding as new from real-time:", message);
       return [...prev, message].sort((a, b) => 
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       );

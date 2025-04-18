@@ -1,3 +1,4 @@
+
 import { useEffect, useCallback, useState } from "react";
 import { RoomMessage } from "@/types/room-messages";
 import { useMessagePersistence } from "@/services/messages/useMessagePersistence";
@@ -17,11 +18,14 @@ export function useRoomMessages(roomId: string | undefined) {
   const handleNewMessage = useCallback((message: RoomMessage) => {
     console.log("Handling new/updated message:", message);
     
-    // If this is an update to an existing message, use updateMessage
-    // If it's a completely new message, we should still handle it
+    // If this message is from the real-time subscription (not pending), use updateMessage
+    // This will either update an existing message or add it as new if it doesn't exist
     if (message.isPending === false) {
+      console.log("This is a confirmed message from real-time, updating:", message.id);
       updateMessage(message);
     } else {
+      // This is a local optimistic message, add it directly
+      console.log("This is a local optimistic message, adding:", message.id);
       addMessage(message);
     }
   }, [updateMessage, addMessage]);
