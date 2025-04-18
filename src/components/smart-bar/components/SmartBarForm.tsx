@@ -1,5 +1,6 @@
+
 import { useState, useRef } from "react";
-import { SmartBarInput } from "./SmartBarInput";
+import { SmartBarInput } from "../SmartBarInput";
 import { SmartBarButton } from "../SmartBarButton";
 import { useSmartBar } from "../context/SmartBarContext";
 import { Send } from "lucide-react";
@@ -15,7 +16,7 @@ export function SmartBarForm({
   onSendMessage: (message: string, files?: File[]) => Promise<void>;
   isDisabled?: boolean;
 }) {
-  const { message, setMessage, isSubmitting, enterSends, uploadedFiles, clearFiles } = useSmartBar();
+  const { message, setMessage, isSubmitting, setIsSubmitting, enterSends, uploadedFiles, clearFiles } = useSmartBar();
   const { mode } = useSmartBar();
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
