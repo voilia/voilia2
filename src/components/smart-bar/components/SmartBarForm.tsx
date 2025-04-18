@@ -58,14 +58,15 @@ export function SmartBarForm({
         <SmartBarInput
           value={message}
           onChange={(value) => setMessage(value)}
-          placeholder={`Ask ${mode}...`}
-          disabled={isDisabled || isSubmitting}
           onKeyDown={(e) => {
             if (enterSends && e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
               handleSubmit(e);
             }
           }}
+          isDisabled={isDisabled || isSubmitting}
+          id="smart-bar-input"
+          name="message-input"
         />
         <SmartBarButton
           type="submit"
