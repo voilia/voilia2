@@ -1,5 +1,5 @@
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { 
   Popover,
   PopoverContent,
@@ -8,6 +8,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useSmartBar } from "../../context/SmartBarContext";
 import { BotMessageSquare, Palette, Wrench, Vault } from "lucide-react";
+import { useFilePopoverPosition } from "../../file-upload/hooks/useFilePopoverPosition";
 
 interface ModeSelectorPopoverProps {
   children: ReactNode;
@@ -16,33 +17,44 @@ interface ModeSelectorPopoverProps {
 
 export function ModeSelectorPopover({ children, disabled }: ModeSelectorPopoverProps) {
   const { mode, setMode } = useSmartBar();
+  const [open, setOpen] = useState(false);
+  const { popoverWidth, popoverPosition } = useFilePopoverPosition(open);
   
   const handleModeSelect = (newMode: "chat" | "visual" | "assist" | "vault") => {
     if (disabled) return;
     setMode(newMode);
+    setOpen(false);
   };
   
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild disabled={disabled}>
         {children}
       </PopoverTrigger>
       <PopoverContent 
         className={cn(
-          "p-0 z-[100] w-full max-w-[800px]",
+          "p-0 z-[100]",
           "border border-white/20 dark:border-slate-700/30",
           "bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg",
           "shadow-[0_8px_32px_rgba(0,0,0,0.1)]",
-          "rounded-xl"
+          "rounded-xl overflow-hidden"
         )}
         align="center"
         sideOffset={5}
         onClick={(e) => e.stopPropagation()}
+        style={{
+          width: popoverWidth ? `${popoverWidth}px` : 'auto',
+          position: 'fixed',
+          top: `${popoverPosition.top}px`,
+          left: `${popoverPosition.left}px`,
+          transform: 'translateY(-100%)',
+          marginTop: '-10px',
+        }}
       >
-        <div className="grid grid-cols-4 divide-x divide-border/40">
+        <div className="grid grid-cols-4">
           <button
             className={cn(
-              "flex flex-col items-center justify-center gap-2 p-4 rounded-l-xl",
+              "flex flex-col items-center justify-center gap-2 p-4",
               "transition-all duration-200",
               "hover:bg-white/50 dark:hover:bg-slate-800/50",
               mode === "chat" ? "bg-white/30 dark:bg-slate-800/30" : "bg-transparent",
@@ -60,7 +72,8 @@ export function ModeSelectorPopover({ children, disabled }: ModeSelectorPopoverP
               "transition-all duration-200",
               "hover:bg-white/50 dark:hover:bg-slate-800/50",
               mode === "visual" ? "bg-white/30 dark:bg-slate-800/30" : "bg-transparent",
-              mode === "visual" ? "text-foreground" : "text-muted-foreground"
+              mode === "visual" ? "text-foreground" : "text-muted-foreground",
+              "border-l border-border/40"
             )}
             onClick={() => handleModeSelect("visual")}
           >
@@ -74,7 +87,8 @@ export function ModeSelectorPopover({ children, disabled }: ModeSelectorPopoverP
               "transition-all duration-200",
               "hover:bg-white/50 dark:hover:bg-slate-800/50",
               mode === "assist" ? "bg-white/30 dark:bg-slate-800/30" : "bg-transparent",
-              mode === "assist" ? "text-foreground" : "text-muted-foreground"
+              mode === "assist" ? "text-foreground" : "text-muted-foreground",
+              "border-l border-border/40"
             )}
             onClick={() => handleModeSelect("assist")}
           >
@@ -84,11 +98,12 @@ export function ModeSelectorPopover({ children, disabled }: ModeSelectorPopoverP
           
           <button
             className={cn(
-              "flex flex-col items-center justify-center gap-2 p-4 rounded-r-xl",
+              "flex flex-col items-center justify-center gap-2 p-4",
               "transition-all duration-200",
               "hover:bg-white/50 dark:hover:bg-slate-800/50",
               mode === "vault" ? "bg-white/30 dark:bg-slate-800/30" : "bg-transparent",
-              mode === "vault" ? "text-foreground" : "text-muted-foreground"
+              mode === "vault" ? "text-foreground" : "text-muted-foreground",
+              "border-l border-border/40"
             )}
             onClick={() => handleModeSelect("vault")}
           >

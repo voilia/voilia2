@@ -16,31 +16,33 @@ export function useFilePopoverPosition(showPopover: boolean) {
     const updateSmartBarDimensions = () => {
       if (typeof window === 'undefined') return;
       
-      const smartBarForm = document.querySelector('form.rounded-xl, form.rounded-2xl');
-      if (smartBarForm) {
-        const rect = smartBarForm.getBoundingClientRect();
+      // Find the SmartBar container
+      const smartBarContainer = document.querySelector('.SmartBar, form.rounded-xl, .relative.max-w-3xl');
+      if (smartBarContainer) {
+        const rect = smartBarContainer.getBoundingClientRect();
         
         setPopoverWidth(rect.width);
-        // Adjust the left position based on sidebar state if not mobile
-        const leftPosition = isMobile ? rect.left : rect.left;
         
+        // Calculate position to be exactly above the smartbar
         setPopoverPosition({
-          top: rect.top - 12,
-          left: leftPosition
+          top: rect.top,
+          left: rect.left
         });
       }
     };
     
     if (showPopover) {
-      updateSmartBarDimensions();
+      // Small timeout to ensure DOM is ready
+      setTimeout(updateSmartBarDimensions, 0);
+      
+      // Update on resize and scroll
       window.addEventListener('resize', updateSmartBarDimensions);
       window.addEventListener('scroll', updateSmartBarDimensions);
       
-      // Also listen for sidebar toggling
+      // Listen for sidebar toggling
       const sidebarToggleButton = document.querySelector('[aria-label="Toggle sidebar"]');
       if (sidebarToggleButton) {
         sidebarToggleButton.addEventListener('click', () => {
-          // Add a small delay to allow DOM to update
           setTimeout(updateSmartBarDimensions, 350);
         });
       }
