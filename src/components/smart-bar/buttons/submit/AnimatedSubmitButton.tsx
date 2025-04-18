@@ -17,7 +17,7 @@ export function AnimatedSubmitButton({ disabled, mode, className }: AnimatedSubm
   const getButtonColor = () => {
     if (mode === "chat") {
       if (disabled) {
-        return isDark ? "bg-[#D6BCFA]/80" : "bg-[#E9D5FF]/80";  // Light purple when disabled
+        return isDark ? "bg-[#D6BCFA]/80" : "bg-[#E9D5FF]/80";
       }
       return isDark ? "bg-[#9333EA]/90" : "bg-[#8B5CF6]/90";
     } else if (mode === "visual") {
@@ -34,7 +34,6 @@ export function AnimatedSubmitButton({ disabled, mode, className }: AnimatedSubm
         : (isDark ? "bg-[#34D399]/90" : "bg-[#10B981]/90");
     }
     
-    // Default fallback
     return isDark ? "bg-[#9333EA]/90" : "bg-[#8B5CF6]/90";
   };
 
@@ -51,7 +50,8 @@ export function AnimatedSubmitButton({ disabled, mode, className }: AnimatedSubm
           ? "cursor-not-allowed hover:opacity-80"
           : [
               getButtonColor(),
-              "hover:shadow-md hover:opacity-95",
+              "hover:shadow-md hover:ring-2 hover:ring-offset-2 hover:ring-offset-background hover:ring-primary/20",
+              "hover:opacity-95",
               "active:shadow-[inset_2px_2px_5px_rgba(0,0,0,0.1)]",
             ],
         className

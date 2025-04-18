@@ -52,16 +52,16 @@ export function SmartBar({
         "flex flex-col gap-2"
       )}>
         <div className={cn(
-          "relative w-full rounded-2xl overflow-hidden",
-          "bg-white/95 dark:bg-background/95",
-          "backdrop-blur-lg",
+          "relative w-full rounded-xl overflow-hidden",
+          "bg-white/95 dark:bg-background/80",
+          "backdrop-blur-xl",
           "shadow-[0_8px_32px_rgba(0,0,0,0.08)]",
           "border border-white/20 dark:border-slate-700/30",
           "transition-all duration-300"
         )}>
           <ColoredModeIndicator 
             mode={mode} 
-            className="absolute top-0 inset-x-0 w-full rounded-t-2xl" 
+            className="absolute top-0 inset-x-0 w-full rounded-t-xl" 
           />
           <SmartBarForm
             onSendMessage={onSendMessage}

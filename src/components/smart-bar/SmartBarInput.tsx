@@ -35,9 +35,10 @@ export function SmartBarInput({
           "bg-transparent",
           "text-base text-foreground/90",
           "placeholder:text-muted-foreground/50",
-          "focus:ring-0",
+          "focus:ring-0 focus:bg-white/5 dark:focus:bg-slate-800/30",
           "disabled:opacity-50",
-          "min-h-[48px]" // Ensure minimum height
+          "min-h-[48px]", // Ensure minimum height
+          "transition-all duration-200"
         )}
         maxRows={8}
         id={id}
