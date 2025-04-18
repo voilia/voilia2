@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { RoomMessage } from "@/hooks/useRoomMessages";
+import { RoomMessage } from "@/types/room-messages";
 import { toast } from "sonner";
 import { isValidUUID } from "../webhook/utils";
 

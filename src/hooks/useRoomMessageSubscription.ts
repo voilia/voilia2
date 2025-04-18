@@ -34,7 +34,7 @@ export const useRoomMessageSubscription = (
           const newMessage = {
             ...payload.new as RoomMessage,
             transaction_id: (payload.new as any).transaction_id || `rt-${(payload.new as any).id}`,
-            messageType: (payload.new as any).user_id ? 'user' : 'agent'
+            messageType: (payload.new as any).user_id ? 'user' as const : 'agent' as const
           };
           onNewMessage(newMessage);
         }

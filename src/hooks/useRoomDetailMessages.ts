@@ -1,6 +1,7 @@
 
 import { useState, useEffect, useCallback } from "react";
-import { RoomMessage, useRoomMessages } from "@/hooks/useRoomMessages";
+import { RoomMessage } from "@/types/room-messages";
+import { useRoomMessages } from "@/hooks/useRoomMessages";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { submitSmartBarMessage } from "@/services/webhook/webhookService";
 import { addAiResponseToRoom } from "@/services/messages/roomMessages";
