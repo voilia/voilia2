@@ -16,9 +16,14 @@ export function useWebhookHandler(
     
     try {
       // Check if we have a simulated response from no-cors mode
-      if (response.status === "sent" || (response.message && response.message.includes("CORS restrictions"))) {
-        // Create an automated response message for no-cors mode
-        const fallbackMessage = "I've received your message and am processing it. Due to current technical limitations, I can't show a detailed response right now. Please check back later or try again.";
+      if (response.status === "processing" || response.status === "sent" || 
+          (response.message && response.message.includes("CORS restrictions"))) {
+        console.log("Processing response with status:", response.status);
+        
+        // Try to extract any message content if available
+        const messageText = response.message || 
+                          response.data?.message || 
+                          "I've received your message and am processing it. Please wait while I formulate a response.";
         
         // Create unique ID for the optimistic message
         const messageId = `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
@@ -29,7 +34,7 @@ export function useWebhookHandler(
           room_id: roomId,
           user_id: null,
           agent_id: null,
-          message_text: fallbackMessage,
+          message_text: messageText,
           created_at: new Date().toISOString(),
           updated_at: null,
           messageType: 'agent' as const,
@@ -38,14 +43,14 @@ export function useWebhookHandler(
         };
         
         // Add AI response immediately to local state
-        console.log("Adding fallback AI response due to CORS:", optimisticAiMessage);
+        console.log("Adding optimistic AI response for CORS-limited message:", optimisticAiMessage);
         addLocalMessage(optimisticAiMessage);
         return;
       }
       
       // Extract the message from the response structure for normal responses
       const messageData = response.data?.response || response.data;
-      const messageText = messageData?.text || messageData?.message;
+      const messageText = messageData?.text || messageData?.message || response.message;
 
       if (messageText) {
         // Extract agent ID if available
