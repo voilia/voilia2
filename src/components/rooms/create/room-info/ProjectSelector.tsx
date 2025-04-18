@@ -29,7 +29,14 @@ export function ProjectSelector({
       {isCreatingProject ? (
         <div className="space-y-4">
           <CreateProjectInline 
-            onProjectCreated={handleProjectCreated}
+            onProjectCreated={(projectId) => {
+              // Set the selected project ID first
+              setSelectedProjectId(projectId);
+              // Then call handleProjectCreated to refresh the projects list
+              handleProjectCreated(projectId);
+              // Finally, close the create project form
+              setIsCreatingProject(false);
+            }}
             onCancel={() => setIsCreatingProject(false)}
           />
         </div>

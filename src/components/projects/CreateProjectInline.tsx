@@ -81,6 +81,7 @@ export function CreateProjectInline({ onProjectCreated, onCancel }: CreateProjec
       console.log("Project created successfully:", data);
       toast.success("Project created successfully");
       
+      // Call onProjectCreated with the new project ID immediately
       onProjectCreated(data as string);
     } catch (error: any) {
       console.error("Error creating project:", error);
