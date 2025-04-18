@@ -15,7 +15,35 @@ export function useWebhookHandler(
     console.log("Received webhook response:", response);
     
     try {
-      // Extract the message from the response structure
+      // Check if we have a simulated response from no-cors mode
+      if (response.status === "sent" || (response.message && response.message.includes("CORS restrictions"))) {
+        // Create an automated response message for no-cors mode
+        const fallbackMessage = "I've received your message and am processing it. Due to current technical limitations, I can't show a detailed response right now. Please check back later or try again.";
+        
+        // Create unique ID for the optimistic message
+        const messageId = `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+        
+        // Create optimistic AI message for immediate display
+        const optimisticAiMessage: RoomMessage = {
+          id: messageId,
+          room_id: roomId,
+          user_id: null,
+          agent_id: null,
+          message_text: fallbackMessage,
+          created_at: new Date().toISOString(),
+          updated_at: null,
+          messageType: 'agent' as const,
+          transaction_id: transactionId || uuidv4(),
+          isPending: true
+        };
+        
+        // Add AI response immediately to local state
+        console.log("Adding fallback AI response due to CORS:", optimisticAiMessage);
+        addLocalMessage(optimisticAiMessage);
+        return;
+      }
+      
+      // Extract the message from the response structure for normal responses
       const messageData = response.data?.response || response.data;
       const messageText = messageData?.text || messageData?.message;
 

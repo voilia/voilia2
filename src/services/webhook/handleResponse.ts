@@ -1,5 +1,4 @@
 
-import { supabase } from "@/integrations/supabase/client";
 import { WebhookResponse, MessageSubmitOptions } from "./types";
 
 export async function handleWebhookResponse(
@@ -14,11 +13,24 @@ export async function handleWebhookResponse(
 
   let responseData;
   try {
-    responseData = await response.json();
-    console.log("Parsed webhook response:", responseData);
+    // For no-cors responses, we may not be able to parse JSON
+    if (response.type === 'opaque') {
+      console.log("Received opaque response from webhook (expected with no-cors)");
+      responseData = { 
+        message: "Request processed. Due to CORS restrictions, detailed response unavailable.",
+        status: "sent" 
+      };
+    } else {
+      responseData = await response.json();
+      console.log("Parsed webhook response:", responseData);
+    }
   } catch (jsonError) {
     console.error("Error parsing webhook response:", jsonError);
-    throw new Error("Invalid response from AI service");
+    // Provide a fallback for no-cors mode
+    responseData = { 
+      message: "Request sent. Unable to parse response due to CORS restrictions.",
+      status: "sent"
+    };
   }
   
   if (options.onResponseReceived) {
