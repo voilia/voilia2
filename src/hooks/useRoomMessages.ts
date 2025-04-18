@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -13,9 +12,9 @@ export interface RoomMessage {
   message_text: string | null;
   created_at: string;
   updated_at: string | null;
-  isPending?: boolean; // Added for optimistic updates
-  transaction_id?: string; // New field to match database schema
-  messageType?: 'user' | 'agent'; // Added to clearly identify message types
+  isPending?: boolean;
+  transaction_id?: string;
+  messageType?: 'user' | 'agent';
 }
 
 export function useRoomMessages(roomId: string | undefined) {
@@ -27,7 +26,6 @@ export function useRoomMessages(roomId: string | undefined) {
   useEffect(() => {
     if (!roomId || !user) return;
 
-    // Initial fetch of messages
     const fetchMessages = async () => {
       try {
         setIsLoading(true);
@@ -51,7 +49,6 @@ export function useRoomMessages(roomId: string | undefined) {
 
     fetchMessages();
 
-    // Subscribe to new messages
     const channel = supabase
       .channel(`room_${roomId}_messages`)
       .on(
@@ -65,26 +62,20 @@ export function useRoomMessages(roomId: string | undefined) {
         (payload) => {
           const newMessage = payload.new as RoomMessage;
           
-          // Process incoming message
           setMessages((prev) => {
-            // If this is a confirmed version of our optimistic message, replace it
-            // We identify matching optimistic messages using combined criteria
             const pendingIndex = prev.findIndex(msg => 
               msg.isPending && 
               (msg.message_text === newMessage.message_text) && 
-              // Match either by user_id directly or check if this is a user message that matches current user
               ((msg.user_id === newMessage.user_id) || 
                (msg.user_id === user?.id && newMessage.user_id === user?.id))
             );
             
-            // If we found a matching pending message, replace it
             if (pendingIndex >= 0) {
               const updatedMessages = [...prev];
               updatedMessages[pendingIndex] = newMessage;
               return updatedMessages;
             }
             
-            // Otherwise, it's a new message from the server, add it
             return [...prev, newMessage];
           });
         }
@@ -96,12 +87,10 @@ export function useRoomMessages(roomId: string | undefined) {
     };
   }, [roomId, user?.id, user]);
 
-  // Function to add a message locally without waiting for Supabase
   const addLocalMessage = (message: RoomMessage) => {
     setMessages(prev => [...prev, message]);
   };
 
-  // Function to send a new message with optimistic updates and transaction ID
   const sendMessage = async (text: string, transactionId?: string) => {
     if (!roomId || !text.trim() || !user) {
       if (!user && !authLoading) {
@@ -112,10 +101,8 @@ export function useRoomMessages(roomId: string | undefined) {
       return;
     }
 
-    // Generate transaction ID if not provided
     const msgTransactionId = transactionId || uuidv4();
 
-    // Create optimistic message for immediate display
     const optimisticMessage: RoomMessage = {
       id: uuidv4(),
       room_id: roomId,
@@ -129,7 +116,6 @@ export function useRoomMessages(roomId: string | undefined) {
       messageType: 'user'
     };
 
-    // Add optimistic message immediately
     setMessages(prev => [...prev, optimisticMessage]);
 
     try {
@@ -147,10 +133,8 @@ export function useRoomMessages(roomId: string | undefined) {
     } catch (err) {
       console.error("Error sending message:", err);
       
-      // On error, remove the optimistic message
       setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
       
-      // Show error toast
       toast.error("Failed to send message");
       throw err;
     }

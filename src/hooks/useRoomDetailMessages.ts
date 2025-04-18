@@ -6,6 +6,7 @@ import { submitSmartBarMessage } from "@/services/webhook/webhookService";
 import { addAiResponseToRoom } from "@/services/messages/roomMessages";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from 'uuid';
 
 export function useRoomDetailMessages(roomId: string | undefined, projectId: string | null) {
   const { user, loading: authLoading } = useAuth();
@@ -35,23 +36,14 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
     let currentGroup: { userId: string | null; messages: RoomMessage[] } | null = null;
 
     messages.forEach((message) => {
-      const isFromCurrentUser = 
-        (message.messageType === 'user') || 
-        (message.user_id === user?.id && message.user_id !== null);
-      
+      const isFromCurrentUser = message.user_id === user?.id;
       const senderId = isFromCurrentUser ? user?.id : message.agent_id || null;
       
-      if (!currentGroup || 
-          currentGroup.userId !== senderId || 
-          (isFromCurrentUser !== (currentGroup.messages[0].user_id === user?.id))) {
+      if (!currentGroup || currentGroup.userId !== senderId) {
         if (currentGroup) {
           groups.push(currentGroup);
         }
-        
-        currentGroup = { 
-          userId: senderId, 
-          messages: [message] 
-        };
+        currentGroup = { userId: senderId, messages: [message] };
       } else {
         currentGroup.messages.push(message);
       }
@@ -84,9 +76,11 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
           created_at: new Date().toISOString(),
           updated_at: null,
           messageType: 'agent',
-          transaction_id: transactionId
+          transaction_id: transactionId,
+          isPending: true
         };
         
+        // Add AI response immediately with pending state
         addLocalMessage(optimisticAiMessage);
         
         await addAiResponseToRoom(
@@ -117,6 +111,24 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
     }
     
     setIsProcessing(true);
+    const transactionId = uuidv4();
+    
+    // Create and display optimistic user message immediately
+    const optimisticUserMessage: RoomMessage = {
+      id: `temp-${Date.now()}`,
+      room_id: roomId,
+      user_id: user?.id || null,
+      agent_id: null,
+      message_text: text,
+      created_at: new Date().toISOString(),
+      updated_at: null,
+      messageType: 'user',
+      transaction_id: transactionId,
+      isPending: true
+    };
+    
+    // Add user message immediately
+    addLocalMessage(optimisticUserMessage);
     
     try {
       let finalText = text;
@@ -138,7 +150,8 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
           size: file.size,
           preview: URL.createObjectURL(file)
         })) || [],
-        onResponseReceived: handleWebhookResponse
+        onResponseReceived: handleWebhookResponse,
+        transactionId
       });
       
       if (!result.success && result.error) {

@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { WebhookResponse, MessageSubmitOptions } from "./types";
 import { v4 as uuidv4 } from 'uuid';
@@ -31,24 +30,6 @@ export async function submitSmartBarMessage(options: MessageSubmitOptions): Prom
 
     const user = session.user;
     const msgTransactionId = options.transactionId || uuidv4();
-
-    // Add user message to room with improved error handling
-    const userMessageResult = await supabase
-      .from('room_messages')
-      .insert({
-        room_id: options.roomId,
-        user_id: user.id,
-        message_text: options.message,
-        transaction_id: msgTransactionId
-      });
-
-    if (userMessageResult.error) {
-      console.error('Error adding user message:', userMessageResult.error);
-      toast.error("Failed to save your message", {
-        description: userMessageResult.error.message || "Database error occurred"
-      });
-      throw userMessageResult.error;
-    }
 
     // Prepare webhook payload
     const payload = await prepareWebhookPayload({
