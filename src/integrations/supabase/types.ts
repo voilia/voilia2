@@ -1096,6 +1096,7 @@ export type Database = {
           id: string
           message_text: string | null
           room_id: string
+          transaction_id: string | null
           updated_at: string | null
           user_id: string | null
         }
@@ -1105,6 +1106,7 @@ export type Database = {
           id?: string
           message_text?: string | null
           room_id: string
+          transaction_id?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -1114,6 +1116,7 @@ export type Database = {
           id?: string
           message_text?: string | null
           room_id?: string
+          transaction_id?: string | null
           updated_at?: string | null
           user_id?: string | null
         }

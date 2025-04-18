@@ -14,7 +14,7 @@ export interface RoomMessage {
   created_at: string;
   updated_at: string | null;
   isPending?: boolean; // Added for optimistic updates
-  transaction_id?: string; // Added to link messages in the same conversation
+  transaction_id?: string; // New field to match database schema
   messageType?: 'user' | 'agent'; // Added to clearly identify message types
 }
 
