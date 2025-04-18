@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Project } from "@/components/projects/types";
@@ -89,10 +89,11 @@ export function useProjects() {
   }, [location.state?.refresh, location.pathname]);
 
   // Add a manual refresh function that can be called
-  const refreshProjects = () => {
+  const refreshProjects = useCallback(() => {
     console.log("Manual refresh requested");
     setRefreshTrigger(prev => prev + 1);
-  };
+    return fetchProjects(); // Return the promise for better control
+  }, []);
 
   return { projects, isLoading, error, refreshProjects };
 }

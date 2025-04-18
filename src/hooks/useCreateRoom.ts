@@ -19,7 +19,9 @@ export function useCreateRoom(initialProjectId?: string) {
   const [searchQuery, setSearchQuery] = useState("");
   const [showAllAgents, setShowAllAgents] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [projectJustCreated, setProjectJustCreated] = useState<string | null>(null);
 
+  // Effect to handle color sync with selected project
   useEffect(() => {
     if (selectedProjectId && projects) {
       const selectedProject = projects.find(p => p.id === selectedProjectId);
@@ -35,6 +37,19 @@ export function useCreateRoom(initialProjectId?: string) {
     }
   }, [selectedProjectId, projects]);
 
+  // Effect to wait for project refresh after creation
+  useEffect(() => {
+    if (projectJustCreated && projects) {
+      // Check if the newly created project is now in the projects list
+      const projectExists = projects.some(p => p.id === projectJustCreated);
+      
+      if (projectExists) {
+        // Project is now in the list, we can clear the waiting state
+        setProjectJustCreated(null);
+      }
+    }
+  }, [projectJustCreated, projects]);
+
   const resetForm = () => {
     setName("");
     setDescription("");
@@ -47,15 +62,25 @@ export function useCreateRoom(initialProjectId?: string) {
       setSelectedProjectId(null);
     }
     setIsCreatingProject(false);
+    setProjectJustCreated(null);
   };
 
-  const handleProjectCreated = (newProjectId: string) => {
+  const handleProjectCreated = async (newProjectId: string) => {
     // Set the selected project ID immediately
     setSelectedProjectId(newProjectId);
     // Close the project creation form
     setIsCreatingProject(false);
-    // Refresh the projects list to include the new project
-    refreshProjects();
+    // Mark that we're waiting for this project to appear in the projects list
+    setProjectJustCreated(newProjectId);
+    
+    // Immediately refresh projects list to include the new project
+    await refreshProjects();
+    
+    // Even after refresh, sometimes the project might not be immediately visible
+    // due to Supabase caching or delay, so we'll set a fallback
+    setTimeout(() => {
+      refreshProjects();
+    }, 1000);
   };
   
   const toggleAgentSelection = (id: string) => {
@@ -154,6 +179,7 @@ export function useCreateRoom(initialProjectId?: string) {
     isLoading,
     handleSubmit,
     handleProjectCreated,
-    resetForm
+    resetForm,
+    projectJustCreated
   };
 }

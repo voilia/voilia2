@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Project } from "@/components/projects/types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus } from "lucide-react";
@@ -25,6 +26,21 @@ export function ProjectSelector({
 }: ProjectSelectorProps) {
   // Track if we're in the process of creating both a project and room
   const [isCreatingProjectAndRoom, setIsCreatingProjectAndRoom] = useState(false);
+  
+  // Find the currently selected project from the projects list
+  const selectedProject = projects?.find(p => p.id === selectedProjectId);
+
+  // This effect ensures the dropdown shows the selected project after creation
+  useEffect(() => {
+    if (selectedProjectId && projects && projects.length > 0) {
+      // If a project ID is selected but not found in the list, it might be because
+      // the list hasn't been refreshed yet - we handle this in handleProjectCreated
+      const projectExists = projects.some(p => p.id === selectedProjectId);
+      if (!projectExists) {
+        console.log("Selected project not found in list, will be refreshed soon");
+      }
+    }
+  }, [selectedProjectId, projects]);
 
   return (
     <div className="space-y-2">
@@ -65,7 +81,17 @@ export function ProjectSelector({
           disabled={isLoadingProjects}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Select a project" />
+            <SelectValue placeholder="Select a project">
+              {selectedProject && (
+                <div className="flex items-center gap-2">
+                  <div 
+                    className="w-3 h-3 rounded-full" 
+                    style={{ backgroundColor: selectedProject.color }}
+                  />
+                  {selectedProject.name}
+                </div>
+              )}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {projects.map((project) => (
