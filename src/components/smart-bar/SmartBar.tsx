@@ -36,7 +36,7 @@ export function SmartBar({
   return (
     <div 
       className={cn(
-        "fixed pb-2 bg-background/80 backdrop-blur-sm",
+        "fixed pb-2 bg-background/95 backdrop-blur-sm border-t border-border/40",
         isMobile ? "bottom-0 left-0 right-0 px-2" : "bottom-0 px-4"
       )}
       style={{
@@ -44,7 +44,7 @@ export function SmartBar({
         right: '0',
         maxWidth: isMobile ? '100%' : 'none',
         transition: 'left 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-        zIndex: 20
+        zIndex: 40
       }}
     >
       <div className="mx-auto max-w-3xl w-full transition-transform duration-300 ease-out">
