@@ -15,34 +15,59 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // First, set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    let isSubscribed = true;
+
+    // First set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, currentSession) => {
       console.log("Auth state changed in Auth page:", event);
-      setSession(session);
       
-      if (session) {
+      if (!isSubscribed) return;
+      
+      setSession(currentSession);
+      
+      if (currentSession) {
+        console.log("Session detected, redirecting to home");
         // Allow a small delay for the session to be fully established
         setTimeout(() => {
-          if (event === "SIGNED_IN") {
-            toast.success("Successfully signed in");
-          }
           navigate("/home");
-        }, 100);
+        }, 300);
       }
     });
 
     // Then check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log("Getting session in Auth page:", session?.user?.email || "No session");
-      setSession(session);
-      setIsLoading(false);
-      
-      if (session) {
-        navigate("/home");
+    const checkSession = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error("Session check error:", error);
+          if (isSubscribed) toast.error("Failed to verify authentication status");
+        }
+        
+        if (isSubscribed) {
+          console.log("Getting session in Auth page:", data.session?.user?.email || "No session");
+          setSession(data.session);
+          
+          if (data.session) {
+            console.log("Existing session found, redirecting to home");
+            navigate("/home");
+          }
+          
+          setIsLoading(false);
+        }
+      } catch (err) {
+        console.error("Unexpected error checking session:", err);
+        if (isSubscribed) {
+          setIsLoading(false);
+          toast.error("Authentication service error");
+        }
       }
-    });
+    };
+
+    checkSession();
 
     return () => {
+      isSubscribed = false;
       subscription.unsubscribe();
     };
   }, [navigate]);
@@ -59,7 +84,8 @@ const Auth = () => {
     return null; // Will redirect in useEffect
   }
 
-  return <div className="flex min-h-screen flex-col items-center justify-center p-4 md:p-8 bg-gradient-to-b from-background via-background to-secondary/20">
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center p-4 md:p-8 bg-gradient-to-b from-background via-background to-secondary/20">
       <div className="absolute top-4 right-4">
         <ThemeToggle />
       </div>
@@ -78,10 +104,12 @@ const Auth = () => {
           </CardContent>
         </Card>
 
-        <p className="text-center text-sm text-muted-foreground mt-4">By continuing,
-you agree to VOILIA's Terms of Service and Privacy Policy.</p>
+        <p className="text-center text-sm text-muted-foreground mt-4">
+          By continuing, you agree to VOILIA's Terms of Service and Privacy Policy.
+        </p>
       </div>
-    </div>;
+    </div>
+  );
 };
 
 export default Auth;

@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,7 +17,15 @@ import Rooms from "./pages/Rooms";
 import AuthProvider, { useAuth } from "./components/auth/AuthProvider";
 import { Loader } from "@/components/ui/loader";
 
-const queryClient = new QueryClient();
+// Create a new query client with retry settings
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
@@ -45,12 +54,7 @@ const App = () => {
             <BrowserRouter>
               <Routes>
                 <Route path="/auth" element={<Auth />} />
-                <Route 
-                  path="/" 
-                  element={
-                    <Navigate to="/home" replace />
-                  } 
-                />
+                <Route path="/" element={<Navigate to="/home" replace />} />
                 <Route 
                   path="/home" 
                   element={

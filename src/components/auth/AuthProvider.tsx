@@ -26,19 +26,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Configure session to expire after 8 hours
-    const SESSION_DURATION_HOURS = 8 * 60 * 60; // 8 hours in seconds
-    
     let isSubscribed = true;
 
-    // Set up auth state listener first
+    // First set up auth state listener to catch events
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      (event, currentSession) => {
         console.log("Auth state changed in provider:", event);
         
         if (isSubscribed) {
-          setSession(session);
-          setUser(session?.user ?? null);
+          setSession(currentSession);
+          setUser(currentSession?.user ?? null);
           setLoading(false);
           
           // Provide feedback on authentication events
@@ -48,14 +45,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             console.log("Session token refreshed successfully");
           } else if (event === 'USER_UPDATED') {
             toast.success("User profile updated");
+          } else if (event === 'SIGNED_IN') {
+            toast.success("Successfully signed in");
           }
         }
       }
     );
 
     // Then check for existing session
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      console.log("Getting session in provider:", session?.user?.email || "No session");
+    supabase.auth.getSession().then(({ data: { session: initialSession }, error }) => {
+      console.log("Getting session in provider:", initialSession?.user?.email || "No session");
       
       if (error) {
         console.error("Error getting session:", error);
@@ -67,38 +66,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       
       if (isSubscribed) {
-        setSession(session);
-        setUser(session?.user ?? null);
+        setSession(initialSession);
+        setUser(initialSession?.user ?? null);
         setLoading(false);
       }
     });
 
-    // Optional: You can also use this to enforce session duration client-side
-    const checkSessionExpiration = () => {
-      if (session) {
-        // Check if session is expired
-        const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
-        const expiryTime = session.expires_at || 0; // expires_at is in seconds
-        
-        // Force sign out if session is older than 8 hours
-        // This is a fallback in case the server-side expiry doesn't work
-        if (currentTime > expiryTime || (expiryTime - currentTime) > SESSION_DURATION_HOURS) {
-          supabase.auth.signOut().then(() => {
-            if (isSubscribed) {
-              toast.info("Your session has expired. Please sign in again.");
-            }
-          });
-        }
-      }
-    };
-
-    // Check session expiration periodically
-    const intervalId = setInterval(checkSessionExpiration, 60 * 1000); // Check every minute
-
     return () => {
       isSubscribed = false;
       subscription.unsubscribe();
-      clearInterval(intervalId);
     };
   }, []);
 

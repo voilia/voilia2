@@ -22,8 +22,11 @@ export const useAuthForm = () => {
     setIsSubmitting(true);
     
     try {
+      console.log("Auth form submitted:", isPasswordMode ? "password mode" : "magic link mode");
+      
       if (isPasswordMode && data.password) {
-        // First try to sign in
+        // Password login flow
+        console.log("Attempting password login for:", data.email);
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email: data.email,
           password: data.password,
@@ -33,12 +36,13 @@ export const useAuthForm = () => {
           console.log("Sign in error:", signInError.message);
           
           if (signInError.message.includes("Invalid login credentials")) {
+            console.log("Invalid credentials, attempting sign up");
             // If sign in fails with invalid credentials, try to sign up
             const { error: signUpError } = await supabase.auth.signUp({
               email: data.email,
               password: data.password,
               options: {
-                emailRedirectTo: `${window.location.origin}/home`,
+                emailRedirectTo: window.location.origin,
               },
             });
 
@@ -51,13 +55,16 @@ export const useAuthForm = () => {
           } else {
             toast.error(signInError.message);
           }
+        } else {
+          console.log("Password login successful");
         }
       } else {
         // Magic link flow
+        console.log("Sending magic link to:", data.email);
         const { error } = await supabase.auth.signInWithOtp({
           email: data.email,
           options: {
-            emailRedirectTo: `${window.location.origin}/home`,
+            emailRedirectTo: window.location.origin,
           },
         });
 
@@ -85,7 +92,7 @@ export const useAuthForm = () => {
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/home`,
+        redirectTo: window.location.origin,
       });
 
       if (error) {
