@@ -12,7 +12,7 @@ interface SmartBarFileButtonProps {
 
 export function SmartBarFileButton({ className, disabled }: SmartBarFileButtonProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { addFiles } = useSmartBar();
+  const { addFiles, uploadedFiles } = useSmartBar();
   
   const handleClick = () => {
     if (disabled) return;
@@ -22,16 +22,14 @@ export function SmartBarFileButton({ className, disabled }: SmartBarFileButtonPr
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const files = Array.from(e.target.files);
-      console.info(`Selected ${files.length} files`);
+      console.info(`Selected ${files.length} files in file button`);
       
       if (files.length > 10) {
         toast.warning("Maximum 10 files can be uploaded at once.");
         addFiles(files.slice(0, 10));
       } else {
         addFiles(files);
-        toast.success(`Added ${files.length} ${files.length === 1 ? 'file' : 'files'}`, {
-          duration: 2000
-        });
+        console.info(`Added ${files.length} files, total now: ${uploadedFiles.length + files.length}`);
       }
       
       // Reset the input so the same file can be selected again

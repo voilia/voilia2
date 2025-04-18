@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { SmartBarContextType, SmartBarMode, UploadedFile } from '../types/smart-bar-types';
 import { toast } from 'sonner';
 
@@ -20,6 +20,13 @@ export function SmartBarProvider({ children }: { children: React.ReactNode }) {
   const [isPaused, setIsPaused] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [audioRecordingData, setAudioRecordingData] = useState<Blob | null>(null);
+
+  // Debug log for files
+  useEffect(() => {
+    if (uploadedFiles.length > 0) {
+      console.info(`SmartBarContext has ${uploadedFiles.length} files ready to display`);
+    }
+  }, [uploadedFiles]);
 
   const removeFile = (fileId: string) => {
     setUploadedFiles(prevFiles => {
@@ -53,7 +60,20 @@ export function SmartBarProvider({ children }: { children: React.ReactNode }) {
       preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : null
     }));
 
-    setUploadedFiles(prev => [...prev, ...newFiles]);
+    console.info(`Adding ${newFiles.length} files to context`);
+    
+    setUploadedFiles(prev => {
+      const updated = [...prev, ...newFiles];
+      console.info(`Context now has ${updated.length} files`);
+      return updated;
+    });
+    
+    // Show success toast
+    if (files.length > 0) {
+      toast.success(`Added ${files.length} ${files.length === 1 ? 'file' : 'files'}`, {
+        duration: 2000
+      });
+    }
   };
 
   const clearFiles = () => {
@@ -62,6 +82,7 @@ export function SmartBarProvider({ children }: { children: React.ReactNode }) {
       if (file.preview) URL.revokeObjectURL(file.preview);
     });
     setUploadedFiles([]);
+    console.info("Cleared all files");
   };
   
   // Save the current recording as a file

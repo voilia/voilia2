@@ -23,6 +23,7 @@ export function FileUploadPopover() {
     }
   }, [showPopover, uploadedFiles.length]);
 
+  // Don't render anything until we have files and document is available
   if (!showPopover || typeof document === 'undefined') return null;
   
   return createPortal(
@@ -31,8 +32,8 @@ export function FileUploadPopover() {
         "file-upload-popover fixed z-[999]",
         "shadow-lg transition-all duration-200 rounded-2xl p-3",
         isDark 
-          ? "bg-black/80 border-white/10" 
-          : "bg-white/90 border-foreground/10",
+          ? "bg-black/95 border-white/10" 
+          : "bg-white/95 border-foreground/10",
         "backdrop-blur-lg border"
       )}
       style={{

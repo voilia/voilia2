@@ -7,6 +7,7 @@ import { RoomMessage } from "@/types/room-messages";
 import { cn } from "@/lib/utils";
 import { ColoredModeIndicator } from "./buttons/mode-selector/ColoredModeIndicator";
 import { useTheme } from "@/components/ThemeProvider";
+import { FileUploadPopover } from "./file-upload/FileUploadPopover";
 
 interface SmartBarProps {
   onSendMessage: (message: string, files?: File[]) => Promise<void>;
@@ -32,10 +33,12 @@ export function SmartBar({
   room,
   isLoading
 }: SmartBarProps) {
-  const { enterSends, setEnterSends, mode } = useSmartBar();
+  const { enterSends, setEnterSends, mode, uploadedFiles } = useSmartBar();
   const isMobile = useIsMobile();
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  
+  console.info(`SmartBar rendering with ${uploadedFiles.length} files`);
 
   return (
     <div 
@@ -55,6 +58,9 @@ export function SmartBar({
         "flex flex-col gap-2",
         "SmartBar"
       )}>
+        {/* The FileUploadPopover must be included here outside other elements */}
+        <FileUploadPopover />
+        
         <div className={cn(
           "relative w-full rounded-xl overflow-hidden",
           isDark 
