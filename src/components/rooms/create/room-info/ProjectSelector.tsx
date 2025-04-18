@@ -28,7 +28,6 @@ export function ProjectSelector({
   waitingForProjectRefresh = false,
   projectJustCreated = null,
 }: ProjectSelectorProps) {
-  // Track if we're in the process of creating both a project and room
   const [isCreatingProjectAndRoom, setIsCreatingProjectAndRoom] = useState(false);
   
   // Find the currently selected project from the projects list
@@ -37,7 +36,6 @@ export function ProjectSelector({
   // Handle the case when a project was just created
   useEffect(() => {
     if (projectJustCreated && projects && projects.length > 0) {
-      // Look for the newly created project in the projects list
       const newProject = projects.find(p => p.id === projectJustCreated);
       
       if (newProject) {
@@ -52,13 +50,6 @@ export function ProjectSelector({
   // Show loading state while waiting for project refresh
   const showLoading = isLoadingProjects || waitingForProjectRefresh;
 
-  // Placeholder text logic
-  const placeholderText = showLoading 
-    ? "Loading projects..." 
-    : selectedProject 
-      ? `${selectedProject.name}` 
-      : "Select a project";
-
   return (
     <div className="space-y-2">
       {isCreatingProject ? (
@@ -66,11 +57,8 @@ export function ProjectSelector({
           <CreateProjectInline 
             onProjectCreated={(projectId) => {
               console.log("Project created callback with ID:", projectId);
-              // Set the selected project ID
               setSelectedProjectId(projectId);
-              // Call handleProjectCreated to refresh the projects list
               handleProjectCreated(projectId);
-              // Keep the create project form open if we're creating both
               if (!isCreatingProjectAndRoom) {
                 setIsCreatingProject(false);
               }
@@ -79,7 +67,6 @@ export function ProjectSelector({
               setIsCreatingProject(false);
               setIsCreatingProjectAndRoom(false);
             }}
-            // Allow continuing to room creation
             allowContinueToRoom={true}
             onContinueToRoom={() => {
               setIsCreatingProjectAndRoom(true);
@@ -98,16 +85,18 @@ export function ProjectSelector({
           }}
           disabled={showLoading}
         >
-          <SelectTrigger>
-            <SelectValue placeholder={placeholderText}>
-              {selectedProject && (
+          <SelectTrigger className="w-full">
+            <SelectValue>
+              {selectedProject ? (
                 <div className="flex items-center gap-2">
                   <div 
                     className="w-3 h-3 rounded-full" 
                     style={{ backgroundColor: selectedProject.color }}
                   />
-                  {selectedProject.name}
+                  <span className="truncate">{selectedProject.name}</span>
                 </div>
+              ) : (
+                <span>{showLoading ? "Loading projects..." : "Select a project"}</span>
               )}
             </SelectValue>
           </SelectTrigger>
@@ -119,7 +108,7 @@ export function ProjectSelector({
                     className="w-3 h-3 rounded-full" 
                     style={{ backgroundColor: project.color }}
                   />
-                  {project.name}
+                  <span className="truncate">{project.name}</span>
                 </div>
               </SelectItem>
             ))}
