@@ -26,6 +26,17 @@ export function ModeSelectorPopover({ children, disabled }: ModeSelectorPopoverP
     setOpen(false);
   };
   
+  // Force recalculation of position when open state changes
+  useEffect(() => {
+    if (open) {
+      // Apply a small delay to ensure DOM has updated
+      const timer = setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 10);
+      return () => clearTimeout(timer);
+    }
+  }, [open]);
+  
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild disabled={disabled}>
@@ -45,7 +56,7 @@ export function ModeSelectorPopover({ children, disabled }: ModeSelectorPopoverP
         style={{
           width: popoverWidth ? `${popoverWidth}px` : 'auto',
           position: 'fixed',
-          top: `${popoverPosition.top}px`,
+          top: `${Math.max(0, popoverPosition.top - 10)}px`,
           left: `${popoverPosition.left}px`,
           transform: 'translateY(-100%)',
           marginTop: '-10px',

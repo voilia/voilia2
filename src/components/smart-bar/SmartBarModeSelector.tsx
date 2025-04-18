@@ -7,15 +7,16 @@ import { ModeSelectorPopover } from "./buttons/mode-selector/ModeSelectorPopover
 
 interface SmartBarModeSelectorProps {
   className?: string;
+  disabled?: boolean;
 }
 
-export function SmartBarModeSelector({ className }: SmartBarModeSelectorProps) {
+export function SmartBarModeSelector({ className, disabled }: SmartBarModeSelectorProps) {
   const { mode } = useSmartBar()
   const { getColors } = useSmartBarColors()
   const colorValue = getColors(mode)
 
   return (
-    <ModeSelectorPopover>
+    <ModeSelectorPopover disabled={disabled}>
       <button 
         className={cn(
           "flex items-center justify-center h-8 w-8 rounded-md transition-colors",

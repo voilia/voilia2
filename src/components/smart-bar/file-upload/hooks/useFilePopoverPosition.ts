@@ -17,7 +17,7 @@ export function useFilePopoverPosition(showPopover: boolean) {
       if (typeof window === 'undefined') return;
       
       // Find the SmartBar container
-      const smartBarContainer = document.querySelector('.SmartBar, form.rounded-xl, .relative.max-w-3xl');
+      const smartBarContainer = document.querySelector('.SmartBar');
       if (smartBarContainer) {
         const rect = smartBarContainer.getBoundingClientRect();
         
