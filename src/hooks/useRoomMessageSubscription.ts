@@ -31,11 +31,21 @@ export const useRoomMessageSubscription = (
         },
         (payload) => {
           console.log("New message from realtime subscription:", payload.new);
+          // Check if this is an AI message (null user_id and has agent_id)
+          const isAiMessage = !payload.new.user_id && payload.new.agent_id;
+          
           const newMessage = {
             ...payload.new as RoomMessage,
             transaction_id: (payload.new as any).transaction_id || `rt-${(payload.new as any).id}`,
-            messageType: (payload.new as any).user_id ? 'user' as const : 'agent' as const
+            messageType: isAiMessage ? 'agent' as const : 'user' as const
           };
+          
+          console.log("Processing realtime message:", {
+            isAiMessage,
+            transactionId: newMessage.transaction_id,
+            messageType: newMessage.messageType
+          });
+          
           onNewMessage(newMessage);
         }
       )
@@ -49,11 +59,20 @@ export const useRoomMessageSubscription = (
         },
         (payload) => {
           console.log("Updated message from realtime:", payload.new);
+          const isAiMessage = !payload.new.user_id && payload.new.agent_id;
+          
           const updatedMessage = {
             ...payload.new as RoomMessage,
             transaction_id: (payload.new as any).transaction_id || `rt-${(payload.new as any).id}`,
-            messageType: (payload.new as any).user_id ? 'user' as const : 'agent' as const
+            messageType: isAiMessage ? 'agent' as const : 'user' as const
           };
+          
+          console.log("Processing updated message:", {
+            isAiMessage,
+            transactionId: updatedMessage.transaction_id,
+            messageType: updatedMessage.messageType
+          });
+          
           onNewMessage(updatedMessage);
         }
       )

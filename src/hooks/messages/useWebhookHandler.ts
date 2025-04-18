@@ -1,6 +1,5 @@
 
 import { useCallback } from "react";
-import { addAiResponseToRoom } from "@/services/messages/roomMessages";
 import { RoomMessage } from "@/types/room-messages";
 import { toast } from "sonner";
 
@@ -44,18 +43,6 @@ export function useWebhookHandler(
         console.log("Adding optimistic AI response:", optimisticAiMessage);
         addLocalMessage(optimisticAiMessage);
         
-        try {
-          // Save the response to the database asynchronously
-          await addAiResponseToRoom(
-            roomId, 
-            agentId, 
-            messageText,
-            transactionId
-          );
-        } catch (dbError) {
-          console.error("Error saving AI response to database:", dbError);
-          toast.error("Failed to save AI response");
-        }
       } else if (response.error) {
         console.error("Error in webhook response:", response.error);
         throw new Error(response.error);
