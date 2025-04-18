@@ -49,6 +49,7 @@ export async function submitSmartBarMessage(options: MessageSubmitOptions): Prom
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
+        mode: 'no-cors' // Set mode to no-cors to bypass CORS issues
       });
 
       return await handleWebhookResponse(response, options, msgTransactionId);
