@@ -1,14 +1,22 @@
 
-import { BotMessageSquare } from "lucide-react"
+import { BotMessageSquare, Palette, Wrench, Vault } from "lucide-react"
 import { useSmartBarColors } from "./hooks/useSmartBarColors"
 import { useSmartBar } from "./context/SmartBarContext"
 import { cn } from "@/lib/utils"
 import { ModeSelectorPopover } from "./buttons/mode-selector/ModeSelectorPopover"
 import { useState } from "react"
+import type { SmartBarMode } from "./types/smart-bar-types"
 
 interface SmartBarModeSelectorProps {
   className?: string;
   disabled?: boolean;
+}
+
+const modeIcons = {
+  chat: BotMessageSquare,
+  visual: Palette,
+  assist: Wrench,
+  vault: Vault
 }
 
 export function SmartBarModeSelector({ className, disabled }: SmartBarModeSelectorProps) {
@@ -16,6 +24,8 @@ export function SmartBarModeSelector({ className, disabled }: SmartBarModeSelect
   const { getColors } = useSmartBarColors()
   const colorValue = getColors(mode)
   const [isOpen, setIsOpen] = useState(false)
+
+  const Icon = modeIcons[mode]
 
   return (
     <ModeSelectorPopover 
@@ -38,7 +48,7 @@ export function SmartBarModeSelector({ className, disabled }: SmartBarModeSelect
         type="button" 
         aria-label="Select Mode"
       >
-        <BotMessageSquare className="h-5 w-5" />
+        <Icon className="h-5 w-5" />
         <span className="sr-only">Select Mode</span>
       </button>
     </ModeSelectorPopover>
