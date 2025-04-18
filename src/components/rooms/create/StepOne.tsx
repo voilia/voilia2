@@ -1,3 +1,4 @@
+
 import { Project, ProjectColor } from "@/components/projects/types";
 import { ProjectSelector } from "./room-info/ProjectSelector";
 import { RoomBasicInfo } from "./room-info/RoomBasicInfo";
@@ -16,6 +17,8 @@ interface StepOneProps {
   isCreatingProject: boolean;
   setIsCreatingProject: (creating: boolean) => void;
   handleProjectCreated: (newProjectId: string) => void;
+  waitingForProjectRefresh?: boolean;
+  projectJustCreated?: string | null;
 }
 
 export function StepOne({
@@ -32,6 +35,8 @@ export function StepOne({
   isCreatingProject,
   setIsCreatingProject,
   handleProjectCreated,
+  waitingForProjectRefresh,
+  projectJustCreated,
 }: StepOneProps) {
   return (
     <div className="space-y-6">
@@ -43,6 +48,8 @@ export function StepOne({
         isCreatingProject={isCreatingProject}
         setIsCreatingProject={setIsCreatingProject}
         handleProjectCreated={handleProjectCreated}
+        waitingForProjectRefresh={waitingForProjectRefresh}
+        projectJustCreated={projectJustCreated}
       />
       
       <RoomBasicInfo

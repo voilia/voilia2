@@ -12,7 +12,7 @@ export function useProjects() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const location = useLocation();
 
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -65,18 +65,20 @@ export function useProjects() {
       console.log(`Fetched ${projectsData.length} projects`);
       
       setProjects(projectsData);
+      setIsLoading(false);
+      return projectsData; // Return the projects for immediate use
     } catch (err) {
       console.error("Error fetching projects:", err);
       setError(err as Error);
       toast.error("Failed to load projects");
-    } finally {
       setIsLoading(false);
+      return null;
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchProjects();
-  }, [refreshTrigger]); // Only depend on refreshTrigger, not location.key
+  }, [refreshTrigger, fetchProjects]); // Include fetchProjects in dependencies
 
   // Separate effect to handle location.state refresh
   useEffect(() => {
@@ -93,7 +95,7 @@ export function useProjects() {
     console.log("Manual refresh requested");
     setRefreshTrigger(prev => prev + 1);
     return fetchProjects(); // Return the promise for better control
-  }, []);
+  }, [fetchProjects]);
 
-  return { projects, isLoading, error, refreshProjects };
+  return { projects, isLoading, error, refreshProjects, fetchProjects };
 }

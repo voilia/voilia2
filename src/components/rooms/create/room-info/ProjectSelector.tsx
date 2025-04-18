@@ -13,6 +13,8 @@ interface ProjectSelectorProps {
   isCreatingProject: boolean;
   setIsCreatingProject: (creating: boolean) => void;
   handleProjectCreated: (newProjectId: string) => void;
+  waitingForProjectRefresh?: boolean;
+  projectJustCreated?: string | null;
 }
 
 export function ProjectSelector({
@@ -23,6 +25,8 @@ export function ProjectSelector({
   isCreatingProject,
   setIsCreatingProject,
   handleProjectCreated,
+  waitingForProjectRefresh = false,
+  projectJustCreated = null,
 }: ProjectSelectorProps) {
   // Track if we're in the process of creating both a project and room
   const [isCreatingProjectAndRoom, setIsCreatingProjectAndRoom] = useState(false);
@@ -30,17 +34,23 @@ export function ProjectSelector({
   // Find the currently selected project from the projects list
   const selectedProject = projects?.find(p => p.id === selectedProjectId);
 
-  // This effect ensures the dropdown shows the selected project after creation
+  // Handle the case when a project was just created
   useEffect(() => {
-    if (selectedProjectId && projects && projects.length > 0) {
-      // If a project ID is selected but not found in the list, it might be because
-      // the list hasn't been refreshed yet - we handle this in handleProjectCreated
-      const projectExists = projects.some(p => p.id === selectedProjectId);
-      if (!projectExists) {
-        console.log("Selected project not found in list, will be refreshed soon");
+    if (projectJustCreated && projects && projects.length > 0) {
+      // Look for the newly created project in the projects list
+      const newProject = projects.find(p => p.id === projectJustCreated);
+      
+      if (newProject) {
+        console.log("Found newly created project in projects list:", newProject.id);
+        setSelectedProjectId(newProject.id);
+      } else if (waitingForProjectRefresh) {
+        console.log("Waiting for project refresh to find newly created project:", projectJustCreated);
       }
     }
-  }, [selectedProjectId, projects]);
+  }, [projectJustCreated, projects, setSelectedProjectId, waitingForProjectRefresh]);
+
+  // Show loading state while waiting for project refresh
+  const showLoading = isLoadingProjects || waitingForProjectRefresh;
 
   return (
     <div className="space-y-2">
@@ -48,6 +58,7 @@ export function ProjectSelector({
         <div className="space-y-4">
           <CreateProjectInline 
             onProjectCreated={(projectId) => {
+              console.log("Project created callback with ID:", projectId);
               // Set the selected project ID
               setSelectedProjectId(projectId);
               // Call handleProjectCreated to refresh the projects list
@@ -78,10 +89,10 @@ export function ProjectSelector({
               setSelectedProjectId(value);
             }
           }}
-          disabled={isLoadingProjects}
+          disabled={showLoading}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Select a project">
+            <SelectValue placeholder={showLoading ? "Loading projects..." : "Select a project"}>
               {selectedProject && (
                 <div className="flex items-center gap-2">
                   <div 
