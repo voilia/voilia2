@@ -10,17 +10,18 @@ export async function handleWebhookResponse(
   if (response.type === "opaque" as any) {
     console.log("Received opaque response from webhook (expected with no-cors)");
     
-    // Create a simulated response for the initial message acknowledgement
+    // Create a response object for internal handling - don't display to user
     const initialResponse = {
       success: true,
       status: "processing",
-      message: "Message sent successfully, awaiting response..."
+      message: "", // Empty message to avoid showing placeholder text
+      internal: true // Mark this as internal to avoid displaying to user
     };
 
     // Call the onResponseReceived callback with this initial response
     if (options.onResponseReceived) {
       try {
-        console.log("Calling onResponseReceived with initial response while waiting for real-time update");
+        console.log("Calling onResponseReceived with empty initial response while waiting for real-time update");
         await options.onResponseReceived(initialResponse, transactionId);
       } catch (responseErr) {
         console.error('Error in onResponseReceived callback:', responseErr);

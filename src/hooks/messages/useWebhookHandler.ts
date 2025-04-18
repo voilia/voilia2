@@ -14,6 +14,12 @@ export function useWebhookHandler(
     
     console.log("Received webhook response:", response);
     
+    // Skip internal messages marked for no display
+    if (response.internal === true) {
+      console.log("Skipping internal placeholder message, waiting for real-time update");
+      return;
+    }
+    
     try {
       // Extract the message text from various possible response structures
       let messageText = null;
@@ -34,6 +40,11 @@ export function useWebhookHandler(
       // For no-cors initial response (just a placeholder)
       else if (response.status === "processing" && response.message) {
         console.log("Processing initial no-cors response. This will be replaced by real-time updates.");
+        // Skip empty messages or placeholders
+        if (!response.message || response.message.includes("awaiting response")) {
+          console.log("Skipping empty or placeholder message");
+          return;
+        }
         messageText = response.message;
       }
       // Alternative response format with nested data
@@ -53,8 +64,13 @@ export function useWebhookHandler(
                     response.data?.message || 
                     response.data?.text ||
                     response.response?.text ||
-                    (typeof response === 'string' ? response : null) ||
-                    "Processing your request...";
+                    (typeof response === 'string' ? response : null);
+                    
+        // Skip empty messages or messages that are just waiting for response
+        if (!messageText || messageText.includes("awaiting response")) {
+          console.log("Skipping empty or placeholder message");
+          return;
+        }
       }
       
       // Try to extract agent ID if available
