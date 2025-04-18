@@ -15,6 +15,7 @@ export function useRoomMessages(roomId: string | undefined) {
   
   const handleNewMessage = useCallback((message: RoomMessage) => {
     setMessages(prev => {
+      // Find if there's a pending message with the same transaction ID
       const pendingIndex = prev.findIndex(msg => 
         msg.transaction_id === message.transaction_id
       );
@@ -23,11 +24,13 @@ export function useRoomMessages(roomId: string | undefined) {
         const updatedMessages = [...prev];
         updatedMessages[pendingIndex] = {
           ...message,
+          messageType: message.user_id === null ? 'agent' : 'user',
           isPending: false
         };
         return updatedMessages;
       }
       
+      // Check if message already exists to avoid duplicates
       const exists = prev.some(msg => 
         msg.id === message.id || 
         msg.transaction_id === message.transaction_id
@@ -35,7 +38,11 @@ export function useRoomMessages(roomId: string | undefined) {
       
       if (exists) return prev;
       
-      return [...prev, message].sort((a, b) => 
+      // Add the new message and sort by creation time
+      return [...prev, {
+        ...message,
+        messageType: message.user_id === null ? 'agent' : 'user'
+      }].sort((a, b) => 
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       );
     });

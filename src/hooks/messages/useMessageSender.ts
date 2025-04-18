@@ -5,6 +5,7 @@ import { submitSmartBarMessage } from "@/services/webhook/webhookService";
 import { RoomMessage } from "@/types/room-messages";
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 export function useMessageSender(
   roomId: string | undefined,
@@ -36,11 +37,26 @@ export function useMessageSender(
       isPending: true
     };
     
-    // Add user message immediately
+    // Add user message immediately to UI
     console.log("Adding optimistic user message:", optimisticUserMessage);
     addLocalMessage(optimisticUserMessage);
     
     try {
+      // Persist the user message to the database FIRST, before webhook call
+      const { error: dbError } = await supabase
+        .from("room_messages")
+        .insert({
+          room_id: roomId,
+          user_id: user?.id,
+          message_text: text,
+          transaction_id: transactionId
+        });
+      
+      if (dbError) {
+        console.error("Error persisting user message to database:", dbError);
+        throw dbError;
+      }
+      
       let finalText = text;
       if (files && files.length > 0) {
         const fileNames = files.map(f => f.name).join(", ");
