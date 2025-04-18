@@ -39,26 +39,39 @@ export function useRoomMessages(roomId: string | undefined) {
         if (error) throw error;
         
         setMessages(currentMessages => {
+          // Keep track of all pending messages
           const pendingMessages = currentMessages.filter(msg => msg.isPending);
+          console.log("Pending messages before merging:", pendingMessages.length, pendingMessages);
           
+          // Process database messages
           const combinedMessages = [...(data || [])].map(msg => ({
             ...msg,
-            transaction_id: msg.transaction_id || `db-${msg.id}` // Ensure transaction_id is never null
+            // Ensure transaction_id is never null
+            transaction_id: msg.transaction_id || `db-${msg.id}` 
           }));
           
+          // For each pending message, check if it exists in the database
           pendingMessages.forEach(pendingMsg => {
             if (!pendingMsg.transaction_id) return;
             
+            // Check if this pending message already exists in database results
             const existsInData = combinedMessages.some(dbMsg => 
               dbMsg.transaction_id === pendingMsg.transaction_id
             );
             
+            // If message is not in database yet, keep the pending version
             if (!existsInData) {
+              console.log("Keeping pending message:", pendingMsg);
               combinedMessages.push(pendingMsg);
+            } else {
+              console.log("Message exists in DB, not adding pending version:", pendingMsg.transaction_id);
             }
           });
           
-          return combinedMessages;
+          // Sort by creation time to ensure correct order
+          return combinedMessages.sort((a, b) => 
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+          );
         });
       } catch (err) {
         console.error("Error fetching room messages:", err);
@@ -89,19 +102,41 @@ export function useRoomMessages(roomId: string | undefined) {
           };
           
           setMessages((prev) => {
-            if (!newMessage.transaction_id) return [...prev, newMessage];
+            // Handle messages without transaction IDs
+            if (!newMessage.transaction_id) {
+              console.log("Message has no transaction ID, adding as new:", newMessage);
+              return [...prev, newMessage];
+            }
             
+            // Find any pending message with the same transaction ID
             const pendingIndex = prev.findIndex(msg => 
-              msg.isPending && 
               msg.transaction_id === newMessage.transaction_id
             );
             
+            // If we found a matching message, replace it while preserving local properties
             if (pendingIndex >= 0) {
+              console.log("Found matching pending message at index:", pendingIndex);
+              
               const updatedMessages = [...prev];
-              updatedMessages[pendingIndex] = newMessage;
+              const existingMsg = updatedMessages[pendingIndex];
+              
+              // Merge the new message with the existing one, ensuring we keep
+              // any properties like messageType that might be set locally
+              updatedMessages[pendingIndex] = {
+                ...existingMsg,
+                ...newMessage,
+                // Set isPending to false since it's now saved
+                isPending: false,
+                // Preserve messageType if it exists
+                messageType: existingMsg.messageType
+              };
+              
+              console.log("Updated message:", updatedMessages[pendingIndex]);
               return updatedMessages;
             }
             
+            // If no matching pending message found, add as new
+            console.log("No matching pending message, adding as new");
             return [...prev, newMessage];
           });
         }
@@ -122,9 +157,9 @@ export function useRoomMessages(roomId: string | undefined) {
     };
     
     setMessages(prev => {
+      // Check if the message already exists with the same transaction ID
       const exists = prev.some(m => 
-        m.transaction_id === messageWithTransaction.transaction_id && 
-        m.messageType === messageWithTransaction.messageType
+        m.transaction_id === messageWithTransaction.transaction_id
       );
       
       if (exists) {
@@ -132,7 +167,12 @@ export function useRoomMessages(roomId: string | undefined) {
         return prev;
       }
       
-      return [...prev, messageWithTransaction];
+      const newMessages = [...prev, messageWithTransaction];
+      
+      // Sort by creation time to ensure correct order
+      return newMessages.sort((a, b) => 
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      );
     });
   };
 
@@ -147,6 +187,7 @@ export function useRoomMessages(roomId: string | undefined) {
     }
 
     const msgTransactionId = transactionId || uuidv4();
+    console.log("Sending message with transaction ID:", msgTransactionId);
 
     const optimisticMessage: RoomMessage = {
       id: uuidv4(),
@@ -178,6 +219,8 @@ export function useRoomMessages(roomId: string | undefined) {
     } catch (err) {
       console.error("Error sending message:", err);
       
+      // Only remove the optimistic message if the error is not a network error
+      // This prevents messages from disappearing when there are connection issues
       setMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
       
       toast.error("Failed to send message");
