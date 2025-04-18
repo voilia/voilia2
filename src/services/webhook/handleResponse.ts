@@ -6,8 +6,7 @@ export async function handleWebhookResponse(
   options: MessageSubmitOptions,
   transactionId: string
 ): Promise<WebhookResponse> {
-  // For no-cors responses, check the type differently to avoid TypeScript error
-  // Response.type can be "opaque" in no-cors mode, but TypeScript doesn't know this
+  // For no-cors responses, we cannot read the response body
   if (response.type === "opaque" as any) {
     console.log("Received opaque response from webhook (expected with no-cors)");
     
@@ -27,8 +26,8 @@ export async function handleWebhookResponse(
       }
     }
 
-    // For no-cors mode, we need to implement optimistic updates since we can't parse the response
-    // The actual AI response will be received via the real-time subscription
+    // For no-cors mode, we rely on real-time subscriptions for the actual response
+    // The actual AI response will be received via the Supabase real-time subscription
     
     if (options.onComplete) {
       options.onComplete();
@@ -41,58 +40,51 @@ export async function handleWebhookResponse(
     };
   }
 
-  if (!response.ok) {
-    const errorText = await response.text().catch(() => "Unknown error");
-    throw new Error(`Failed to send message: ${response.status} ${response.statusText} - ${errorText}`);
-  }
-
-  let responseData;
+  // Handle standard responses (when not using no-cors)
   try {
-    // For no-cors responses, we may not be able to parse JSON
-    if (response.type === "opaque" as any) {
-      console.log("Received opaque response from webhook (expected with no-cors)");
-      responseData = { 
-        success: true,
-        message: "Request processed. Due to CORS restrictions, detailed response unavailable.",
-        status: "sent" 
-      };
-    } else {
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => "Unknown error");
+      throw new Error(`Failed to send message: ${response.status} ${response.statusText} - ${errorText}`);
+    }
+
+    let responseData;
+    try {
       responseData = await response.json();
       console.log("Parsed webhook response:", responseData);
-      
-      // Handle specific response format from n8n
-      if (responseData && responseData.success === true && responseData.response) {
-        console.log("Response format detected from n8n:", responseData.response);
+    } catch (jsonError) {
+      console.error("Error parsing webhook response:", jsonError);
+      responseData = { 
+        success: true,
+        message: "Request sent. Response received but couldn't be parsed.",
+        status: "sent"
+      };
+    }
+    
+    if (options.onResponseReceived) {
+      try {
+        console.log("Calling onResponseReceived with data:", responseData);
+        await options.onResponseReceived(responseData, transactionId);
+      } catch (responseErr) {
+        console.error('Error in onResponseReceived callback:', responseErr);
       }
     }
-  } catch (jsonError) {
-    console.error("Error parsing webhook response:", jsonError);
-    // Provide a fallback for no-cors mode
-    responseData = { 
-      success: true,
-      message: "Request sent. Unable to parse response due to CORS restrictions.",
-      status: "sent"
-    };
-  }
-  
-  if (options.onResponseReceived) {
-    try {
-      console.log("Calling onResponseReceived with data:", responseData);
-      await options.onResponseReceived(responseData, transactionId);
-    } catch (responseErr) {
-      console.error('Error in onResponseReceived callback:', responseErr);
+
+    if (options.onComplete) {
+      options.onComplete();
     }
-  }
 
-  if (options.onComplete) {
-    options.onComplete();
+    return { 
+      success: true, 
+      data: responseData, 
+      transactionId 
+    };
+  } catch (error) {
+    console.error("Error handling webhook response:", error);
+    if (options.onError) {
+      options.onError(error instanceof Error ? error : new Error(String(error)));
+    }
+    throw error;
   }
-
-  return { 
-    success: true, 
-    data: responseData, 
-    transactionId 
-  };
 }
 
 export function handleWebhookError(

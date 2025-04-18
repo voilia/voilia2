@@ -20,39 +20,45 @@ export function useWebhookHandler(
       let messageId = null;
       let agentId = null;
       
-      // Handle response from n8n webhook with the expected structure from the spec
-      if (response.success === true && response.response) {
-        console.log("Processing structured n8n response:", response.response);
+      // For standard response format from n8n webhook
+      if (response.success === true && response.response && response.response.text) {
+        console.log("Processing standard response format:", response.response);
         messageText = response.response.text;
         messageId = response.response.messageId;
         
-        // Check if response has agent information in data
+        // Look for agent info
         if (response.data && response.data.agent && response.data.agent.id) {
           agentId = response.data.agent.id;
         }
       } 
-      // Handle response.data.response structure 
+      // For no-cors initial response (just a placeholder)
+      else if (response.status === "processing" && response.message) {
+        console.log("Processing initial no-cors response. This will be replaced by real-time updates.");
+        // We don't create a message for this since it will be replaced by real-time subscription
+        return;
+      }
+      // Alternative response format with nested data
       else if (response.data?.response) {
-        console.log("Processing data.response structure:", response.data.response);
+        console.log("Processing alternative response format:", response.data.response);
         messageText = response.data.response.text || response.data.response.message;
         messageId = response.data.response.messageId;
         
-        // Check for agent info in data
         if (response.data.agent && response.data.agent.id) {
           agentId = response.data.agent.id;
         }
       }
-      // Handle other response structures or fallback message
+      // Fallback for other formats
       else {
-        console.log("Using fallback message extraction");
+        console.log("Using fallback response extraction");
         messageText = response.message || 
                     response.data?.message || 
                     response.data?.text ||
                     response.response?.text ||
-                    "I've received your message and am processing it. Please wait while I formulate a response.";
+                    (typeof response === 'string' ? response : null) ||
+                    "Processing your request...";
       }
       
-      // Try to extract agent ID if available and validate it's a UUID
+      // Try to extract agent ID if available
       if (agentId === null && response.data?.agent?.id) {
         const idCandidate = response.data.agent.id;
         if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idCandidate)) {
@@ -66,7 +72,7 @@ export function useWebhookHandler(
         return;
       }
       
-      // Create unique ID for the message
+      // Create unique ID for the message if none provided
       const localMessageId = messageId || `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
       
       // Create AI message for immediate display
