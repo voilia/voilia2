@@ -15,12 +15,10 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     storageKey: 'voilia-auth-session',
     detectSessionInUrl: true,
     flowType: 'pkce',
-    storage: localStorage,
   },
   global: {
     fetch: (url, options) => {
       return fetch(url, options).then(async (response) => {
-        // If the response is not successful, log it for debugging
         if (!response.ok) {
           const clonedResponse = response.clone();
           try {

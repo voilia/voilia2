@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useEffect, useState, useRef } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -24,23 +24,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const handledEvents = useRef<Record<string, boolean>>({});
+  const [handledSignInEvent, setHandledSignInEvent] = useState(false);
+  const [handledSignOutEvent, setHandledSignOutEvent] = useState(false);
   
-  // Used to prevent duplicate toasts when page visibility changes
-  const visibilityHandled = useRef(false);
-
   useEffect(() => {
     let isSubscribed = true;
     
-    // Handle page visibility changes to prevent duplicate toasts
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        visibilityHandled.current = true;
-      }
-    };
-    
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
     // First set up auth state listener to catch events
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, currentSession) => {
@@ -51,32 +40,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setUser(currentSession?.user ?? null);
           setLoading(false);
           
-          // Create a unique key for this event to prevent duplicates
-          const eventKey = `${event}_${Date.now()}`;
-          
-          // Only show toasts for events that haven't been handled yet
-          // and only when the page is visible
-          if (!handledEvents.current[event] && document.visibilityState === 'visible' && !visibilityHandled.current) {
-            // Provide feedback on authentication events
-            if (event === 'SIGNED_OUT') {
-              toast.info("You have been signed out");
-              handledEvents.current[event] = true;
-            } else if (event === 'TOKEN_REFRESHED') {
-              console.log("Session token refreshed successfully");
-            } else if (event === 'USER_UPDATED') {
-              toast.success("User profile updated");
-            } else if (event === 'SIGNED_IN') {
-              toast.success("Successfully signed in");
-              handledEvents.current[event] = true;
-            }
-          }
-          
-          // Reset handled events after a short delay to allow for future events
-          if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
-            setTimeout(() => {
-              handledEvents.current = {};
-              visibilityHandled.current = false;
-            }, 1000);
+          // Only show toasts for specific events and prevent duplicates
+          if (event === 'SIGNED_OUT' && !handledSignOutEvent) {
+            toast.info("You have been signed out");
+            setHandledSignOutEvent(true);
+            // Reset sign-in flag when signing out
+            setHandledSignInEvent(false);
+          } else if (event === 'SIGNED_IN' && !handledSignInEvent) {
+            toast.success("Successfully signed in");
+            setHandledSignInEvent(true);
+            // Reset sign-out flag when signing in
+            setHandledSignOutEvent(false);
+          } else if (event === 'USER_UPDATED') {
+            toast.success("User profile updated");
           }
         }
       }
@@ -104,16 +80,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     return () => {
       isSubscribed = false;
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
       subscription.unsubscribe();
     };
-  }, []);
+  }, [handledSignInEvent, handledSignOutEvent]);
 
   const signOut = async () => {
     try {
       setLoading(true);
       await supabase.auth.signOut();
-      // The toast for sign out will be shown by the onAuthStateChange listener
+      // Toast for sign out is handled by the onAuthStateChange listener
     } catch (error) {
       console.error("Error signing out:", error);
       toast.error("Error signing out", {

@@ -19,6 +19,7 @@ export const useAuthForm = () => {
   });
 
   const onSubmit = async (data: AuthFormValues) => {
+    if (isSubmitting) return; // Prevent duplicate submissions
     setIsSubmitting(true);
     
     try {
@@ -42,7 +43,7 @@ export const useAuthForm = () => {
               email: data.email,
               password: data.password,
               options: {
-                emailRedirectTo: window.location.origin,
+                emailRedirectTo: `${window.location.origin}/auth`,
               },
             });
 
@@ -55,17 +56,15 @@ export const useAuthForm = () => {
           } else {
             toast.error(signInError.message);
           }
-        } else {
-          console.log("Password login successful");
-          // No success toast here, will be handled by AuthProvider
         }
+        // No success toast here, will be handled by AuthProvider
       } else {
         // Magic link flow
         console.log("Sending magic link to:", data.email);
         const { error } = await supabase.auth.signInWithOtp({
           email: data.email,
           options: {
-            emailRedirectTo: window.location.origin,
+            emailRedirectTo: `${window.location.origin}/auth`,
           },
         });
 
@@ -80,7 +79,10 @@ export const useAuthForm = () => {
       console.error("Unexpected auth error:", error);
       toast.error("An unexpected error occurred");
     } finally {
-      setIsSubmitting(false);
+      // Add a small delay to prevent form resubmission
+      setTimeout(() => {
+        setIsSubmitting(false);
+      }, 500);
     }
   };
 
@@ -93,7 +95,7 @@ export const useAuthForm = () => {
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin,
+        redirectTo: `${window.location.origin}/auth`,
       });
 
       if (error) {

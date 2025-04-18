@@ -6,7 +6,6 @@ import AuthForm from "@/components/auth/AuthForm";
 import { Card, CardContent } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Session } from "@supabase/supabase-js";
-import { toast } from "sonner";
 import { Loader } from "@/components/ui/loader";
 
 const Auth = () => {
@@ -30,7 +29,7 @@ const Auth = () => {
         // Allow a small delay for the session to be fully established
         setTimeout(() => {
           navigate("/home");
-        }, 300);
+        }, 500);
       }
     });
 
@@ -41,7 +40,9 @@ const Auth = () => {
         
         if (error) {
           console.error("Session check error:", error);
-          if (isSubscribed) toast.error("Failed to verify authentication status");
+          if (isSubscribed) {
+            setIsLoading(false);
+          }
         }
         
         if (isSubscribed) {
@@ -59,7 +60,6 @@ const Auth = () => {
         console.error("Unexpected error checking session:", err);
         if (isSubscribed) {
           setIsLoading(false);
-          toast.error("Authentication service error");
         }
       }
     };

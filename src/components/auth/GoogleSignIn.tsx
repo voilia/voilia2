@@ -9,6 +9,8 @@ const GoogleSignIn = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleSignIn = async () => {
+    if (isLoading) return; // Prevent multiple clicks
+    
     setIsLoading(true);
     
     try {
@@ -16,7 +18,7 @@ const GoogleSignIn = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: window.location.origin,
+          redirectTo: `${window.location.origin}/auth`,
         },
       });
       
@@ -31,7 +33,10 @@ const GoogleSignIn = () => {
       console.error("Unexpected Google sign in error:", error);
       toast.error("Failed to connect with Google");
     } finally {
-      setIsLoading(false);
+      // Allow a short delay before resetting loading state in case redirect happens
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
     }
   };
 
