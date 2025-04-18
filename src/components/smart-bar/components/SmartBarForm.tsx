@@ -1,37 +1,77 @@
-
-import { SmartBarInput } from "../SmartBarInput";
-import { SmartBarActions } from "../buttons/SmartBarActions";
+import { useState, useRef } from "react";
+import { SmartBarInput } from "./SmartBarInput";
+import { SmartBarButton } from "../SmartBarButton";
 import { useSmartBar } from "../context/SmartBarContext";
-import { useSmartBarForm } from "../hooks/useSmartBarForm";
-import { AnimatedSubmitButton } from "../buttons/submit/AnimatedSubmitButton";
+import { Send } from "lucide-react";
+import { SmartBarFileButton } from "../buttons/SmartBarFileButton";
+import { SmartBarVoiceButton } from "../buttons/SmartBarVoiceButton";
+import { toast } from "sonner";
+import { SmartBarModeSelector } from "../SmartBarModeSelector";
 
-interface SmartBarFormProps {
+export function SmartBarForm({
+  onSendMessage,
+  isDisabled = false,
+}: {
   onSendMessage: (message: string, files?: File[]) => Promise<void>;
   isDisabled?: boolean;
-}
+}) {
+  const { message, setMessage, isSubmitting, enterSends, uploadedFiles, clearFiles } = useSmartBar();
+  const { mode } = useSmartBar();
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
-export function SmartBarForm({ onSendMessage, isDisabled = false }: SmartBarFormProps) {
-  const { message, setMessage, mode } = useSmartBar();
-  const { handleSubmit, handleKeyDown, isSubmitting } = useSmartBarForm({
-    onSendMessage,
-    isDisabled
-  });
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (isSubmitting) return;
+
+    if (!message.trim() && uploadedFiles.length === 0) {
+      toast.warning("Please enter a message or attach a file");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      await onSendMessage(message, uploadedFiles.map(file => file.file));
+      setMessage("");
+      clearFiles();
+      if (inputRef.current) {
+        inputRef.current.style.height = 'inherit'; // Reset the height
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+      toast.error("Failed to send message. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="relative rounded-xl md:rounded-2xl overflow-hidden border transition-colors duration-200 min-h-[90px] md:min-h-24 max-w-3xl mx-auto">
-      <SmartBarInput
-        value={message}
-        onChange={setMessage}
-        onKeyDown={handleKeyDown}
-        isDisabled={isDisabled}
-        isSubmitting={isSubmitting}
-      />
-      <div className="flex items-center justify-between px-3 py-2">
-        <SmartBarActions disabled={isDisabled || isSubmitting} />
-        <AnimatedSubmitButton 
-          disabled={isDisabled || isSubmitting || !message.trim()} 
-          mode={mode} 
-          className="ml-2"
+    <form onSubmit={handleSubmit} className="relative">
+      <div className="flex items-center gap-2 py-2">
+        <div className="flex items-center gap-3">
+          <SmartBarModeSelector />
+          <SmartBarFileButton disabled={isDisabled} />
+          <SmartBarVoiceButton disabled={isDisabled} />
+        </div>
+        
+        <SmartBarInput
+          ref={inputRef}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder={`Ask ${mode}...`}
+          disabled={isDisabled || isSubmitting}
+          onKeyDown={(e) => {
+            if (enterSends && e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSubmit(e);
+            }
+          }}
+        />
+        <SmartBarButton
+          type="submit"
+          icon={Send}
+          tooltip="Send"
+          disabled={isDisabled || isSubmitting}
         />
       </div>
     </form>
