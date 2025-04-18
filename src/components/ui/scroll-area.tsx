@@ -20,11 +20,15 @@ const ScrollArea = React.forwardRef<
       <ScrollAreaPrimitive.Viewport 
         className={cn(
           "h-full w-full rounded-[inherit]",
+          "overscroll-contain",
           isMobile && "overscroll-behavior-y: contain"
         )}
         style={isMobile ? {
-          WebkitOverflowScrolling: 'touch'
-        } as React.CSSProperties : undefined}
+          WebkitOverflowScrolling: 'touch',
+          overscrollBehavior: 'contain'
+        } as React.CSSProperties : {
+          overscrollBehavior: 'contain'
+        } as React.CSSProperties}
       >
         {children}
       </ScrollAreaPrimitive.Viewport>

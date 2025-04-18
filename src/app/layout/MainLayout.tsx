@@ -58,7 +58,7 @@ export function MainLayout({ children }: MainLayoutProps) {
       <main 
         className={cn(
           "flex-1 transition-all duration-200 ease-out relative",
-          isRoomPage && isMobile ? "overflow-hidden h-screen w-screen" : "overflow-x-hidden"
+          isRoomPage && isMobile ? "overflow-hidden h-[100dvh] w-screen" : "overflow-x-hidden"
         )}
         style={{ 
           marginLeft: isMobile ? '0' : (isCollapsed ? '0' : '240px'),

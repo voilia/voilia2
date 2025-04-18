@@ -1,6 +1,6 @@
 
 import { useParams, useNavigate } from "react-router-dom";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import { useRoom } from "@/hooks/useRoom";
 import { MainLayout } from "@/app/layout/MainLayout";
 import { SmartBar } from "@/components/smart-bar/SmartBar";
@@ -27,19 +27,36 @@ export default function RoomDetail() {
     addLocalMessage
   } = useRoomDetailMessages(id, room?.project_id || null);
 
-  // Scroll to bottom on new messages
-  const scrollToBottom = useThrottle(() => {
+  // Enhanced scroll to bottom function
+  const scrollToBottom = useCallback(() => {
     if (scrollAreaRef.current) {
       const scrollElement = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
       if (scrollElement) {
         scrollElement.scrollTop = scrollElement.scrollHeight;
       }
     }
-  }, 100);
+  }, []);
 
+  // Throttled scroll for performance during rapid updates
+  const throttledScrollToBottom = useThrottle(scrollToBottom, 50);
+
+  // Scroll to bottom on initial load and when messageGroups changes
   useEffect(() => {
+    throttledScrollToBottom();
+  }, [messageGroups, throttledScrollToBottom]);
+
+  // Additional effect to ensure scroll happens after render
+  useEffect(() => {
+    // Initial scroll
     scrollToBottom();
-  }, [messageGroups, scrollToBottom]);
+    
+    // Safety timeout to ensure messages are fully rendered
+    const timeoutId = setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+    
+    return () => clearTimeout(timeoutId);
+  }, [scrollToBottom]);
 
   // Check for authentication
   useEffect(() => {
@@ -71,7 +88,7 @@ export default function RoomDetail() {
   return (
     <MainLayout>
       <SmartBarProvider>
-        <div className="flex flex-col h-full w-full overflow-hidden max-w-full">
+        <div className="flex flex-col h-full w-full overflow-hidden max-w-full relative">
           <RoomDetailHeader
             isLoading={isRoomLoading}
             roomName={room?.name}

@@ -1,3 +1,4 @@
+
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ContentContainer } from "@/components/ui/ContentContainer";
 import { MessageGroup } from "@/components/rooms/MessageGroup";
@@ -5,6 +6,7 @@ import { EmptyMessagesState } from "@/components/rooms/EmptyMessagesState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RoomMessage } from "@/types/room-messages";
 import { RefObject } from "react";
+import { cn } from "@/lib/utils";
 
 interface SmartBarMessagesProps {
   isLoading: boolean;
@@ -24,8 +26,15 @@ export function SmartBarMessages({
   currentUserId
 }: SmartBarMessagesProps) {
   return (
-    <ScrollArea className="h-full" ref={scrollAreaRef}>
-      <ContentContainer className={`py-4 ${isMobile ? 'pb-[180px]' : 'pb-[220px]'}`}>
+    <ScrollArea 
+      className="h-full z-0" 
+      ref={scrollAreaRef}
+      data-testid="smart-bar-messages"
+    >
+      <ContentContainer className={cn(
+        "py-4",
+        isMobile ? "pb-[220px]" : "pb-[240px]"
+      )}>
         {isLoading && messageGroups.length === 0 ? (
           <div className="space-y-4 p-4">
             <Skeleton className="h-12 w-2/3" />

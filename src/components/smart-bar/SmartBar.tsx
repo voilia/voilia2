@@ -44,7 +44,7 @@ export function SmartBar({
     <div 
       className={cn(
         "fixed bottom-6 bg-transparent",
-        "w-full transition-all duration-300 ease-out z-40",
+        "w-full transition-all duration-300 ease-out z-50",
         isMobile ? "px-3" : "px-4"
       )}
       style={{
