@@ -20,18 +20,20 @@ export function FileUploadPopover() {
   return createPortal(
     <div 
       className={cn(
-        "file-upload-popover fixed z-40 overflow-hidden",
+        "file-upload-popover fixed z-50",
         "shadow-lg transition-all duration-200 rounded-2xl p-3",
         isDark 
-          ? "bg-black/30 border-white/10" 
-          : "bg-foreground/5 border-foreground/10",
+          ? "bg-black/80 border-white/10" 
+          : "bg-white/90 border-foreground/10",
         "backdrop-blur-lg border"
       )}
       style={{
         width: popoverWidth ? `${popoverWidth}px` : 'auto',
-        top: `${popoverPosition.top}px`,
+        top: `${popoverPosition.top - 16}px`,
         left: `${popoverPosition.left}px`,
         transform: 'translateY(-100%)',
+        maxHeight: 'calc(90vh - 200px)',
+        overflowY: 'auto'
       }}
     >
       <FilePopoverHeader 

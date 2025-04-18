@@ -14,51 +14,45 @@ export function useFilePopoverPosition(showPopover: boolean) {
 
   useEffect(() => {
     const updateSmartBarDimensions = () => {
-      if (typeof window === 'undefined') return;
+      if (!showPopover || typeof window === 'undefined') return;
       
-      // Find the SmartBar container - use multiple selectors to ensure we find it
-      const smartBarContainer = document.querySelector('.SmartBar') || 
-                                document.querySelector('form.rounded-xl') || 
-                                document.querySelector('.relative.max-w-3xl.mx-auto.w-full');
+      // Find the SmartBar container
+      const smartBarContainer = document.querySelector('.SmartBar');
                                 
       if (smartBarContainer) {
         const rect = smartBarContainer.getBoundingClientRect();
         
-        setPopoverWidth(rect.width);
+        // Calculate width based on the SmartBar's width
+        const width = Math.min(rect.width, 768); // Max width of 768px
+        setPopoverWidth(width);
         
-        // Calculate position to be exactly above the smartbar
+        // Calculate position to be above the SmartBar
         setPopoverPosition({
-          top: rect.top,
-          left: rect.left
+          top: rect.top + window.scrollY,
+          left: rect.left + (rect.width - width) / 2 // Center horizontally
         });
       }
     };
     
-    if (showPopover) {
-      // Initial update
-      updateSmartBarDimensions();
-      
-      // Small timeout to ensure DOM is ready
-      const initialTimer = setTimeout(updateSmartBarDimensions, 50);
-      
-      // Update on resize and scroll
-      window.addEventListener('resize', updateSmartBarDimensions);
-      window.addEventListener('scroll', updateSmartBarDimensions);
-      
-      // Listen for sidebar toggling
-      const sidebarToggleButton = document.querySelector('[aria-label="Toggle sidebar"]');
-      if (sidebarToggleButton) {
-        sidebarToggleButton.addEventListener('click', () => {
-          setTimeout(updateSmartBarDimensions, 350);
-        });
-      }
-      
-      return () => {
-        clearTimeout(initialTimer);
-        window.removeEventListener('resize', updateSmartBarDimensions);
-        window.removeEventListener('scroll', updateSmartBarDimensions);
-      };
+    // Initial update
+    updateSmartBarDimensions();
+    
+    // Update on resize and scroll
+    window.addEventListener('resize', updateSmartBarDimensions);
+    window.addEventListener('scroll', updateSmartBarDimensions);
+    
+    // Update when sidebar state changes
+    const sidebarToggleBtn = document.querySelector('[aria-label="Toggle sidebar"]');
+    if (sidebarToggleBtn) {
+      sidebarToggleBtn.addEventListener('click', () => {
+        setTimeout(updateSmartBarDimensions, 350);
+      });
     }
+    
+    return () => {
+      window.removeEventListener('resize', updateSmartBarDimensions);
+      window.removeEventListener('scroll', updateSmartBarDimensions);
+    };
   }, [showPopover, isMobile]);
 
   return { popoverWidth, popoverPosition };
