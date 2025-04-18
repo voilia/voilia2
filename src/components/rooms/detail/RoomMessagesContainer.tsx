@@ -21,8 +21,12 @@ export const RoomMessagesContainer = forwardRef<HTMLDivElement, RoomMessagesCont
     const isMobile = useIsMobile();
 
     return (
-      <ScrollArea className="h-full" ref={ref}>
-        <ContentContainer className={`py-4 ${isMobile ? 'pb-[128px]' : 'pb-[160px]'}`}>
+      <ScrollArea className="h-full relative" ref={ref}>
+        <ContentContainer className={cn(
+          "py-4",
+          isMobile ? "pb-[128px]" : "pb-[160px]",
+          "relative z-10" // Add z-index to keep messages above SmartBar
+        )}>
           {isLoading && messages.length === 0 ? (
             <div className="space-y-4 p-4">
               <Skeleton className="h-12 w-2/3" />
