@@ -56,9 +56,8 @@ export function SmartBarForm({
         </div>
         
         <SmartBarInput
-          ref={inputRef}
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(value) => setMessage(value)}
           placeholder={`Ask ${mode}...`}
           disabled={isDisabled || isSubmitting}
           onKeyDown={(e) => {
