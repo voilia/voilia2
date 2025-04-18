@@ -7,7 +7,7 @@ export interface RoomMessage {
   message_text: string | null;
   created_at: string;
   updated_at: string | null;
-  isPending?: boolean;
+  isPending: boolean; // Changed from optional to required
   transaction_id: string;
   messageType: "user" | "agent";
 }

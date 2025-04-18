@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { RoomMessage } from "@/types/room-messages";
@@ -59,14 +60,18 @@ export function useRoomMessages(roomId: string | undefined) {
 
   useRoomMessageSubscription(roomId, handleNewMessage);
 
-  const addLocalMessage = useCallback((message: RoomMessage) => {
+  const addLocalMessage = useCallback((message: Partial<RoomMessage> & Pick<RoomMessage, 'id' | 'room_id' | 'message_text' | 'created_at'>) => {
     console.log("Adding local message:", message);
     setMessages(prev => {
-      // Ensure isPending is always set to handle TypeScript error
-      const completeMessage = {
+      // Ensure all required fields are set
+      const completeMessage: RoomMessage = {
         ...message,
+        user_id: message.user_id ?? null,
+        agent_id: message.agent_id ?? null,
+        updated_at: message.updated_at ?? null,
         isPending: message.isPending !== undefined ? message.isPending : true,
-        transaction_id: message.transaction_id || `local-${message.id}`
+        transaction_id: message.transaction_id || `local-${message.id}`,
+        messageType: message.messageType || (message.user_id === null ? 'agent' : 'user')
       };
       
       // Check if a message with this transaction ID already exists

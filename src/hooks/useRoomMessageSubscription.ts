@@ -34,10 +34,11 @@ export const useRoomMessageSubscription = (
           // Check if this is an AI message (null user_id and has agent_id)
           const isAiMessage = !payload.new.user_id && payload.new.agent_id;
           
-          const newMessage = {
-            ...payload.new as RoomMessage,
+          const newMessage: RoomMessage = {
+            ...payload.new as any,
             transaction_id: (payload.new as any).transaction_id || `rt-${(payload.new as any).id}`,
-            messageType: isAiMessage ? 'agent' as const : 'user' as const
+            messageType: isAiMessage ? 'agent' as const : 'user' as const,
+            isPending: false // Ensure this property is set
           };
           
           console.log("Processing realtime message:", {
@@ -45,11 +46,6 @@ export const useRoomMessageSubscription = (
             transactionId: newMessage.transaction_id,
             messageType: newMessage.messageType
           });
-          
-          // Remove isPending flag to ensure the message shows as confirmed
-          if (newMessage.isPending) {
-            newMessage.isPending = false;
-          }
           
           onNewMessage(newMessage);
         }
@@ -66,10 +62,11 @@ export const useRoomMessageSubscription = (
           console.log("Updated message from realtime:", payload.new);
           const isAiMessage = !payload.new.user_id && payload.new.agent_id;
           
-          const updatedMessage = {
-            ...payload.new as RoomMessage,
+          const updatedMessage: RoomMessage = {
+            ...payload.new as any,
             transaction_id: (payload.new as any).transaction_id || `rt-${(payload.new as any).id}`,
-            messageType: isAiMessage ? 'agent' as const : 'user' as const
+            messageType: isAiMessage ? 'agent' as const : 'user' as const,
+            isPending: false // Ensure this property is set
           };
           
           console.log("Processing updated message:", {
@@ -77,11 +74,6 @@ export const useRoomMessageSubscription = (
             transactionId: updatedMessage.transaction_id,
             messageType: updatedMessage.messageType
           });
-          
-          // Remove isPending flag to ensure the message shows as confirmed
-          if (updatedMessage.isPending) {
-            updatedMessage.isPending = false;
-          }
           
           onNewMessage(updatedMessage);
         }
