@@ -43,7 +43,14 @@ export function FileDropZone({ children }: FileDropZoneProps) {
 
       if (e.dataTransfer?.files?.length) {
         const files = Array.from(e.dataTransfer.files);
+        console.info(`Dropped ${files.length} files`);
         addFiles(files);
+        // Notify for debugging
+        if (files.length) {
+          toast.success(`Added ${files.length} files`, {
+            duration: 2000
+          });
+        }
       }
     };
 

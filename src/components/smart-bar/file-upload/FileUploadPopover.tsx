@@ -6,6 +6,7 @@ import { useTheme } from "@/components/ThemeProvider";
 import { FilePopoverHeader } from "./components/FilePopoverHeader";
 import { FilePreviewList } from "./components/FilePreviewList";
 import { useFilePopoverPosition } from "./hooks/useFilePopoverPosition";
+import { useEffect } from "react";
 
 export function FileUploadPopover() {
   const { uploadedFiles, removeFile, clearFiles } = useSmartBar();
@@ -15,12 +16,19 @@ export function FileUploadPopover() {
   const showPopover = uploadedFiles.length > 0;
   const { popoverWidth, popoverPosition } = useFilePopoverPosition(showPopover);
 
+  // Debug log to help identify issues
+  useEffect(() => {
+    if (showPopover) {
+      console.info(`FileUploadPopover should show with ${uploadedFiles.length} files`);
+    }
+  }, [showPopover, uploadedFiles.length]);
+
   if (!showPopover || typeof document === 'undefined') return null;
   
   return createPortal(
     <div 
       className={cn(
-        "file-upload-popover fixed z-50",
+        "file-upload-popover fixed z-[999]",
         "shadow-lg transition-all duration-200 rounded-2xl p-3",
         isDark 
           ? "bg-black/80 border-white/10" 

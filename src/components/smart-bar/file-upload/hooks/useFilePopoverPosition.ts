@@ -31,28 +31,42 @@ export function useFilePopoverPosition(showPopover: boolean) {
           top: rect.top + window.scrollY,
           left: rect.left + (rect.width - width) / 2 // Center horizontally
         });
+
+        console.info("Popover position updated:", { 
+          top: rect.top + window.scrollY,
+          left: rect.left + (rect.width - width) / 2,
+          width
+        });
+      } else {
+        console.warn("SmartBar container not found");
       }
     };
     
-    // Initial update
-    updateSmartBarDimensions();
-    
-    // Update on resize and scroll
-    window.addEventListener('resize', updateSmartBarDimensions);
-    window.addEventListener('scroll', updateSmartBarDimensions);
-    
-    // Update when sidebar state changes
-    const sidebarToggleBtn = document.querySelector('[aria-label="Toggle sidebar"]');
-    if (sidebarToggleBtn) {
-      sidebarToggleBtn.addEventListener('click', () => {
-        setTimeout(updateSmartBarDimensions, 350);
-      });
+    if (showPopover) {
+      // Initial update
+      updateSmartBarDimensions();
+      
+      // Run it again after a small delay to ensure DOM is fully rendered
+      const initialTimer = setTimeout(updateSmartBarDimensions, 100);
+      
+      // Update on resize and scroll
+      window.addEventListener('resize', updateSmartBarDimensions);
+      window.addEventListener('scroll', updateSmartBarDimensions);
+      
+      // Update when sidebar state changes
+      const sidebarToggleBtn = document.querySelector('[aria-label="Toggle sidebar"]');
+      if (sidebarToggleBtn) {
+        sidebarToggleBtn.addEventListener('click', () => {
+          setTimeout(updateSmartBarDimensions, 350);
+        });
+      }
+      
+      return () => {
+        clearTimeout(initialTimer);
+        window.removeEventListener('resize', updateSmartBarDimensions);
+        window.removeEventListener('scroll', updateSmartBarDimensions);
+      };
     }
-    
-    return () => {
-      window.removeEventListener('resize', updateSmartBarDimensions);
-      window.removeEventListener('scroll', updateSmartBarDimensions);
-    };
   }, [showPopover, isMobile]);
 
   return { popoverWidth, popoverPosition };
