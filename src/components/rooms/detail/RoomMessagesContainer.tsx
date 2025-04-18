@@ -12,10 +12,11 @@ interface RoomMessagesContainerProps {
   isLoading: boolean;
   messages: { userId: string | null; messages: RoomMessage[] }[];
   roomName?: string;
+  currentUserId?: string | null;
 }
 
 export const RoomMessagesContainer = forwardRef<HTMLDivElement, RoomMessagesContainerProps>(
-  ({ isLoading, messages, roomName }, ref) => {
+  ({ isLoading, messages, roomName, currentUserId }, ref) => {
     const isMobile = useIsMobile();
 
     return (
@@ -33,7 +34,7 @@ export const RoomMessagesContainer = forwardRef<HTMLDivElement, RoomMessagesCont
                 <MessageGroup 
                   key={`${group.userId}-${i}`} 
                   messages={group.messages} 
-                  isUserGroup={group.userId !== null}
+                  isUserGroup={group.userId === currentUserId}
                 />
               ))}
             </div>

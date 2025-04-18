@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { RoomMessage, useRoomMessages } from "@/hooks/useRoomMessages";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { submitSmartBarMessage } from "@/services/webhook/webhookService";
@@ -13,7 +13,12 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
   const [messageGroups, setMessageGroups] = useState<{ userId: string | null; messages: RoomMessage[] }[]>([]);
-  const { messages, isLoading, addLocalMessage } = useRoomMessages(roomId);
+  const { 
+    messages, 
+    isLoading, 
+    addLocalMessage, 
+    refetchMessages
+  } = useRoomMessages(roomId);
 
   // Check authentication
   useEffect(() => {
@@ -24,6 +29,26 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
       navigate('/auth', { replace: true });
     }
   }, [user, authLoading, navigate]);
+
+  // Refetch messages when the component is mounted or when the user becomes visible
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        console.log("Page became visible, refreshing messages");
+        refetchMessages();
+      }
+    };
+
+    // Call once on mount
+    refetchMessages();
+    
+    // Set up visibility change listener
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [refetchMessages]);
 
   // Group messages by sender
   useEffect(() => {
@@ -75,7 +100,7 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
   }, [messages, user?.id]);
 
   // Handler for webhook responses
-  const handleWebhookResponse = async (response: any, transactionId: string) => {
+  const handleWebhookResponse = useCallback(async (response: any, transactionId: string) => {
     if (!roomId || !user) return;
     
     console.log("Received webhook response:", response);
@@ -124,10 +149,10 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
       console.error("Error processing webhook response:", error);
       toast.error("Failed to process AI response");
     }
-  };
+  }, [roomId, user, addLocalMessage]);
   
   // Handler for sending messages
-  const handleSendMessage = async (text: string, files?: File[]) => {
+  const handleSendMessage = useCallback(async (text: string, files?: File[]) => {
     if (!roomId || !text.trim()) return;
     
     // Check if user is authenticated
@@ -198,7 +223,7 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
     } finally {
       setIsProcessing(false);
     }
-  };
+  }, [roomId, projectId, user, authLoading, navigate, addLocalMessage, handleWebhookResponse]);
 
   return {
     messageGroups,

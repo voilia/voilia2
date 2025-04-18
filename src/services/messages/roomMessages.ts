@@ -45,21 +45,42 @@ export async function addAiResponseToRoom(
     
     console.log("Inserting AI message with transaction ID:", msgTransactionId);
     
-    // Insert the message into the database
-    const { data, error } = await supabase
-      .from("room_messages")
-      .insert({
-        room_id: roomId,
-        agent_id: validAgentId,
-        message_text: message,
-        user_id: null,
-        transaction_id: msgTransactionId
-      })
-      .select('*')
-      .single();
+    // Insert the message into the database with retries
+    let retries = 0;
+    const maxRetries = 3;
+    let data = null;
+    let error = null;
     
-    if (error) {
-      console.error("Supabase error adding AI response:", error);
+    while (retries < maxRetries) {
+      const result = await supabase
+        .from("room_messages")
+        .insert({
+          room_id: roomId,
+          agent_id: validAgentId,
+          message_text: message,
+          user_id: null,
+          transaction_id: msgTransactionId
+        })
+        .select('*')
+        .single();
+      
+      if (!result.error) {
+        data = result.data;
+        break;
+      }
+      
+      error = result.error;
+      retries++;
+      console.log(`Retry ${retries}/${maxRetries} for message insertion:`, error.message);
+      
+      // Wait before retrying (exponential backoff)
+      if (retries < maxRetries) {
+        await new Promise(resolve => setTimeout(resolve, retries * 500));
+      }
+    }
+    
+    if (error && !data) {
+      console.error("Supabase error adding AI response after retries:", error);
       throw error;
     }
     

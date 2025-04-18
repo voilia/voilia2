@@ -88,6 +88,7 @@ export default function RoomDetail() {
                 isLoading={isLoading}
                 messages={messageGroups}
                 roomName={room?.name}
+                currentUserId={user?.id}
               />
             </div>
           </FileDropZone>
