@@ -62,7 +62,7 @@ export function useProjects() {
         return dateB - dateA; // Descending order (newest first)
       });
       
-      console.log(`Fetched ${projectsData.length} projects`);
+      console.log(`Fetched ${projectsData.length} projects, data:`, projectsData);
       
       setProjects(projectsData);
       setIsLoading(false);

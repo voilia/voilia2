@@ -41,7 +41,7 @@ export function ProjectSelector({
       const newProject = projects.find(p => p.id === projectJustCreated);
       
       if (newProject) {
-        console.log("Found newly created project in projects list:", newProject.id);
+        console.log("Found newly created project in projects list, setting as selected:", newProject.id);
         setSelectedProjectId(newProject.id);
       } else if (waitingForProjectRefresh) {
         console.log("Waiting for project refresh to find newly created project:", projectJustCreated);
@@ -51,6 +51,13 @@ export function ProjectSelector({
 
   // Show loading state while waiting for project refresh
   const showLoading = isLoadingProjects || waitingForProjectRefresh;
+
+  // Placeholder text logic
+  const placeholderText = showLoading 
+    ? "Loading projects..." 
+    : selectedProject 
+      ? `${selectedProject.name}` 
+      : "Select a project";
 
   return (
     <div className="space-y-2">
@@ -92,7 +99,7 @@ export function ProjectSelector({
           disabled={showLoading}
         >
           <SelectTrigger>
-            <SelectValue placeholder={showLoading ? "Loading projects..." : "Select a project"}>
+            <SelectValue placeholder={placeholderText}>
               {selectedProject && (
                 <div className="flex items-center gap-2">
                   <div 

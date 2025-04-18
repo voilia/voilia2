@@ -44,30 +44,36 @@ export function useCreateRoom(initialProjectId?: string) {
       if (projectJustCreated && waitingForProjectRefresh) {
         console.log("Checking for newly created project:", projectJustCreated);
         
-        // Specifically fetch projects to ensure we have the latest data
-        const latestProjects = await fetchProjects();
-        
-        if (latestProjects) {
-          // Check if the newly created project is now in the projects list
-          const projectExists = latestProjects.some(p => p.id === projectJustCreated);
+        try {
+          // Specifically fetch projects to ensure we have the latest data
+          const latestProjects = await fetchProjects();
           
-          if (projectExists) {
-            console.log("Found newly created project in fetched list:", projectJustCreated);
-            // Project is now in the list, set it as selected and clear waiting states
-            setSelectedProjectId(projectJustCreated);
-            setProjectJustCreated(null);
-            setWaitingForProjectRefresh(false);
-          } else {
-            console.log("Project still not in list, will try again");
-            // If it's not in the list yet, schedule another refresh
-            setTimeout(() => refreshProjects(), 500);
+          if (latestProjects) {
+            // Check if the newly created project is now in the projects list
+            const projectExists = latestProjects.some(p => p.id === projectJustCreated);
+            
+            if (projectExists) {
+              console.log("Found newly created project in fetched list:", projectJustCreated);
+              // Project is now in the list, set it as selected and clear waiting states
+              setSelectedProjectId(projectJustCreated);
+              setProjectJustCreated(null);
+              setWaitingForProjectRefresh(false);
+            } else {
+              console.log("Project still not in list, will try again");
+              // If it's not in the list yet, schedule another refresh
+              setTimeout(() => refreshProjects(), 1000); // Increased timeout for better chances
+            }
           }
+        } catch (error) {
+          console.error("Error refreshing projects:", error);
+          // Still try again after a timeout
+          setTimeout(() => refreshProjects(), 1000);
         }
       }
     };
     
     checkAndUpdateSelectedProject();
-  }, [projectJustCreated, waitingForProjectRefresh, projects, fetchProjects, refreshProjects]);
+  }, [projectJustCreated, waitingForProjectRefresh, fetchProjects, refreshProjects]);
 
   const resetForm = () => {
     setName("");
@@ -99,13 +105,27 @@ export function useCreateRoom(initialProjectId?: string) {
     setWaitingForProjectRefresh(true);
     
     // Immediately refresh projects list to include the new project
-    await refreshProjects();
-    
-    // Even after refresh, sometimes the project might not be immediately visible
-    // due to Supabase caching or delay, so we'll set a fallback
-    setTimeout(() => {
-      refreshProjects();
-    }, 500);
+    try {
+      await refreshProjects();
+      
+      // Even after refresh, sometimes the project might not be immediately visible
+      // due to Supabase caching or delay, so we'll set multiple fallback retries
+      const retryIntervals = [500, 1000, 2000, 3000];
+      
+      for (const interval of retryIntervals) {
+        setTimeout(async () => {
+          console.log(`Retrying project refresh after ${interval}ms`);
+          const latestProjects = await refreshProjects();
+          
+          if (latestProjects && latestProjects.some(p => p.id === newProjectId)) {
+            console.log(`Found project after ${interval}ms retry`);
+            setWaitingForProjectRefresh(false);
+          }
+        }, interval);
+      }
+    } catch (error) {
+      console.error("Error in initial project refresh:", error);
+    }
   }, [refreshProjects]);
   
   const toggleAgentSelection = (id: string) => {

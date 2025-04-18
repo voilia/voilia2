@@ -6,6 +6,7 @@ import { useCreateRoom } from "@/hooks/useCreateRoom";
 import { StepIndicator } from "./create/navigation/StepIndicator";
 import { CreateRoomFooter } from "./create/navigation/CreateRoomFooter";
 import { useProjects } from "@/hooks/useProjects";
+import { useEffect } from "react";
 
 interface CreateRoomModalProps {
   isOpen: boolean;
@@ -18,7 +19,7 @@ export function CreateRoomModal({
   onOpenChange,
   initialProjectId 
 }: CreateRoomModalProps) {
-  const { projects, isLoading: isLoadingProjects } = useProjects();
+  const { projects, isLoading: isLoadingProjects, refreshProjects } = useProjects();
   const {
     currentStep,
     setCurrentStep,
@@ -46,9 +47,21 @@ export function CreateRoomModal({
     waitingForProjectRefresh
   } = useCreateRoom(initialProjectId);
 
+  // Refresh projects when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      refreshProjects();
+    }
+  }, [isOpen, refreshProjects]);
+
   // Check if Next button should be disabled (Step 1, no project selected, creating project)
   const isNextDisabled = currentStep === 1 && 
     (!selectedProjectId || isCreatingProject || waitingForProjectRefresh);
+
+  console.log("CreateRoomModal - selectedProjectId:", selectedProjectId);
+  console.log("CreateRoomModal - projectJustCreated:", projectJustCreated);
+  console.log("CreateRoomModal - waitingForProjectRefresh:", waitingForProjectRefresh);
+  console.log("CreateRoomModal - projects count:", projects?.length);
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => {

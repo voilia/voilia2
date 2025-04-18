@@ -38,6 +38,11 @@ export function StepOne({
   waitingForProjectRefresh,
   projectJustCreated,
 }: StepOneProps) {
+  console.log("StepOne rendering with selected project:", selectedProjectId);
+  console.log("Available projects:", projects);
+  console.log("Project just created:", projectJustCreated);
+  console.log("Waiting for refresh:", waitingForProjectRefresh);
+
   return (
     <div className="space-y-6">
       <ProjectSelector
