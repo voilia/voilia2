@@ -62,24 +62,26 @@ export function useRoomMessages(roomId: string | undefined) {
   const addLocalMessage = useCallback((message: RoomMessage) => {
     console.log("Adding local message:", message);
     setMessages(prev => {
-      const messageWithTransaction = {
+      // Ensure isPending is always set to handle TypeScript error
+      const completeMessage = {
         ...message,
+        isPending: message.isPending !== undefined ? message.isPending : true,
         transaction_id: message.transaction_id || `local-${message.id}`
       };
       
       // Check if a message with this transaction ID already exists
       const exists = prev.some(m => 
-        m.id === messageWithTransaction.id || 
-        m.transaction_id === messageWithTransaction.transaction_id
+        m.id === completeMessage.id || 
+        m.transaction_id === completeMessage.transaction_id
       );
       
       if (exists) {
-        console.log("Local message already exists, not adding duplicate:", messageWithTransaction.id);
+        console.log("Local message already exists, not adding duplicate:", completeMessage.id);
         return prev;
       }
       
-      console.log("Adding local message to state:", messageWithTransaction.id);
-      return [...prev, messageWithTransaction].sort((a, b) => 
+      console.log("Adding local message to state:", completeMessage.id);
+      return [...prev, completeMessage].sort((a, b) => 
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       );
     });

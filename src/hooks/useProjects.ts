@@ -1,5 +1,5 @@
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Project } from "@/components/projects/types";
@@ -11,8 +11,17 @@ export function useProjects() {
   const [error, setError] = useState<Error | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const location = useLocation();
+  const lastFetchTime = useRef<number>(0);
+  const cacheTimeMs = 60000; // 1 minute cache
 
-  const fetchProjects = useCallback(async () => {
+  const fetchProjects = useCallback(async (forceFetch = false) => {
+    // Skip fetching if we've fetched recently unless force refresh
+    const now = Date.now();
+    if (!forceFetch && now - lastFetchTime.current < cacheTimeMs && projects) {
+      console.log("Using cached projects data");
+      return projects;
+    }
+
     try {
       setIsLoading(true);
       setError(null);
@@ -62,8 +71,9 @@ export function useProjects() {
         return dateB - dateA; // Descending order (newest first)
       });
       
-      console.log(`Fetched ${projectsData.length} projects, data:`, projectsData);
+      console.log(`Fetched ${projectsData.length} projects`);
       
+      lastFetchTime.current = now;
       setProjects(projectsData);
       setIsLoading(false);
       return projectsData; // Return the projects for immediate use
@@ -74,7 +84,7 @@ export function useProjects() {
       setIsLoading(false);
       return null;
     }
-  }, []);
+  }, [projects]);
 
   useEffect(() => {
     fetchProjects();
@@ -94,7 +104,7 @@ export function useProjects() {
   const refreshProjects = useCallback(() => {
     console.log("Manual refresh requested");
     setRefreshTrigger(prev => prev + 1);
-    return fetchProjects(); // Return the promise for better control
+    return fetchProjects(true); // Force refresh
   }, [fetchProjects]);
 
   return { projects, isLoading, error, refreshProjects, fetchProjects };

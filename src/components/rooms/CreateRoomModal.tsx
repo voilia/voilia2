@@ -60,7 +60,7 @@ export function CreateRoomModal({
 
   // Only log debug info when the modal is actually open to prevent unnecessary logs
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && process.env.NODE_ENV === 'development') {
       console.log("CreateRoomModal - selectedProjectId:", selectedProjectId);
       console.log("CreateRoomModal - projectJustCreated:", projectJustCreated);
       console.log("CreateRoomModal - waitingForProjectRefresh:", waitingForProjectRefresh);
