@@ -15,8 +15,10 @@ export function MessageGroup({ messages, isUserGroup }: MessageGroupProps) {
   if (!messages.length) return null;
   
   // If we explicitly know this is a user group, trust that
-  // Otherwise, verify based on the first message's user_id
-  const isCurrentUserMessages = isUserGroup || (messages[0].user_id === user?.id);
+  // Otherwise, determine based on message type or user_id
+  const isCurrentUserMessages = isUserGroup || 
+    (messages[0].messageType === 'user') || 
+    (messages[0].user_id === user?.id && messages[0].user_id !== null);
   
   return (
     <div className={cn(
@@ -51,6 +53,7 @@ function Message({ message, isUser }: MessageProps) {
     <div className="group">
       <div className={cn(
         "px-4 py-2 text-sm rounded-xl",
+        message.isPending && "opacity-70",
         isUser
           ? "bg-primary/10 text-foreground ml-auto rounded-tr-none"
           : "bg-muted text-foreground mr-auto rounded-tl-none"
@@ -61,7 +64,7 @@ function Message({ message, isUser }: MessageProps) {
         "text-xs text-muted-foreground mt-1",
         isUser ? "text-right" : "text-left"
       )}>
-        {time}
+        {time} {message.isPending && "(sending...)"}
       </div>
     </div>
   );

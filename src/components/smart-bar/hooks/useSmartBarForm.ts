@@ -26,17 +26,13 @@ export function useSmartBarForm({ onSendMessage, isDisabled }: UseSmartBarFormPr
     try {
       setIsSubmitting(true);
       
-      if (uploadedFiles.length > 0) {
-        const fileNames = uploadedFiles.map(f => f.name).join(", ");
-        const combinedText = message 
-          ? `${message}\n\nAttached files: ${fileNames}` 
-          : `Attached files: ${fileNames}`;
-        
-        await onSendMessage(combinedText, uploadedFiles.map(f => f.file));
-      } else {
-        await onSendMessage(message);
-      }
+      // Convert uploadedFiles to regular File objects
+      const files = uploadedFiles.length > 0 ? uploadedFiles.map(f => f.file) : undefined;
       
+      // Send the message with files if available
+      await onSendMessage(message, files);
+      
+      // Clear the message and files after successful submission
       setMessage("");
       clearFiles();
     } catch (error) {

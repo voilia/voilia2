@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -13,6 +14,8 @@ export interface RoomMessage {
   created_at: string;
   updated_at: string | null;
   isPending?: boolean; // Added for optimistic updates
+  transaction_id?: string; // Added to link messages in the same conversation
+  messageType?: 'user' | 'agent'; // Added to clearly identify message types
 }
 
 export function useRoomMessages(roomId: string | undefined) {
@@ -98,9 +101,12 @@ export function useRoomMessages(roomId: string | undefined) {
     setMessages(prev => [...prev, message]);
   };
 
-  // Function to send a new message with optimistic updates
-  const sendMessage = async (text: string) => {
+  // Function to send a new message with optimistic updates and transaction ID
+  const sendMessage = async (text: string, transactionId?: string) => {
     if (!roomId || !text.trim() || !user) return;
+
+    // Generate transaction ID if not provided
+    const msgTransactionId = transactionId || uuidv4();
 
     // Create optimistic message for immediate display
     const optimisticMessage: RoomMessage = {
@@ -111,7 +117,9 @@ export function useRoomMessages(roomId: string | undefined) {
       message_text: text,
       created_at: new Date().toISOString(),
       updated_at: null,
-      isPending: true
+      isPending: true,
+      transaction_id: msgTransactionId,
+      messageType: 'user'
     };
 
     // Add optimistic message immediately
@@ -123,9 +131,12 @@ export function useRoomMessages(roomId: string | undefined) {
         .insert({
           room_id: roomId,
           message_text: text,
+          transaction_id: msgTransactionId
         });
 
       if (error) throw error;
+      
+      return msgTransactionId;
     } catch (err) {
       console.error("Error sending message:", err);
       

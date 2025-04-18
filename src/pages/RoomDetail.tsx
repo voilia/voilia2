@@ -20,6 +20,8 @@ import { toast } from "sonner";
 import { useThrottle } from "@/components/smart-bar/buttons/mode-selector/hooks/useThrottle";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useMobileScroll } from "@/hooks/useMobileScroll";
+import { submitSmartBarMessage, addAiResponseToRoom } from "@/services/n8nService";
+import { SmartBarMode } from "@/components/smart-bar/types/smart-bar-types";
 
 export default function RoomDetail() {
   const { id } = useParams<{ id: string }>();
@@ -30,6 +32,7 @@ export default function RoomDetail() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [messageGroups, setMessageGroups] = useState<{ userId: string | null; messages: RoomMessage[] }[]>([]);
   const isMobile = useIsMobile();
+  const [isProcessing, setIsProcessing] = useState(false);
   
   useMobileScroll();
   
@@ -44,14 +47,22 @@ export default function RoomDetail() {
     let currentGroup: { userId: string | null; messages: RoomMessage[] } | null = null;
 
     messages.forEach((message) => {
-      // Determine message ownership consistently - if user_id matches current user, it's from current user
-      const isFromCurrentUser = (message.user_id === user?.id);
-      const senderId = isFromCurrentUser ? user?.id : message.user_id || message.agent_id;
+      // Determine message ownership consistently
+      // Agent messages (messageType='agent' or agent_id is set) should be on the left
+      // User messages (messageType='user' or user_id matches current user) should be on the right
+      const isFromCurrentUser = 
+        (message.messageType === 'user') || 
+        (message.user_id === user?.id && message.user_id !== null);
+      
+      const senderId = isFromCurrentUser ? user?.id : message.agent_id || null;
       
       // Start a new group if:
       // 1. This is the first message
       // 2. The sender ID is different from the current group's ID
-      if (!currentGroup || currentGroup.userId !== senderId) {
+      // 3. The message type is different (user vs agent)
+      if (!currentGroup || 
+          currentGroup.userId !== senderId || 
+          (isFromCurrentUser !== (currentGroup.messages[0].user_id === user?.id))) {
         // Push the current group if it exists
         if (currentGroup) {
           groups.push(currentGroup);
@@ -90,27 +101,98 @@ export default function RoomDetail() {
     scrollToBottom();
   }, [messageGroups, scrollToBottom]);
   
-  const handleSendMessage = async (text: string, files?: File[]) => {
+  // Handle webhook response and add AI message to the room
+  const handleWebhookResponse = async (response: any, transactionId: string) => {
+    console.log("Received webhook response:", response);
+    
     if (!id) return;
     
     try {
-      if (files && files.length > 0) {
-        const fileNames = files.map(f => f.name).join(", ");
-        const combinedText = text 
-          ? `${text}\n\nAttached files: ${fileNames}` 
-          : `Attached files: ${fileNames}`;
+      // Check if the response has a message field
+      if (response.message) {
+        // Get a valid agent ID if available
+        const agentId = response.agent_id && 
+          typeof response.agent_id === 'string' && 
+          /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(response.agent_id) 
+            ? response.agent_id 
+            : null;
         
-        await sendMessage(combinedText);
+        // First add message to local state for immediate display
+        const optimisticAiMessage: RoomMessage = {
+          id: `temp-${Date.now()}`,
+          room_id: id,
+          user_id: null,
+          agent_id: agentId,
+          message_text: response.message,
+          created_at: new Date().toISOString(),
+          updated_at: null,
+          messageType: 'agent',
+          transaction_id: transactionId
+        };
+        
+        // Add to local state first for immediate display
+        addLocalMessage(optimisticAiMessage);
+        
+        // Then add to database (which will eventually replace our optimistic message via subscription)
+        await addAiResponseToRoom(
+          id, 
+          agentId, 
+          response.message,
+          transactionId
+        );
+      } else if (response.error) {
+        throw new Error(response.error);
       } else {
-        await sendMessage(text);
+        console.warn("Received response without message content:", response);
       }
     } catch (error) {
-      console.error("Error sending message with files:", error);
-      toast.error("Failed to send message with attachments");
+      console.error("Error processing webhook response:", error);
+      toast.error("Failed to process AI response");
+    }
+  };
+  
+  const handleSendMessage = async (text: string, files?: File[]) => {
+    if (!id || !text.trim()) return;
+    
+    setIsProcessing(true);
+    
+    try {
+      // If files are present, include them in the message
+      let finalText = text;
+      if (files && files.length > 0) {
+        const fileNames = files.map(f => f.name).join(", ");
+        finalText = `${text}\n\nAttached files: ${fileNames}`;
+      }
+      
+      // Process via n8n webhook
+      const result = await submitSmartBarMessage({
+        message: finalText,
+        roomId: id,
+        projectId: room?.project_id || null,
+        mode: 'chat' as SmartBarMode,
+        uploadedFiles: files?.map(file => ({
+          id: `file-${Date.now()}`,
+          file,
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          preview: URL.createObjectURL(file)
+        })) || [],
+        onResponseReceived: handleWebhookResponse
+      });
+      
+      if (!result.success && result.error) {
+        throw result.error;
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+      toast.error("Failed to send message");
+    } finally {
+      setIsProcessing(false);
     }
   };
 
-  const isLoading = isRoomLoading || isMessagesLoading;
+  const isLoading = isRoomLoading || isMessagesLoading || isProcessing;
 
   return (
     <MainLayout>
@@ -155,7 +237,7 @@ export default function RoomDetail() {
             <div className="flex-1 overflow-hidden relative">
               <ScrollArea className="h-full" ref={scrollAreaRef}>
                 <ContentContainer className={`py-4 ${isMobile ? 'pb-[128px]' : 'pb-[160px]'}`}>
-                  {isLoading ? (
+                  {isLoading && messages.length === 0 ? (
                     <div className="space-y-4 p-4">
                       <Skeleton className="h-12 w-2/3" />
                       <Skeleton className="h-12 w-1/2 ml-auto" />

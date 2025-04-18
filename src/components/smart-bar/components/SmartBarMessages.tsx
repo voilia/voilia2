@@ -13,6 +13,7 @@ interface SmartBarMessagesProps {
   roomName?: string;
   scrollAreaRef: RefObject<HTMLDivElement>;
   isMobile: boolean;
+  currentUserId?: string | null;
 }
 
 export function SmartBarMessages({ 
@@ -22,11 +23,11 @@ export function SmartBarMessages({
   scrollAreaRef,
   isMobile,
   currentUserId
-}: SmartBarMessagesProps & { currentUserId?: string | null }) {
+}: SmartBarMessagesProps) {
   return (
     <ScrollArea className="h-full" ref={scrollAreaRef}>
       <ContentContainer className={`py-4 ${isMobile ? 'pb-[128px]' : 'pb-[160px]'}`}>
-        {isLoading ? (
+        {isLoading && messageGroups.length === 0 ? (
           <div className="space-y-4 p-4">
             <Skeleton className="h-12 w-2/3" />
             <Skeleton className="h-12 w-1/2 ml-auto" />

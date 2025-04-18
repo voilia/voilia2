@@ -1,7 +1,9 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { SmartBarMode, UploadedFile } from "@/components/smart-bar/types/smart-bar-types";
 import { toast } from "sonner";
 import { RoomMessage } from "@/hooks/useRoomMessages";
+import { v4 as uuidv4 } from 'uuid';
 
 interface WebhookPayload {
   user_id: string;
@@ -19,6 +21,7 @@ interface WebhookPayload {
   voice_url?: string;
   thread_id?: string;
   agent_ids: string[];
+  transaction_id: string; // Add transaction ID to payload
 }
 
 interface SubmitSmartBarMessageOptions {
@@ -31,10 +34,11 @@ interface SubmitSmartBarMessageOptions {
   threadId?: string;
   agentIds?: string[];
   language?: string;
+  transactionId?: string; // Add transaction ID option
   onStart?: () => void;
   onComplete?: () => void;
   onError?: (error: Error) => void;
-  onResponseReceived?: (response: any) => void;
+  onResponseReceived?: (response: any, transactionId: string) => void; // Modified to include transaction ID
 }
 
 // Helper to validate UUID format
@@ -52,12 +56,16 @@ export async function submitSmartBarMessage({
   threadId,
   agentIds = [],
   language = 'en',
+  transactionId,
   onStart,
   onComplete,
   onError,
   onResponseReceived
-}: SubmitSmartBarMessageOptions): Promise<{ success: boolean, data?: any, error?: Error }> {
+}: SubmitSmartBarMessageOptions): Promise<{ success: boolean, data?: any, error?: Error, transactionId: string }> {
   try {
+    // Generate a transaction ID if not provided
+    const msgTransactionId = transactionId || uuidv4();
+    
     // Signal the start of submission
     if (onStart) onStart();
 
@@ -87,6 +95,7 @@ export async function submitSmartBarMessage({
         room_id: roomId,
         user_id: user.id,
         message_text: message,
+        transaction_id: msgTransactionId
       })
       .select('*')
       .single();
@@ -106,6 +115,7 @@ export async function submitSmartBarMessage({
       language,
       files: processedFiles,
       agent_ids: validAgentIds,
+      transaction_id: msgTransactionId
     };
 
     if (voiceUrl) payload.voice_url = voiceUrl;
@@ -129,7 +139,7 @@ export async function submitSmartBarMessage({
     // Process the response and add AI message to the room
     if (onResponseReceived) {
       try {
-        await onResponseReceived(responseData);
+        await onResponseReceived(responseData, msgTransactionId);
       } catch (responseErr) {
         console.error('Error in onResponseReceived callback:', responseErr);
       }
@@ -138,7 +148,7 @@ export async function submitSmartBarMessage({
     // Signal completion
     if (onComplete) onComplete();
 
-    return { success: true, data: responseData };
+    return { success: true, data: responseData, transactionId: msgTransactionId };
   } catch (error) {
     console.error('Error submitting message to N8N:', error);
     
@@ -146,14 +156,15 @@ export async function submitSmartBarMessage({
     
     if (onError) onError(errorObj);
     
-    return { success: false, error: errorObj };
+    return { success: false, error: errorObj, transactionId: transactionId || uuidv4() };
   }
 }
 
 export async function addAiResponseToRoom(
   roomId: string, 
   agentId: string | null, 
-  message: string
+  message: string,
+  transactionId?: string
 ): Promise<RoomMessage | null> {
   try {
     // First verify we have an authenticated session
@@ -169,7 +180,9 @@ export async function addAiResponseToRoom(
         agent_id: agentId,
         message_text: message,
         created_at: new Date().toISOString(),
-        updated_at: null
+        updated_at: null,
+        messageType: 'agent',
+        transaction_id: transactionId
       };
     }
     
@@ -183,7 +196,8 @@ export async function addAiResponseToRoom(
         room_id: roomId,
         agent_id: validAgentId,
         message_text: message,
-        user_id: null // Indicates this is an AI message
+        user_id: null, // Indicates this is an AI message
+        transaction_id: transactionId
       })
       .select('*')
       .single();
@@ -206,7 +220,9 @@ export async function addAiResponseToRoom(
       agent_id: null, // Set to null instead of potentially invalid agent_id
       message_text: message,
       created_at: new Date().toISOString(),
-      updated_at: null
+      updated_at: null,
+      messageType: 'agent',
+      transaction_id: transactionId
     };
   }
 }
