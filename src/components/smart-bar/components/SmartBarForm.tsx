@@ -16,7 +16,7 @@ export function SmartBarForm({
   isDisabled?: boolean;
 }) {
   const { handleSubmit, handleKeyDown, isSubmitting } = useSmartBarForm({ onSendMessage, isDisabled });
-  const { mode } = useSmartBar();
+  const { mode, message, setMessage } = useSmartBar();
 
   return (
     <form onSubmit={handleSubmit} className="relative">
