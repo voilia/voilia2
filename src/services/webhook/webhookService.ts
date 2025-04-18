@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { WebhookResponse, MessageSubmitOptions } from "./types";
 import { v4 as uuidv4 } from 'uuid';
@@ -43,32 +42,17 @@ export async function submitSmartBarMessage(options: MessageSubmitOptions): Prom
     try {
       console.log("Sending request to N8N webhook with payload:", JSON.stringify(payload).substring(0, 500) + "...");
       
-      const response = await fetch('https://n8n.srv768178.hstgr.cloud/webhook-test/smartbar', {
+      const response = await fetch('https://n8n.srv768178.hstgr.cloud/webhook/smartbar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        // Use no-cors mode to handle CORS issues
         mode: 'no-cors',
         body: JSON.stringify(payload),
       });
+
+      return await handleWebhookResponse(response, options, msgTransactionId);
       
-      // Since we're using no-cors, we won't get a proper response to parse
-      // Instead, we'll create a simulated successful response
-      console.log("Request to N8N webhook sent in no-cors mode");
-      
-      // Create a mock response for the no-cors request
-      const mockResponse = {
-        success: true,
-        message: "Request sent to N8N webhook in no-cors mode"
-      };
-      
-      // Call the response handler with our mock response
-      return {
-        success: true,
-        data: mockResponse,
-        transactionId: msgTransactionId
-      };
     } catch (fetchError) {
       console.error('Network error when calling webhook:', fetchError);
       toast.error("Connection error", {

@@ -1,4 +1,3 @@
-
 import { WebhookResponse, MessageSubmitOptions } from "./types";
 
 export async function handleWebhookResponse(
@@ -6,6 +5,33 @@ export async function handleWebhookResponse(
   options: MessageSubmitOptions,
   transactionId: string
 ): Promise<WebhookResponse> {
+  // For no-cors responses, create a pending response
+  if (response.type === 'opaque') {
+    console.log("Received opaque response from webhook (expected with no-cors)");
+    const responseData = {
+      status: "processing",
+      message: "Message sent successfully, awaiting response..."
+    };
+
+    if (options.onResponseReceived) {
+      try {
+        await options.onResponseReceived(responseData, transactionId);
+      } catch (responseErr) {
+        console.error('Error in onResponseReceived callback:', responseErr);
+      }
+    }
+
+    if (options.onComplete) {
+      options.onComplete();
+    }
+
+    return { 
+      success: true, 
+      data: responseData,
+      transactionId 
+    };
+  }
+
   if (!response.ok) {
     const errorText = await response.text().catch(() => "Unknown error");
     throw new Error(`Failed to send message: ${response.status} ${response.statusText} - ${errorText}`);
