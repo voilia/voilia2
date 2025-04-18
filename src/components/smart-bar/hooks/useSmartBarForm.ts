@@ -20,19 +20,21 @@ export function useSmartBarForm({ onSendMessage, isDisabled }: UseSmartBarFormPr
     clearFiles,
     enterSends 
   } = useSmartBar();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if ((!message.trim() && uploadedFiles.length === 0) || isDisabled || isSubmitting) return;
 
-    // Check authentication
+    // Enhanced auth check with clear feedback
     if (!user) {
-      toast.error("Authentication required", {
-        description: "Please log in to send messages"
-      });
-      navigate('/auth');
+      if (!authLoading) {
+        toast.error("Authentication required", {
+          description: "Please log in to send messages"
+        });
+        navigate('/auth');
+      }
       return;
     }
 
@@ -50,7 +52,7 @@ export function useSmartBarForm({ onSendMessage, isDisabled }: UseSmartBarFormPr
       clearFiles();
     } catch (error) {
       console.error("Error sending message:", error);
-      // Toast is handled in the submitSmartBarMessage function
+      // Error handling is in the submitSmartBarMessage function
     } finally {
       setIsSubmitting(false);
     }

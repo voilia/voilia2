@@ -10,8 +10,17 @@ export async function submitSmartBarMessage(options: MessageSubmitOptions): Prom
   try {
     if (options.onStart) options.onStart();
 
-    // Get current user session
-    const { data: { session } } = await supabase.auth.getSession();
+    // Get current user session with improved error handling
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError) {
+      console.error("Session error:", sessionError);
+      toast.error("Authentication error", {
+        description: sessionError.message || "Failed to verify your session"
+      });
+      return handleWebhookError(new Error(sessionError.message), options, options.transactionId || uuidv4());
+    }
+    
     if (!session || !session.user) {
       const error = new Error("You must be logged in to send messages");
       toast.error("Authentication required", {
@@ -23,7 +32,7 @@ export async function submitSmartBarMessage(options: MessageSubmitOptions): Prom
     const user = session.user;
     const msgTransactionId = options.transactionId || uuidv4();
 
-    // Add user message to room immediately for optimistic update
+    // Add user message to room with improved error handling
     const userMessageResult = await supabase
       .from('room_messages')
       .insert({
@@ -35,6 +44,9 @@ export async function submitSmartBarMessage(options: MessageSubmitOptions): Prom
 
     if (userMessageResult.error) {
       console.error('Error adding user message:', userMessageResult.error);
+      toast.error("Failed to save your message", {
+        description: userMessageResult.error.message || "Database error occurred"
+      });
       throw userMessageResult.error;
     }
 
@@ -45,20 +57,36 @@ export async function submitSmartBarMessage(options: MessageSubmitOptions): Prom
     });
     payload.user_id = user.id;
 
-    // Send request to webhook
-    const response = await fetch('https://n8n.srv768178.hstgr.cloud/webhook-test/smartbar', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
-
-    return handleWebhookResponse(response, options, msgTransactionId);
+    // Send request to webhook with improved error handling
+    try {
+      const response = await fetch('https://n8n.srv768178.hstgr.cloud/webhook-test/smartbar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Webhook server error: ${response.status} ${response.statusText}`);
+      }
+      
+      return handleWebhookResponse(response, options, msgTransactionId);
+    } catch (fetchError) {
+      console.error('Network error when calling webhook:', fetchError);
+      toast.error("Connection error", {
+        description: "Could not connect to the AI service. Please try again later."
+      });
+      throw fetchError;
+    }
   } catch (error) {
     console.error('Error submitting message:', error);
     toast.error("Failed to send message", {
-      description: error instanceof Error ? error.message : "An unexpected error occurred"
+      description: error instanceof Error 
+        ? error.message 
+        : typeof error === 'object' && error !== null
+          ? JSON.stringify(error)
+          : "An unexpected error occurred"
     });
     return handleWebhookError(error, options, options.transactionId || uuidv4());
   }

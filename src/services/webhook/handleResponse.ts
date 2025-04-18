@@ -8,10 +8,17 @@ export async function handleWebhookResponse(
   transactionId: string
 ): Promise<WebhookResponse> {
   if (!response.ok) {
-    throw new Error(`Failed to send message: ${response.statusText}`);
+    const errorText = await response.text().catch(() => "Unknown error");
+    throw new Error(`Failed to send message: ${response.status} ${response.statusText} - ${errorText}`);
   }
 
-  const responseData = await response.json();
+  let responseData;
+  try {
+    responseData = await response.json();
+  } catch (jsonError) {
+    console.error("Error parsing webhook response:", jsonError);
+    throw new Error("Invalid response from AI service");
+  }
   
   if (options.onResponseReceived) {
     try {
@@ -39,7 +46,20 @@ export function handleWebhookError(
 ): WebhookResponse {
   console.error('Error submitting message to N8N:', error);
   
-  const errorObj = error instanceof Error ? error : new Error(String(error));
+  // Transform error into a proper Error object with meaningful message
+  let errorObj: Error;
+  if (error instanceof Error) {
+    errorObj = error;
+  } else if (typeof error === 'object' && error !== null) {
+    // Handle Supabase-style errors or other object errors
+    const errorMessage = 
+      error.hasOwnProperty('message') ? (error as any).message : 
+      error.hasOwnProperty('error') ? (error as any).error :
+      JSON.stringify(error);
+    errorObj = new Error(errorMessage);
+  } else {
+    errorObj = new Error(String(error));
+  }
   
   if (options.onError) {
     options.onError(errorObj);
