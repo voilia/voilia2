@@ -34,8 +34,7 @@ export function useWebhookHandler(
       // For no-cors initial response (just a placeholder)
       else if (response.status === "processing" && response.message) {
         console.log("Processing initial no-cors response. This will be replaced by real-time updates.");
-        // We don't create a message for this since it will be replaced by real-time subscription
-        return;
+        messageText = response.message;
       }
       // Alternative response format with nested data
       else if (response.data?.response) {

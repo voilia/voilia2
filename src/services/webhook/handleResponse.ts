@@ -20,6 +20,7 @@ export async function handleWebhookResponse(
     // Call the onResponseReceived callback with this initial response
     if (options.onResponseReceived) {
       try {
+        console.log("Calling onResponseReceived with initial response while waiting for real-time update");
         await options.onResponseReceived(initialResponse, transactionId);
       } catch (responseErr) {
         console.error('Error in onResponseReceived callback:', responseErr);
