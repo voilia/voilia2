@@ -32,11 +32,22 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
       return;
     }
 
+    console.log("Grouping messages:", messages.length);
+    
+    // Sort messages by creation time to ensure correct order
+    const sortedMessages = [...messages].sort((a, b) => 
+      new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    );
+
     const groups: { userId: string | null; messages: RoomMessage[] }[] = [];
     let currentGroup: { userId: string | null; messages: RoomMessage[] } | null = null;
 
-    messages.forEach((message) => {
+    sortedMessages.forEach((message) => {
+      // Skip messages without content
+      if (!message.message_text?.trim()) return;
+      
       const isFromCurrentUser = message.user_id === user?.id;
+      // For user messages, use user_id; for agent messages, use agent_id or null
       const senderId = isFromCurrentUser ? user?.id : message.agent_id || null;
       
       if (!currentGroup || currentGroup.userId !== senderId) {
@@ -56,8 +67,11 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
     setMessageGroups(groups);
   }, [messages, user?.id]);
 
+  // Handler for webhook responses
   const handleWebhookResponse = async (response: any, transactionId: string) => {
     if (!roomId || !user) return;
+    
+    console.log("Received webhook response:", response);
     
     try {
       if (response.message) {
@@ -67,8 +81,9 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
             ? response.agent_id 
             : null;
         
+        // Create optimistic AI message for immediate display
         const optimisticAiMessage: RoomMessage = {
-          id: `temp-${Date.now()}`,
+          id: `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
           room_id: roomId,
           user_id: null,
           agent_id: agentId,
@@ -81,8 +96,10 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
         };
         
         // Add AI response immediately with pending state
+        console.log("Adding optimistic AI response:", optimisticAiMessage);
         addLocalMessage(optimisticAiMessage);
         
+        // Save the response to the database
         await addAiResponseToRoom(
           roomId, 
           agentId, 
@@ -90,6 +107,7 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
           transactionId
         );
       } else if (response.error) {
+        console.error("Error in webhook response:", response.error);
         throw new Error(response.error);
       }
     } catch (error) {
@@ -98,6 +116,7 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
     }
   };
   
+  // Handler for sending messages
   const handleSendMessage = async (text: string, files?: File[]) => {
     if (!roomId || !text.trim()) return;
     
@@ -115,7 +134,7 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
     
     // Create and display optimistic user message immediately
     const optimisticUserMessage: RoomMessage = {
-      id: `temp-${Date.now()}`,
+      id: `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
       room_id: roomId,
       user_id: user?.id || null,
       agent_id: null,
@@ -128,6 +147,7 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
     };
     
     // Add user message immediately
+    console.log("Adding optimistic user message:", optimisticUserMessage);
     addLocalMessage(optimisticUserMessage);
     
     try {
@@ -137,13 +157,15 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
         finalText = `${text}\n\nAttached files: ${fileNames}`;
       }
       
+      console.log("Submitting message to webhook:", finalText);
+      
       const result = await submitSmartBarMessage({
         message: finalText,
         roomId,
         projectId,
         mode: 'chat',
         uploadedFiles: files?.map(file => ({
-          id: `file-${Date.now()}`,
+          id: `file-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
           file,
           name: file.name,
           type: file.type,

@@ -15,6 +15,7 @@ export async function handleWebhookResponse(
   let responseData;
   try {
     responseData = await response.json();
+    console.log("Parsed webhook response:", responseData);
   } catch (jsonError) {
     console.error("Error parsing webhook response:", jsonError);
     throw new Error("Invalid response from AI service");
@@ -22,6 +23,7 @@ export async function handleWebhookResponse(
   
   if (options.onResponseReceived) {
     try {
+      console.log("Calling onResponseReceived with data:", responseData);
       await options.onResponseReceived(responseData, transactionId);
     } catch (responseErr) {
       console.error('Error in onResponseReceived callback:', responseErr);

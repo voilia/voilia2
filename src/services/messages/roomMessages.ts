@@ -11,12 +11,14 @@ export async function addAiResponseToRoom(
   transactionId?: string
 ): Promise<RoomMessage | null> {
   try {
+    console.log("Adding AI response to room:", { roomId, agentId, transactionId });
+    
     const { data: { session } } = await supabase.auth.getSession();
     
     if (!session) {
       console.error("No active session for AI response insertion");
       return {
-        id: `temp-${Date.now()}`,
+        id: `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
         room_id: roomId,
         user_id: null,
         agent_id: agentId,
@@ -47,15 +49,17 @@ export async function addAiResponseToRoom(
       throw error;
     }
     
+    console.log("Successfully added AI response to database:", data);
     return data;
   } catch (error) {
     console.error("Error adding AI response:", error);
     
+    // Return an optimistic message object for the UI even if the DB insert failed
     return {
-      id: `temp-${Date.now()}`,
+      id: `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
       room_id: roomId,
       user_id: null,
-      agent_id: null,
+      agent_id: agentId,
       message_text: message,
       created_at: new Date().toISOString(),
       updated_at: null,

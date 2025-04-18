@@ -37,7 +37,23 @@ export function useRoomMessages(roomId: string | undefined) {
 
         if (error) throw error;
         
-        setMessages(data || []);
+        setMessages(currentMessages => {
+          const pendingMessages = currentMessages.filter(msg => msg.isPending);
+          
+          const combinedMessages = [...(data || [])];
+          
+          pendingMessages.forEach(pendingMsg => {
+            const existsInData = data?.some(dbMsg => 
+              dbMsg.transaction_id === pendingMsg.transaction_id
+            );
+            
+            if (!existsInData) {
+              combinedMessages.push(pendingMsg);
+            }
+          });
+          
+          return combinedMessages;
+        });
       } catch (err) {
         console.error("Error fetching room messages:", err);
         setError(err instanceof Error ? err : new Error(String(err)));
@@ -60,14 +76,13 @@ export function useRoomMessages(roomId: string | undefined) {
           filter: `room_id=eq.${roomId}`,
         },
         (payload) => {
+          console.log("New message from realtime:", payload.new);
           const newMessage = payload.new as RoomMessage;
           
           setMessages((prev) => {
             const pendingIndex = prev.findIndex(msg => 
               msg.isPending && 
-              (msg.message_text === newMessage.message_text) && 
-              ((msg.user_id === newMessage.user_id) || 
-               (msg.user_id === user?.id && newMessage.user_id === user?.id))
+              msg.transaction_id === newMessage.transaction_id
             );
             
             if (pendingIndex >= 0) {
@@ -83,12 +98,26 @@ export function useRoomMessages(roomId: string | undefined) {
       .subscribe();
 
     return () => {
+      console.log("Removing channel for room:", roomId);
       supabase.removeChannel(channel);
     };
   }, [roomId, user?.id, user]);
 
   const addLocalMessage = (message: RoomMessage) => {
-    setMessages(prev => [...prev, message]);
+    console.log("Adding local message:", message);
+    setMessages(prev => {
+      const exists = prev.some(m => 
+        m.transaction_id === message.transaction_id && 
+        m.messageType === message.messageType
+      );
+      
+      if (exists) {
+        console.log("Message already exists, not adding duplicate");
+        return prev;
+      }
+      
+      return [...prev, message];
+    });
   };
 
   const sendMessage = async (text: string, transactionId?: string) => {
@@ -116,7 +145,7 @@ export function useRoomMessages(roomId: string | undefined) {
       messageType: 'user'
     };
 
-    setMessages(prev => [...prev, optimisticMessage]);
+    addLocalMessage(optimisticMessage);
 
     try {
       const { error } = await supabase
