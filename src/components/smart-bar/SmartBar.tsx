@@ -1,4 +1,3 @@
-
 import { SmartBarForm } from "./components/SmartBarForm";
 import { SmartBarFooter } from "./SmartBarFooter";
 import { useSmartBar } from "./context/SmartBarContext";
@@ -37,20 +36,18 @@ export function SmartBar({
   return (
     <div 
       className={cn(
-        "fixed pb-2 bg-background/95 backdrop-blur-sm border-t border-border/40",
-        isMobile ? "bottom-0 left-0 right-0 px-2" : "bottom-0 px-4",
-        "relative"
+        "fixed bottom-0 bg-background/95 backdrop-blur-sm border-t border-border/40",
+        "w-full transition-all duration-300 ease-out z-40",
+        isMobile ? "px-2" : "px-4"
       )}
       style={{
         left: isMobile ? '0' : 'var(--sidebar-width, 0px)',
         right: '0',
-        maxWidth: isMobile ? '100%' : 'none',
-        transition: 'left 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-        zIndex: 40
+        maxWidth: isMobile ? '100%' : 'none'
       }}
     >
-      <ColoredModeIndicator mode={mode} />
-      <div className="mx-auto max-w-3xl w-full transition-transform duration-300 ease-out">
+      <div className="relative max-w-3xl mx-auto w-full">
+        <ColoredModeIndicator mode={mode} className="absolute -top-px inset-x-0 w-full" />
         <SmartBarForm
           onSendMessage={onSendMessage}
           isDisabled={isDisabled}
@@ -58,7 +55,6 @@ export function SmartBar({
         <SmartBarFooter 
           enterSends={enterSends}
           onToggleEnterSends={() => setEnterSends(!enterSends)}
-          className=""
         />
       </div>
     </div>
