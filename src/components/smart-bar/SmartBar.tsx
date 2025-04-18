@@ -53,13 +53,13 @@ export function SmartBar({
       <div className={cn(
         "relative max-w-3xl mx-auto w-full",
         "flex flex-col gap-2",
-        "SmartBar" // This class name is important for positioning
+        "SmartBar"
       )}>
         <div className={cn(
           "relative w-full rounded-xl overflow-hidden",
           isDark 
-            ? "bg-black/30 border-white/10" 
-            : "bg-foreground/5 border-foreground/10",
+            ? "bg-black/40 border-white/10" 
+            : "bg-foreground/10 border-foreground/10",
           "backdrop-blur-lg border",
           "shadow-lg transition-all duration-300"
         )}>

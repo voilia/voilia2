@@ -17,20 +17,20 @@ export function AnimatedSubmitButton({ disabled, mode, className }: AnimatedSubm
   const getButtonColor = () => {
     if (mode === "chat") {
       if (disabled) {
-        return isDark ? "bg-[#D6BCFA]/80" : "bg-[#E9D5FF]/80";
+        return isDark ? "bg-[#D6BCFA]/40" : "bg-[#E9D5FF]/40";
       }
       return isDark ? "bg-[#9333EA]/90" : "bg-[#8B5CF6]/90";
     } else if (mode === "visual") {
       return disabled 
-        ? (isDark ? "bg-orange-300/80" : "bg-orange-200/80")
+        ? (isDark ? "bg-orange-300/40" : "bg-orange-200/40")
         : (isDark ? "bg-[#FB923C]/90" : "bg-[#F97316]/90");
     } else if (mode === "assist") {
       return disabled 
-        ? (isDark ? "bg-blue-300/80" : "bg-blue-200/80")
+        ? (isDark ? "bg-blue-300/40" : "bg-blue-200/40")
         : (isDark ? "bg-[#60A5FA]/90" : "bg-[#3B82F6]/90");
     } else if (mode === "vault") {
       return disabled 
-        ? (isDark ? "bg-green-300/80" : "bg-green-200/80")
+        ? (isDark ? "bg-green-300/40" : "bg-green-200/40")
         : (isDark ? "bg-[#34D399]/90" : "bg-[#10B981]/90");
     }
     
@@ -60,7 +60,7 @@ export function AnimatedSubmitButton({ disabled, mode, className }: AnimatedSubm
     >
       <ArrowUp className={cn(
         "h-4 w-4",
-        disabled ? "text-muted-foreground/80" : "text-primary-foreground"
+        disabled ? "text-muted-foreground/50" : "text-primary-foreground"
       )} />
     </button>
   );
