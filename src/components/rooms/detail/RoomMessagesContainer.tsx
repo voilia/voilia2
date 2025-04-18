@@ -1,4 +1,3 @@
-
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ContentContainer } from "@/components/ui/ContentContainer";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -8,6 +7,7 @@ import { MessageErrorBoundary } from "@/components/rooms/MessageErrorBoundary";
 import { RoomMessage } from "@/types/room-messages";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { forwardRef } from "react";
+import { cn } from "@/lib/utils";
 
 interface RoomMessagesContainerProps {
   isLoading: boolean;
@@ -25,7 +25,7 @@ export const RoomMessagesContainer = forwardRef<HTMLDivElement, RoomMessagesCont
         <ContentContainer className={cn(
           "py-4",
           isMobile ? "pb-[128px]" : "pb-[160px]",
-          "relative z-10" // Add z-index to keep messages above SmartBar
+          "relative z-10"
         )}>
           {isLoading && messages.length === 0 ? (
             <div className="space-y-4 p-4">
