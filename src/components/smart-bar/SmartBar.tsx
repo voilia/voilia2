@@ -44,7 +44,7 @@ export function SmartBar({
       style={{
         left: isMobile ? '0' : 'var(--sidebar-width, 0px)',
         right: '0',
-        maxWidth: isMobile ? '100%' : 'none'
+        maxWidth: isMobile ? '100%' : 'calc(100% - var(--sidebar-width, 0px))'
       }}
     >
       <div className="relative max-w-3xl mx-auto w-full glassmorphic-light rounded-t-2xl">

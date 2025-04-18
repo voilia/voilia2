@@ -63,6 +63,7 @@ export function MainLayout({ children }: MainLayoutProps) {
         style={{ 
           marginLeft: isMobile ? '0' : (isCollapsed ? '0' : '240px'),
           paddingTop: isMobile ? '56px' : '2rem',
+          width: isMobile ? '100%' : `calc(100% - ${isCollapsed ? '0px' : '240px'})`
         }}
       >
         <div className={cn(
