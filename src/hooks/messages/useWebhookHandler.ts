@@ -2,6 +2,7 @@
 import { useCallback } from "react";
 import { RoomMessage } from "@/types/room-messages";
 import { toast } from "sonner";
+import { v4 as uuidv4 } from 'uuid';
 
 export function useWebhookHandler(
   roomId: string | undefined,
@@ -15,8 +16,11 @@ export function useWebhookHandler(
     
     try {
       // Extract the message from the response structure
-      const messageText = response.data?.response?.text;
+      const messageData = response.data?.response || response.data;
+      const messageText = messageData?.text || messageData?.message;
+
       if (messageText) {
+        // Extract agent ID if available
         const agentId = response.data?.agent?.id && 
           /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(response.data.agent.id) 
             ? response.data.agent.id 
@@ -35,7 +39,7 @@ export function useWebhookHandler(
           created_at: new Date().toISOString(),
           updated_at: null,
           messageType: 'agent' as const,
-          transaction_id: transactionId,
+          transaction_id: transactionId || uuidv4(),
           isPending: true
         };
         
