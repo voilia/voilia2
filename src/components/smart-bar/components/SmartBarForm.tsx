@@ -21,14 +21,9 @@ export function SmartBarForm({
   return (
     <form onSubmit={handleSubmit} className="relative">
       <div className={cn(
-        "flex items-center gap-4 py-3 px-4",
+        "flex flex-col gap-4 py-3 px-4",
         "backdrop-blur-sm transition-all duration-300"
       )}>
-        <div className="flex items-center gap-4">
-          <SmartBarModeSelector />
-          <SmartBarFileButton disabled={isDisabled} />
-        </div>
-        
         <SmartBarInput
           value={message}
           onChange={(value) => setMessage(value)}
@@ -39,12 +34,19 @@ export function SmartBarForm({
           name="message-input"
         />
         
-        <div className="flex items-center gap-3">
-          <SmartBarVoiceButton disabled={isDisabled} />
-          <AnimatedSubmitButton 
-            disabled={isDisabled || isSubmitting} 
-            mode={mode}
-          />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <SmartBarModeSelector />
+            <SmartBarFileButton disabled={isDisabled} />
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <SmartBarVoiceButton disabled={isDisabled} />
+            <AnimatedSubmitButton 
+              disabled={isDisabled || isSubmitting} 
+              mode={mode}
+            />
+          </div>
         </div>
       </div>
     </form>

@@ -22,7 +22,7 @@ export function SmartBarInput({
   name = "message-input"
 }: SmartBarInputProps) {
   return (
-    <div className="relative flex-1">
+    <div className="relative w-full">
       <TextareaAutosize
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -36,7 +36,8 @@ export function SmartBarInput({
           "text-base text-foreground/90",
           "placeholder:text-muted-foreground/50",
           "focus:ring-0",
-          "disabled:opacity-50"
+          "disabled:opacity-50",
+          "min-h-[48px]" // Ensure minimum height
         )}
         maxRows={8}
         id={id}
