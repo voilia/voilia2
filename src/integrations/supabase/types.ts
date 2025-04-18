@@ -332,21 +332,21 @@ export type Database = {
           {
             foreignKeyName: "agent_prompts_agent_id_fkey"
             columns: ["agent_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "agents"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "agent_prompts_agent_id_fkey"
             columns: ["agent_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "public_agents_with_tags"
             referencedColumns: ["agent_id"]
           },
           {
             foreignKeyName: "agent_prompts_agent_id_fkey"
             columns: ["agent_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "room_agents_with_metadata"
             referencedColumns: ["agent_id"]
           },
@@ -481,27 +481,33 @@ export type Database = {
       agent_versions: {
         Row: {
           agent_id: string | null
+          changelog: string | null
           created_at: string | null
           created_by: string | null
           id: string
           is_active: boolean | null
           system_prompt: string | null
+          version: string | null
         }
         Insert: {
           agent_id?: string | null
+          changelog?: string | null
           created_at?: string | null
           created_by?: string | null
           id?: string
           is_active?: boolean | null
           system_prompt?: string | null
+          version?: string | null
         }
         Update: {
           agent_id?: string | null
+          changelog?: string | null
           created_at?: string | null
           created_by?: string | null
           id?: string
           is_active?: boolean | null
           system_prompt?: string | null
+          version?: string | null
         }
         Relationships: [
           {
@@ -1544,6 +1550,61 @@ export type Database = {
       }
     }
     Views: {
+      active_agent_versions: {
+        Row: {
+          agent_id: string | null
+          changelog: string | null
+          created_at: string | null
+          created_by: string | null
+          id: string | null
+          is_active: boolean | null
+          system_prompt: string | null
+          version: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          changelog?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          system_prompt?: string | null
+          version?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          changelog?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          system_prompt?: string | null
+          version?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_versions_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_versions_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "public_agents_with_tags"
+            referencedColumns: ["agent_id"]
+          },
+          {
+            foreignKeyName: "agent_versions_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "room_agents_with_metadata"
+            referencedColumns: ["agent_id"]
+          },
+        ]
+      }
       public_agents_with_tags: {
         Row: {
           agent_id: string | null
@@ -1579,6 +1640,20 @@ export type Database = {
       check_token_quota: {
         Args: { p_project_id: string; p_tokens_needed: number }
         Returns: boolean
+      }
+      create_agent_with_prompt: {
+        Args: {
+          _name: string
+          _description: string
+          _system_prompt: string
+          _persona: string
+          _agent_type: string
+          _supported_languages?: string[]
+          _icon?: string
+          _color?: string
+          _is_public?: boolean
+        }
+        Returns: string
       }
       create_project_with_owner: {
         Args: {
@@ -1629,6 +1704,10 @@ export type Database = {
       safely_add_project_member: {
         Args: { p_project_id: string; p_user_id: string; p_role?: string }
         Returns: string
+      }
+      sync_agent_prompt_from_version: {
+        Args: { _agent_id: string }
+        Returns: undefined
       }
       update_room_members: {
         Args: { _room_id: string; _user_ids: string[] }

@@ -14,15 +14,22 @@ import { useAuth } from "@/components/auth/AuthProvider";
 interface CreateProjectInlineProps {
   onProjectCreated: (projectId: string) => void;
   onCancel: () => void;
+  allowContinueToRoom?: boolean;
+  onContinueToRoom?: () => void;
 }
 
-export function CreateProjectInline({ onProjectCreated, onCancel }: CreateProjectInlineProps) {
+export function CreateProjectInline({ 
+  onProjectCreated, 
+  onCancel,
+  allowContinueToRoom = false,
+  onContinueToRoom
+}: CreateProjectInlineProps) {
   const [projectName, setProjectName] = useState("");
   const [selectedColor, setSelectedColor] = useState<ProjectColor>("indigo");
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
 
-  const handleCreateProject = async () => {
+  const handleCreateProject = async (andContinue: boolean = false) => {
     if (!projectName.trim()) {
       toast.error("Project name is required");
       return;
@@ -56,6 +63,9 @@ export function CreateProjectInline({ onProjectCreated, onCancel }: CreateProjec
         console.log("Project already exists, using it:", existingProjects[0].id);
         toast.info("A project with this name already exists");
         onProjectCreated(existingProjects[0].id);
+        if (andContinue && onContinueToRoom) {
+          onContinueToRoom();
+        }
         return;
       }
 
@@ -83,6 +93,11 @@ export function CreateProjectInline({ onProjectCreated, onCancel }: CreateProjec
       
       // Call onProjectCreated with the new project ID immediately
       onProjectCreated(data as string);
+      
+      // If we're continuing to room creation, call the callback
+      if (andContinue && onContinueToRoom) {
+        onContinueToRoom();
+      }
     } catch (error: any) {
       console.error("Error creating project:", error);
       toast.error(`Failed to create project: ${error.message || "Please try again"}`);
@@ -130,10 +145,23 @@ export function CreateProjectInline({ onProjectCreated, onCancel }: CreateProjec
           <Button variant="outline" onClick={onCancel} disabled={isLoading}>
             Cancel
           </Button>
-          <Button onClick={handleCreateProject} disabled={isLoading}>
-            {isLoading ? <Loader size="sm" className="mr-2" /> : null}
-            Create Project
-          </Button>
+          {allowContinueToRoom ? (
+            <Button 
+              onClick={() => handleCreateProject(true)} 
+              disabled={isLoading}
+            >
+              {isLoading ? <Loader size="sm" className="mr-2" /> : null}
+              Create & Continue
+            </Button>
+          ) : (
+            <Button 
+              onClick={() => handleCreateProject(false)} 
+              disabled={isLoading}
+            >
+              {isLoading ? <Loader size="sm" className="mr-2" /> : null}
+              Create Project
+            </Button>
+          )}
         </div>
       </div>
     </div>

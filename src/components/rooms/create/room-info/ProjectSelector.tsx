@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Project } from "@/components/projects/types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -24,20 +23,33 @@ export function ProjectSelector({
   setIsCreatingProject,
   handleProjectCreated,
 }: ProjectSelectorProps) {
+  // Track if we're in the process of creating both a project and room
+  const [isCreatingProjectAndRoom, setIsCreatingProjectAndRoom] = useState(false);
+
   return (
     <div className="space-y-2">
       {isCreatingProject ? (
         <div className="space-y-4">
           <CreateProjectInline 
             onProjectCreated={(projectId) => {
-              // Set the selected project ID first
+              // Set the selected project ID
               setSelectedProjectId(projectId);
-              // Then call handleProjectCreated to refresh the projects list
+              // Call handleProjectCreated to refresh the projects list
               handleProjectCreated(projectId);
-              // Finally, close the create project form
-              setIsCreatingProject(false);
+              // Keep the create project form open if we're creating both
+              if (!isCreatingProjectAndRoom) {
+                setIsCreatingProject(false);
+              }
             }}
-            onCancel={() => setIsCreatingProject(false)}
+            onCancel={() => {
+              setIsCreatingProject(false);
+              setIsCreatingProjectAndRoom(false);
+            }}
+            // Allow continuing to room creation
+            allowContinueToRoom={true}
+            onContinueToRoom={() => {
+              setIsCreatingProjectAndRoom(true);
+            }}
           />
         </div>
       ) : (
