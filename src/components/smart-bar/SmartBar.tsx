@@ -1,3 +1,4 @@
+
 import { SmartBarForm } from "./components/SmartBarForm";
 import { SmartBarFooter } from "./SmartBarFooter";
 import { useSmartBar } from "./context/SmartBarContext";
@@ -36,7 +37,7 @@ export function SmartBar({
   return (
     <div 
       className={cn(
-        "fixed bottom-0 bg-background/95 backdrop-blur-sm border-t border-border/40",
+        "fixed bottom-0 bg-background border-t border-border/40",
         "w-full transition-all duration-300 ease-out z-40",
         isMobile ? "px-2" : "px-4"
       )}
@@ -46,8 +47,8 @@ export function SmartBar({
         maxWidth: isMobile ? '100%' : 'none'
       }}
     >
-      <div className="relative max-w-3xl mx-auto w-full">
-        <ColoredModeIndicator mode={mode} className="absolute -top-px inset-x-0 w-full" />
+      <div className="relative max-w-3xl mx-auto w-full rounded-t-2xl bg-background/95 backdrop-blur-sm">
+        <ColoredModeIndicator mode={mode} className="absolute -top-px inset-x-0 w-full rounded-t-2xl" />
         <SmartBarForm
           onSendMessage={onSendMessage}
           isDisabled={isDisabled}

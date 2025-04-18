@@ -1,4 +1,3 @@
-
 import { useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useSmartBar } from "./context/SmartBarContext";
@@ -33,11 +32,6 @@ export function SmartBarInput({
     }
   }, [isDisabled, isSubmitting]);
 
-  // Text for placeholder based on whether files are attached
-  const placeholderText = uploadedFiles.length > 0
-    ? "Add a message or send files..."
-    : "Type a message...";
-
   return (
     <div className="relative w-full">
       <TextareaAutosize
@@ -46,11 +40,11 @@ export function SmartBarInput({
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={onKeyDown}
         disabled={isDisabled || isSubmitting}
-        placeholder={placeholderText}
+        placeholder="Ask anything or use @ to mention a model..."
         className={cn(
-          "w-full px-4 py-3 bg-transparent",
+          "w-full px-4 py-4 bg-transparent",
           "resize-none outline-none border-0",
-          "text-base md:text-sm",
+          "text-base text-foreground/90",
           "placeholder:text-muted-foreground/70",
           "disabled:opacity-50"
         )}
