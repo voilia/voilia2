@@ -12,14 +12,12 @@ export function useMessagesStore() {
 
   const addMessage = useCallback((message: RoomMessage) => {
     setMessages(prev => {
-      const exists = prev.some(msg => 
-        msg.id === message.id || 
-        (msg.transaction_id && message.transaction_id && 
-          msg.transaction_id === message.transaction_id)
-      );
+      // Only check for exact ID match, not transaction_id
+      // This allows messages with the same transaction_id but different IDs to be added
+      const exactIdMatch = prev.some(msg => msg.id === message.id);
       
-      if (exists) {
-        console.log("Message already exists, not adding duplicate:", message.id);
+      if (exactIdMatch) {
+        console.log("Exact ID match found, not adding duplicate:", message.id);
         return prev;
       }
       

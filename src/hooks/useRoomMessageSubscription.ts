@@ -50,10 +50,8 @@ export const useRoomMessageSubscription = (
               messageType: newMessage.messageType
             });
             
-            // Force a small delay to ensure React state updates properly
-            setTimeout(() => {
-              onNewMessage(newMessage);
-            }, 10);
+            // Process immediately without delay
+            onNewMessage(newMessage);
           }
         )
         .on(
@@ -81,10 +79,8 @@ export const useRoomMessageSubscription = (
               messageType: updatedMessage.messageType
             });
             
-            // Force a small delay to ensure React state updates properly
-            setTimeout(() => {
-              onNewMessage(updatedMessage);
-            }, 10);
+            // Process immediately without delay
+            onNewMessage(updatedMessage);
           }
         )
         .subscribe((status) => {
