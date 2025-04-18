@@ -3,6 +3,7 @@ import { SmartBarInput } from "../SmartBarInput";
 import { SmartBarActions } from "../buttons/SmartBarActions";
 import { useSmartBar } from "../context/SmartBarContext";
 import { useSmartBarForm } from "../hooks/useSmartBarForm";
+import { AnimatedSubmitButton } from "../buttons/submit/AnimatedSubmitButton";
 
 interface SmartBarFormProps {
   onSendMessage: (message: string, files?: File[]) => Promise<void>;
@@ -10,7 +11,7 @@ interface SmartBarFormProps {
 }
 
 export function SmartBarForm({ onSendMessage, isDisabled = false }: SmartBarFormProps) {
-  const { message, setMessage } = useSmartBar();
+  const { message, setMessage, mode } = useSmartBar();
   const { handleSubmit, handleKeyDown, isSubmitting } = useSmartBarForm({
     onSendMessage,
     isDisabled
@@ -27,6 +28,11 @@ export function SmartBarForm({ onSendMessage, isDisabled = false }: SmartBarForm
       />
       <div className="flex items-center justify-between px-3 py-2">
         <SmartBarActions disabled={isDisabled || isSubmitting} />
+        <AnimatedSubmitButton 
+          disabled={isDisabled || isSubmitting || !message.trim()} 
+          mode={mode} 
+          className="ml-2"
+        />
       </div>
     </form>
   );

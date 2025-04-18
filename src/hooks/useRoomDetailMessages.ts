@@ -2,15 +2,27 @@
 import { useState, useEffect } from "react";
 import { RoomMessage, useRoomMessages } from "@/hooks/useRoomMessages";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { submitSmartBarMessage } from "@/services/n8nService";
+import { submitSmartBarMessage } from "@/services/webhook/webhookService";
 import { addAiResponseToRoom } from "@/services/messages/roomMessages";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export function useRoomDetailMessages(roomId: string | undefined, projectId: string | null) {
   const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
   const [messageGroups, setMessageGroups] = useState<{ userId: string | null; messages: RoomMessage[] }[]>([]);
   const { messages, isLoading, addLocalMessage } = useRoomMessages(roomId);
+
+  // Check authentication
+  useEffect(() => {
+    if (!authLoading && !user) {
+      toast.error("Authentication required", {
+        description: "Please log in to view room details"
+      });
+      navigate('/auth', { replace: true });
+    }
+  }, [user, authLoading, navigate]);
 
   // Group messages by sender
   useEffect(() => {
@@ -100,6 +112,7 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
       toast.error("Authentication required", {
         description: "Please log in to send messages"
       });
+      navigate('/auth');
       return;
     }
     
@@ -133,7 +146,9 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
       }
     } catch (error) {
       console.error("Error sending message:", error);
-      toast.error("Failed to send message");
+      toast.error("Failed to send message", {
+        description: error instanceof Error ? error.message : "An unexpected error occurred"
+      });
     } finally {
       setIsProcessing(false);
     }

@@ -2,6 +2,8 @@
 import { FormEvent } from "react";
 import { useSmartBar } from "../context/SmartBarContext";
 import { toast } from "sonner";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 interface UseSmartBarFormProps {
   onSendMessage: (message: string, files?: File[]) => Promise<void>;
@@ -18,10 +20,21 @@ export function useSmartBarForm({ onSendMessage, isDisabled }: UseSmartBarFormPr
     clearFiles,
     enterSends 
   } = useSmartBar();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if ((!message.trim() && uploadedFiles.length === 0) || isDisabled || isSubmitting) return;
+
+    // Check authentication
+    if (!user) {
+      toast.error("Authentication required", {
+        description: "Please log in to send messages"
+      });
+      navigate('/auth');
+      return;
+    }
 
     try {
       setIsSubmitting(true);
@@ -37,7 +50,7 @@ export function useSmartBarForm({ onSendMessage, isDisabled }: UseSmartBarFormPr
       clearFiles();
     } catch (error) {
       console.error("Error sending message:", error);
-      toast.error("Failed to send message");
+      // Toast is handled in the submitSmartBarMessage function
     } finally {
       setIsSubmitting(false);
     }

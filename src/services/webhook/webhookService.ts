@@ -31,9 +31,7 @@ export async function submitSmartBarMessage(options: MessageSubmitOptions): Prom
         user_id: user.id,
         message_text: options.message,
         transaction_id: msgTransactionId
-      })
-      .select('*')
-      .single();
+      });
 
     if (userMessageResult.error) {
       console.error('Error adding user message:', userMessageResult.error);
@@ -58,6 +56,10 @@ export async function submitSmartBarMessage(options: MessageSubmitOptions): Prom
 
     return handleWebhookResponse(response, options, msgTransactionId);
   } catch (error) {
+    console.error('Error submitting message:', error);
+    toast.error("Failed to send message", {
+      description: error instanceof Error ? error.message : "An unexpected error occurred"
+    });
     return handleWebhookError(error, options, options.transactionId || uuidv4());
   }
 }
