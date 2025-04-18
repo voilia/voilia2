@@ -43,9 +43,10 @@ export function SmartBar({
         left: isMobile ? '0' : 'var(--sidebar-width, 0px)',
         right: '0',
         maxWidth: isMobile ? '100%' : 'none',
+        transition: 'left 300ms cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     >
-      <div className="mx-auto max-w-3xl w-full">
+      <div className="mx-auto max-w-3xl w-full transition-transform duration-300 ease-out">
         <SmartBarForm
           onSendMessage={onSendMessage}
           isDisabled={isDisabled}
