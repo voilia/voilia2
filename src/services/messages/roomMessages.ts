@@ -31,6 +31,7 @@ export async function addAiResponseToRoom(
     }
     
     const validAgentId = agentId && isValidUUID(agentId) ? agentId : null;
+    const msgTransactionId = transactionId || `temp-${Date.now()}`;
     
     const { data, error } = await supabase
       .from("room_messages")
@@ -39,7 +40,7 @@ export async function addAiResponseToRoom(
         agent_id: validAgentId,
         message_text: message,
         user_id: null,
-        transaction_id: transactionId || `temp-${Date.now()}`
+        transaction_id: msgTransactionId
       })
       .select('*')
       .single();
@@ -50,7 +51,11 @@ export async function addAiResponseToRoom(
     }
     
     console.log("Successfully added AI response to database:", data);
-    return data;
+    return {
+      ...data,
+      messageType: 'agent',
+      transaction_id: data.transaction_id || msgTransactionId
+    };
   } catch (error) {
     console.error("Error adding AI response:", error);
     

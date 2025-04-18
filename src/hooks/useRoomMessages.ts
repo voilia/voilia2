@@ -14,7 +14,7 @@ export interface RoomMessage {
   created_at: string;
   updated_at: string | null;
   isPending?: boolean;
-  transaction_id?: string;
+  transaction_id: string; // Changed from optional to required
   messageType?: 'user' | 'agent';
 }
 
@@ -41,13 +41,15 @@ export function useRoomMessages(roomId: string | undefined) {
         setMessages(currentMessages => {
           const pendingMessages = currentMessages.filter(msg => msg.isPending);
           
-          const combinedMessages = [...(data || [])];
+          const combinedMessages = [...(data || [])].map(msg => ({
+            ...msg,
+            transaction_id: msg.transaction_id || `db-${msg.id}` // Ensure transaction_id is never null
+          }));
           
           pendingMessages.forEach(pendingMsg => {
-            // Make sure we're comparing with a non-null transaction_id
             if (!pendingMsg.transaction_id) return;
             
-            const existsInData = data?.some(dbMsg => 
+            const existsInData = combinedMessages.some(dbMsg => 
               dbMsg.transaction_id === pendingMsg.transaction_id
             );
             
@@ -81,10 +83,12 @@ export function useRoomMessages(roomId: string | undefined) {
         },
         (payload) => {
           console.log("New message from realtime:", payload.new);
-          const newMessage = payload.new as RoomMessage;
+          const newMessage = {
+            ...payload.new as RoomMessage,
+            transaction_id: (payload.new as any).transaction_id || `rt-${(payload.new as any).id}`
+          };
           
           setMessages((prev) => {
-            // Skip if the message doesn't have a transaction_id for comparison
             if (!newMessage.transaction_id) return [...prev, newMessage];
             
             const pendingIndex = prev.findIndex(msg => 
@@ -112,13 +116,15 @@ export function useRoomMessages(roomId: string | undefined) {
 
   const addLocalMessage = (message: RoomMessage) => {
     console.log("Adding local message:", message);
+    const messageWithTransaction = {
+      ...message,
+      transaction_id: message.transaction_id || `local-${message.id}`
+    };
+    
     setMessages(prev => {
-      // Skip comparison if transaction_id is missing
-      if (!message.transaction_id) return [...prev, message];
-      
       const exists = prev.some(m => 
-        m.transaction_id === message.transaction_id && 
-        m.messageType === message.messageType
+        m.transaction_id === messageWithTransaction.transaction_id && 
+        m.messageType === messageWithTransaction.messageType
       );
       
       if (exists) {
@@ -126,7 +132,7 @@ export function useRoomMessages(roomId: string | undefined) {
         return prev;
       }
       
-      return [...prev, message];
+      return [...prev, messageWithTransaction];
     });
   };
 
