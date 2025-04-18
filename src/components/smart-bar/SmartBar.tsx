@@ -6,6 +6,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { RoomMessage } from "@/types/room-messages";
 import { cn } from "@/lib/utils";
 import { ColoredModeIndicator } from "./buttons/mode-selector/ColoredModeIndicator";
+import { useTheme } from "@/components/ThemeProvider";
 
 interface SmartBarProps {
   onSendMessage: (message: string, files?: File[]) => Promise<void>;
@@ -33,6 +34,8 @@ export function SmartBar({
 }: SmartBarProps) {
   const { enterSends, setEnterSends, mode } = useSmartBar();
   const isMobile = useIsMobile();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   return (
     <div 
@@ -54,11 +57,11 @@ export function SmartBar({
       )}>
         <div className={cn(
           "relative w-full rounded-xl overflow-hidden",
-          "bg-white/95 dark:bg-background/80",
-          "backdrop-blur-xl",
-          "shadow-[0_8px_32px_rgba(0,0,0,0.08)]",
-          "border border-white/20 dark:border-slate-700/30",
-          "transition-all duration-300"
+          isDark 
+            ? "bg-black/30 border-white/10" 
+            : "bg-foreground/5 border-foreground/10",
+          "backdrop-blur-lg border",
+          "shadow-lg transition-all duration-300"
         )}>
           <ColoredModeIndicator 
             mode={mode} 
