@@ -2,46 +2,48 @@
 import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
+interface PopoverPosition {
+  top: number;
+  left: number;
+}
+
 export function usePopoverPosition() {
   const [popoverWidth, setPopoverWidth] = useState<number | null>(null);
-  const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
+  const [popoverPosition, setPopoverPosition] = useState<PopoverPosition>({ top: 0, left: 0 });
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    const updateSmartBarDimensions = () => {
-      if (typeof window === 'undefined') return;
+    const updatePosition = () => {
+      const smartBarContainer = document.querySelector('.SmartBar');
       
-      const smartBarForm = document.querySelector('form.rounded-xl, form.rounded-2xl');
-      if (smartBarForm) {
-        const rect = smartBarForm.getBoundingClientRect();
-        
+      if (smartBarContainer) {
+        const rect = smartBarContainer.getBoundingClientRect();
         setPopoverWidth(rect.width);
-        // Adjust the left position based on sidebar state if not mobile
-        const leftPosition = isMobile ? rect.left : rect.left;
-        
         setPopoverPosition({
-          top: rect.top - 12,
-          left: leftPosition
+          top: rect.top - 8, // Small offset for visual spacing
+          left: rect.left
         });
       }
     };
+
+    // Initial update
+    updatePosition();
     
-    updateSmartBarDimensions();
-    window.addEventListener('resize', updateSmartBarDimensions);
-    window.addEventListener('scroll', updateSmartBarDimensions);
+    // Update on resize and scroll
+    window.addEventListener('resize', updatePosition);
+    window.addEventListener('scroll', updatePosition);
     
-    // Also listen for sidebar toggling
+    // Listen for sidebar toggling
     const sidebarToggleButton = document.querySelector('[aria-label="Toggle sidebar"]');
     if (sidebarToggleButton) {
       sidebarToggleButton.addEventListener('click', () => {
-        // Add a small delay to allow DOM to update
-        setTimeout(updateSmartBarDimensions, 350);
+        setTimeout(updatePosition, 350); // After sidebar animation
       });
     }
     
     return () => {
-      window.removeEventListener('resize', updateSmartBarDimensions);
-      window.removeEventListener('scroll', updateSmartBarDimensions);
+      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener('scroll', updatePosition);
     };
   }, [isMobile]);
 

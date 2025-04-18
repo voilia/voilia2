@@ -43,16 +43,19 @@ export function SmartBarVoiceButton({ className, disabled }: SmartBarVoiceButton
   };
   
   return (
-    <SmartBarButton 
-      icon={Mic} 
-      tooltip={isRecording ? "Recording..." : "Voice Input"} 
-      className={cn(
-        "text-foreground", 
-        isRecording && "text-red-500 animate-pulse shadow-[inset_2px_2px_5px_rgba(255,0,0,0.1)]",
-        className
-      )}
-      onClick={handleClick}
-      disabled={isRecording || disabled}
-    />
+    <>
+      <SmartBarButton 
+        icon={Mic} 
+        tooltip={isRecording ? "Recording..." : "Voice Input"} 
+        className={cn(
+          "text-foreground", 
+          isRecording && "text-red-500 animate-pulse shadow-[inset_2px_2px_5px_rgba(255,0,0,0.1)]",
+          className
+        )}
+        onClick={handleClick}
+        disabled={isRecording || disabled}
+      />
+      <VoiceRecordingPopover />
+    </>
   );
 }
