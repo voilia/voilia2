@@ -2,7 +2,7 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import { UploadedFile, SmartBarMode } from "@/components/smart-bar/types/smart-bar-types";
-import { submitSmartBarMessage, addAiResponseToRoom } from "@/services/n8nService";
+import { submitSmartBarMessage } from "@/services/n8nService";
 import { useAuth } from "@/components/auth/AuthProvider";
 
 interface UseN8nSmartBarOptions {
@@ -48,21 +48,7 @@ export function useN8nSmartBar(options: UseN8nSmartBarOptions = {}) {
         threadId,
         agentIds: validAgentIds,
         onResponseReceived: async (response) => {
-          // Handle AI response - add it to the conversation
-          if (response.message) {
-            // Get a valid agent ID if available
-            const agentId = response.agent_id && 
-              typeof response.agent_id === 'string' && 
-              /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(response.agent_id) 
-                ? response.agent_id 
-                : null;
-                
-            await addAiResponseToRoom(
-              roomId, 
-              agentId, 
-              response.message
-            );
-          }
+          console.log("Response received from webhook:", response);
           
           // Call custom handler if provided
           if (options.onAiResponseReceived) {

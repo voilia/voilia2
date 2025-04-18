@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { WebhookResponse, MessageSubmitOptions } from "./types";
 import { v4 as uuidv4 } from 'uuid';
@@ -47,7 +48,6 @@ export async function submitSmartBarMessage(options: MessageSubmitOptions): Prom
         headers: {
           'Content-Type': 'application/json',
         },
-        mode: 'no-cors',
         body: JSON.stringify(payload),
       });
 

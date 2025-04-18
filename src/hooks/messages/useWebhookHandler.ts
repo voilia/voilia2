@@ -15,74 +15,62 @@ export function useWebhookHandler(
     console.log("Received webhook response:", response);
     
     try {
-      // Check if we have a simulated response from no-cors mode
-      if (response.status === "processing" || response.status === "sent" || 
-          (response.message && response.message.includes("CORS restrictions"))) {
-        console.log("Processing response with status:", response.status);
-        
-        // Try to extract any message content if available
-        const messageText = response.message || 
-                          response.data?.message || 
-                          "I've received your message and am processing it. Please wait while I formulate a response.";
-        
-        // Create unique ID for the optimistic message
-        const messageId = `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-        
-        // Create optimistic AI message for immediate display
-        const optimisticAiMessage: RoomMessage = {
-          id: messageId,
-          room_id: roomId,
-          user_id: null,
-          agent_id: null,
-          message_text: messageText,
-          created_at: new Date().toISOString(),
-          updated_at: null,
-          messageType: 'agent' as const,
-          transaction_id: transactionId || uuidv4(),
-          isPending: true
-        };
-        
-        // Add AI response immediately to local state
-        console.log("Adding optimistic AI response for CORS-limited message:", optimisticAiMessage);
-        addLocalMessage(optimisticAiMessage);
+      // Extract the message text from various possible response structures
+      let messageText = null;
+      let messageId = null;
+      let agentId = null;
+      
+      // Handle response from n8n webhook with the expected structure
+      if (response.success === true && response.response) {
+        messageText = response.response.text;
+        messageId = response.response.messageId;
+      } 
+      // Handle response.data.response structure
+      else if (response.data?.response) {
+        messageText = response.data.response.text || response.data.response.message;
+        messageId = response.data.response.messageId;
+      }
+      // Handle other response structures
+      else {
+        messageText = response.message || 
+                    response.data?.message || 
+                    response.data?.text ||
+                    "I've received your message and am processing it. Please wait while I formulate a response.";
+      }
+      
+      // Try to extract agent ID if available
+      agentId = response.data?.agent?.id && 
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(response.data.agent.id) 
+          ? response.data.agent.id 
+          : null;
+      
+      // Skip if no message text was extracted
+      if (!messageText) {
+        console.warn("No message text found in response:", response);
         return;
       }
       
-      // Extract the message from the response structure for normal responses
-      const messageData = response.data?.response || response.data;
-      const messageText = messageData?.text || messageData?.message || response.message;
-
-      if (messageText) {
-        // Extract agent ID if available
-        const agentId = response.data?.agent?.id && 
-          /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(response.data.agent.id) 
-            ? response.data.agent.id 
-            : null;
-        
-        // Create unique ID for the optimistic message
-        const messageId = `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-        
-        // Create optimistic AI message for immediate display
-        const optimisticAiMessage: RoomMessage = {
-          id: messageId,
-          room_id: roomId,
-          user_id: null,
-          agent_id: agentId,
-          message_text: messageText,
-          created_at: new Date().toISOString(),
-          updated_at: null,
-          messageType: 'agent' as const,
-          transaction_id: transactionId || uuidv4(),
-          isPending: true
-        };
-        
-        // Add AI response immediately to local state
-        console.log("Adding optimistic AI response:", optimisticAiMessage);
-        addLocalMessage(optimisticAiMessage);
-      } else if (response.error) {
-        console.error("Error in webhook response:", response.error);
-        throw new Error(response.error);
-      }
+      // Create unique ID for the message
+      const localMessageId = messageId || `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      
+      // Create AI message for immediate display
+      const aiMessage: RoomMessage = {
+        id: localMessageId,
+        room_id: roomId,
+        user_id: null,
+        agent_id: agentId,
+        message_text: messageText,
+        created_at: new Date().toISOString(),
+        updated_at: null,
+        messageType: 'agent' as const,
+        transaction_id: transactionId || uuidv4(),
+        isPending: true
+      };
+      
+      // Add AI response immediately to local state
+      console.log("Adding AI response:", aiMessage);
+      addLocalMessage(aiMessage);
+      
     } catch (error) {
       console.error("Error processing webhook response:", error);
       toast.error("Failed to process AI response");
