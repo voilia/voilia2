@@ -38,10 +38,13 @@ export function SmartBarButton({
             variant={variant}
             size={size}
             className={cn(
-              "h-8 w-8",
-              "bg-transparent hover:bg-accent/80 dark:hover:bg-white/10",
+              "h-8 w-8 rounded-lg",
+              "bg-transparent",
+              "shadow-sm",
               "transition-all duration-200 active:scale-95",
-              disabled && "opacity-50 cursor-not-allowed hover:bg-transparent active:scale-100",
+              "hover:shadow-[inset_2px_2px_5px_rgba(0,0,0,0.05)]",
+              "hover:bg-white/30 dark:hover:bg-slate-800/50",
+              disabled ? "opacity-50 cursor-not-allowed hover:bg-transparent active:scale-100" : "",
               className
             )}
             style={customColor ? { color: customColor } : undefined}
@@ -59,7 +62,7 @@ export function SmartBarButton({
             <span className="sr-only">{tooltip}</span>
           </Button>
         </TooltipTrigger>
-        <TooltipContent>
+        <TooltipContent className="bg-background/95 backdrop-blur-sm border border-border/50">
           <p>{tooltip}</p>
         </TooltipContent>
       </Tooltip>

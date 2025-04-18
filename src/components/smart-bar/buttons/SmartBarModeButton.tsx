@@ -24,7 +24,10 @@ export function SmartBarModeButton({
       size="sm"
       onClick={onClick}
       className={cn(
-        "w-full flex items-center gap-2 justify-start p-2 hover:bg-accent/80",
+        "w-full flex items-center gap-2 justify-start py-2 px-3 rounded-lg",
+        "transition-all duration-200",
+        "hover:bg-white/40 dark:hover:bg-slate-800/50",
+        "active:scale-[0.98] active:shadow-[inset_2px_2px_5px_rgba(0,0,0,0.05)]",
         className
       )}
       style={{ color }}

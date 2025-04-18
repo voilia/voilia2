@@ -18,7 +18,12 @@ export function SmartBarModeSelector({ className }: SmartBarModeSelectorProps) {
     <SmartBarButton 
       icon={Brain}
       tooltip="Select Mode"
-      className={cn("text-foreground", className)}
+      className={cn(
+        "text-foreground",
+        "shadow-[0_2px_5px_rgba(0,0,0,0.05)]",
+        "hover:shadow-[0_2px_8px_rgba(0,0,0,0.1)]",
+        className
+      )}
       onClick={() => setMode(mode === "chat" ? "visual" : "chat")}
       customColor={colorValue}
     />

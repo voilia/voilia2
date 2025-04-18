@@ -46,7 +46,8 @@ export function SmartBarInput({
           "resize-none outline-none border-0",
           "bg-transparent",
           "text-base text-foreground/90",
-          "placeholder:text-muted-foreground/60",
+          "placeholder:text-muted-foreground/50",
+          "focus:ring-0",
           "disabled:opacity-50"
         )}
         maxRows={8}

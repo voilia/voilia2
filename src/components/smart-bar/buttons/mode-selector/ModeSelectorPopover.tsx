@@ -12,14 +12,14 @@ import { BotMessageSquare, Palette, Wrench, Vault } from "lucide-react";
 
 interface ModeSelectorPopoverProps {
   children: ReactNode;
-  disabled?: boolean; // Add disabled prop to interface
+  disabled?: boolean;
 }
 
 export function ModeSelectorPopover({ children, disabled }: ModeSelectorPopoverProps) {
   const { setMode } = useSmartBar();
   
   const handleModeSelect = (mode: "chat" | "visual" | "assist" | "vault") => {
-    if (disabled) return; // Respect disabled state
+    if (disabled) return;
     setMode(mode);
   };
   
@@ -30,36 +30,38 @@ export function ModeSelectorPopover({ children, disabled }: ModeSelectorPopoverP
       </PopoverTrigger>
       <PopoverContent 
         className={cn(
-          "w-56 p-0 z-[100]", // Added higher z-index
-          "border border-border",
-          "bg-background/95 backdrop-blur-sm"
+          "w-56 p-1 z-[100]",
+          "border border-white/20 dark:border-slate-700/30",
+          "bg-white/90 dark:bg-background/90 backdrop-blur-lg",
+          "shadow-[0_8px_32px_rgba(0,0,0,0.1)]",
+          "rounded-xl"
         )}
         align="start"
-        onClick={(e) => e.stopPropagation()} // Prevent click from bubbling
+        onClick={(e) => e.stopPropagation()}
       >
-        <div className="grid grid-cols-2 gap-px bg-muted p-1">
+        <div className="grid grid-cols-2 gap-1 bg-transparent">
           <SmartBarModeButton 
             icon={BotMessageSquare}
             label="Chat"
-            color="purple"
+            color="#8B5CF6"
             onClick={() => handleModeSelect("chat")}
           />
           <SmartBarModeButton 
             icon={Palette}
             label="Visual"
-            color="orange"
+            color="#F97316"
             onClick={() => handleModeSelect("visual")}
           />
           <SmartBarModeButton 
             icon={Wrench}
             label="Assist"
-            color="blue"
+            color="#3B82F6"
             onClick={() => handleModeSelect("assist")}
           />
           <SmartBarModeButton 
             icon={Vault}
             label="Vault"
-            color="green"
+            color="#10B981"
             onClick={() => handleModeSelect("vault")}
           />
         </div>

@@ -9,11 +9,10 @@ import { cn } from "@/lib/utils";
 
 interface AgentSelectorPopoverProps {
   children: ReactNode;
-  disabled?: boolean; // Add disabled prop to interface
+  disabled?: boolean;
 }
 
 export function AgentSelectorPopover({ children, disabled }: AgentSelectorPopoverProps) {
-  // Use disabled to conditionally control popover open state
   return (
     <Popover>
       <PopoverTrigger asChild disabled={disabled}>
@@ -22,8 +21,10 @@ export function AgentSelectorPopover({ children, disabled }: AgentSelectorPopove
       <PopoverContent 
         className={cn(
           "w-80 p-4",
-          "border border-border",
-          "bg-background/95 backdrop-blur-sm"
+          "border border-white/20 dark:border-slate-700/30",
+          "bg-white/90 dark:bg-background/90 backdrop-blur-lg",
+          "shadow-[0_8px_32px_rgba(0,0,0,0.1)]",
+          "rounded-xl"
         )}
         align="start"
       >

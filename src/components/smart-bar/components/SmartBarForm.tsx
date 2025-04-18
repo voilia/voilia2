@@ -8,6 +8,7 @@ import { SmartBarFileButton } from "../buttons/SmartBarFileButton";
 import { SmartBarVoiceButton } from "../buttons/SmartBarVoiceButton";
 import { toast } from "sonner";
 import { SmartBarModeSelector } from "../SmartBarModeSelector";
+import { cn } from "@/lib/utils";
 
 export function SmartBarForm({
   onSendMessage,
@@ -48,8 +49,11 @@ export function SmartBarForm({
 
   return (
     <form onSubmit={handleSubmit} className="relative">
-      <div className="flex items-center gap-2 py-2">
-        <div className="flex items-center gap-3">
+      <div className={cn(
+        "flex items-center gap-2 py-3 px-2",
+        "backdrop-blur-sm transition-all duration-300"
+      )}>
+        <div className="flex items-center gap-2 ml-1">
           <SmartBarModeSelector />
           <SmartBarFileButton disabled={isDisabled} />
           <SmartBarVoiceButton disabled={isDisabled} />
@@ -68,11 +72,16 @@ export function SmartBarForm({
           id="smart-bar-input"
           name="message-input"
         />
+        
         <SmartBarButton
           type="submit"
           icon={Send}
           tooltip="Send"
           disabled={isDisabled || isSubmitting}
+          className={cn(
+            "hover:shadow-sm transition-all",
+            (message.trim() || uploadedFiles.length > 0) ? "opacity-100" : "opacity-70"
+          )}
         />
       </div>
     </form>
