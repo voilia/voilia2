@@ -1,3 +1,4 @@
+
 import { WebhookResponse, MessageSubmitOptions } from "./types";
 
 export async function handleWebhookResponse(
@@ -5,8 +6,9 @@ export async function handleWebhookResponse(
   options: MessageSubmitOptions,
   transactionId: string
 ): Promise<WebhookResponse> {
-  // For no-cors responses, create a pending response
-  if (response.type === 'opaque') {
+  // For no-cors responses, check the type differently to avoid TypeScript error
+  // Response.type can be "opaque" in no-cors mode, but TypeScript doesn't know this
+  if (response.type === "opaque" as any) {
     console.log("Received opaque response from webhook (expected with no-cors)");
     const responseData = {
       status: "processing",
@@ -40,7 +42,7 @@ export async function handleWebhookResponse(
   let responseData;
   try {
     // For no-cors responses, we may not be able to parse JSON
-    if (response.type === 'opaque') {
+    if (response.type === "opaque" as any) {
       console.log("Received opaque response from webhook (expected with no-cors)");
       responseData = { 
         message: "Request processed. Due to CORS restrictions, detailed response unavailable.",
