@@ -8,7 +8,7 @@ interface StepTwoProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   selectedAgentIds: string[];
-  toggleAgentSelection?: (id: string) => void;
+  toggleAgentSelection: (id: string) => void;
   showAllAgents: boolean;
   setShowAllAgents: (show: boolean) => void;
 }
@@ -17,12 +17,12 @@ export function StepTwo({
   searchQuery,
   setSearchQuery,
   selectedAgentIds,
-  toggleAgentSelection: externalToggleAgentSelection,
+  toggleAgentSelection,
+  showAllAgents,
+  setShowAllAgents
 }: StepTwoProps) {
   const { agents: allAgents, isLoading: isLoadingAgents } = useAgents();
   const [filteredAgents, setFilteredAgents] = useState(allAgents);
-  
-  const handleToggleAgentSelection = externalToggleAgentSelection || (() => {});
   
   useEffect(() => {
     if (searchQuery) {
@@ -70,9 +70,9 @@ export function StepTwo({
           setSearchQuery={setSearchQuery}
           visibleAgents={visibleAgents}
           selectedAgentIds={selectedAgentIds}
-          toggleAgentSelection={handleToggleAgentSelection}
-          showAllAgents={false}
-          setShowAllAgents={() => {}}
+          toggleAgentSelection={toggleAgentSelection}
+          showAllAgents={showAllAgents}
+          setShowAllAgents={setShowAllAgents}
           filteredAgents={filteredAgents}
           isLoadingAgents={isLoadingAgents}
           publicAgents={publicAgents}

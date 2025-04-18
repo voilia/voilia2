@@ -25,6 +25,14 @@ export function useRoomForm(initialProjectId?: string) {
     }
   };
 
+  const toggleAgentSelection = (agentId: string) => {
+    setSelectedAgentIds(current => 
+      current.includes(agentId)
+        ? current.filter(id => id !== agentId)
+        : [...current, agentId]
+    );
+  };
+
   return {
     currentStep,
     setCurrentStep,
@@ -38,6 +46,7 @@ export function useRoomForm(initialProjectId?: string) {
     setSelectedProjectId,
     selectedAgentIds,
     setSelectedAgentIds,
+    toggleAgentSelection,
     searchQuery,
     setSearchQuery,
     showAllAgents,
