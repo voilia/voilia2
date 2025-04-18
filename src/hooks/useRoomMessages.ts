@@ -13,19 +13,23 @@ export function useRoomMessages(roomId: string | undefined) {
   const { sendMessage: persistMessage, isProcessing } = useMessagePersistence(roomId);
   
   const handleNewMessage = useCallback((message: RoomMessage) => {
+    console.log("Handling new/updated message:", message);
+    
     setMessages(prev => {
-      // Find if there's a pending message with the same transaction ID
+      // Check if there's a pending message with the same transaction ID
       const pendingIndex = prev.findIndex(msg => 
         msg.transaction_id === message.transaction_id
       );
       
       if (pendingIndex >= 0) {
+        console.log("Updating existing pending message:", prev[pendingIndex].id, "->", message.id);
+        
         // Update existing message, preserving order
         const updatedMessages = [...prev];
         updatedMessages[pendingIndex] = {
           ...message,
           messageType: message.user_id === null ? 'agent' as const : 'user' as const,
-          isPending: false
+          isPending: false // Make sure to remove the pending flag
         };
         return updatedMessages;
       }
@@ -36,12 +40,17 @@ export function useRoomMessages(roomId: string | undefined) {
         msg.transaction_id === message.transaction_id
       );
       
-      if (exists) return prev;
+      if (exists) {
+        console.log("Ignoring duplicate message:", message.id);
+        return prev;
+      }
       
+      console.log("Adding new message to state:", message.id);
       // Add new message and maintain chronological order
       return [...prev, {
         ...message,
-        messageType: message.user_id === null ? 'agent' as const : 'user' as const
+        messageType: message.user_id === null ? 'agent' as const : 'user' as const,
+        isPending: false // Make sure this is not pending
       }].sort((a, b) => 
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       );
@@ -58,13 +67,18 @@ export function useRoomMessages(roomId: string | undefined) {
         transaction_id: message.transaction_id || `local-${message.id}`
       };
       
+      // Check if a message with this transaction ID already exists
       const exists = prev.some(m => 
         m.id === messageWithTransaction.id || 
         m.transaction_id === messageWithTransaction.transaction_id
       );
       
-      if (exists) return prev;
+      if (exists) {
+        console.log("Local message already exists, not adding duplicate:", messageWithTransaction.id);
+        return prev;
+      }
       
+      console.log("Adding local message to state:", messageWithTransaction.id);
       return [...prev, messageWithTransaction].sort((a, b) => 
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       );
@@ -91,10 +105,15 @@ export function useRoomMessages(roomId: string | undefined) {
         const dbMessages = (data || []).map(msg => ({
           ...msg,
           transaction_id: msg.transaction_id || `db-${msg.id}`,
-          messageType: msg.user_id === null ? 'agent' as const : 'user' as const
+          messageType: msg.user_id === null ? 'agent' as const : 'user' as const,
+          isPending: false // Ensure database messages are never pending
         }));
         
+        console.log(`Fetched ${dbMessages.length} messages from DB, have ${pendingMessages.length} pending messages`);
+        
         const combinedMessages = [...dbMessages];
+        
+        // Only keep pending messages that aren't already in the database
         pendingMessages.forEach(pendingMsg => {
           if (!pendingMsg.transaction_id) return;
           
@@ -103,6 +122,7 @@ export function useRoomMessages(roomId: string | undefined) {
           );
           
           if (!existsInData) {
+            console.log("Keeping pending message not in DB:", pendingMsg.id);
             combinedMessages.push(pendingMsg);
           }
         });
@@ -131,7 +151,7 @@ export function useRoomMessages(roomId: string | undefined) {
     const optimisticMessage: RoomMessage = {
       id: optimisticId,
       room_id: roomId,
-      user_id: null,
+      user_id: null, // This will be set by the backend
       agent_id: null,
       message_text: text,
       created_at: new Date().toISOString(),
@@ -146,10 +166,23 @@ export function useRoomMessages(roomId: string | undefined) {
     try {
       const transactionId = await persistMessage(text, optimisticMessage.user_id);
       if (transactionId) {
-        optimisticMessage.transaction_id = transactionId;
+        // Update the transaction ID in our local state to match what was sent to the server
+        setMessages(prev => {
+          const updatedMessages = prev.map(msg => {
+            if (msg.id === optimisticId) {
+              return {
+                ...msg,
+                transaction_id: transactionId
+              };
+            }
+            return msg;
+          });
+          return updatedMessages;
+        });
       }
       return transactionId;
     } catch (error) {
+      // Remove the optimistic message on error
       setMessages(prev => prev.filter(msg => msg.id !== optimisticId));
       throw error;
     }

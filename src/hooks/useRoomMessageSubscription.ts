@@ -46,6 +46,11 @@ export const useRoomMessageSubscription = (
             messageType: newMessage.messageType
           });
           
+          // Remove isPending flag to ensure the message shows as confirmed
+          if (newMessage.isPending) {
+            newMessage.isPending = false;
+          }
+          
           onNewMessage(newMessage);
         }
       )
@@ -72,6 +77,11 @@ export const useRoomMessageSubscription = (
             transactionId: updatedMessage.transaction_id,
             messageType: updatedMessage.messageType
           });
+          
+          // Remove isPending flag to ensure the message shows as confirmed
+          if (updatedMessage.isPending) {
+            updatedMessage.isPending = false;
+          }
           
           onNewMessage(updatedMessage);
         }

@@ -47,7 +47,7 @@ export function CreateRoomModal({
     waitingForProjectRefresh
   } = useCreateRoom(initialProjectId);
 
-  // Refresh projects when modal opens
+  // Refresh projects when modal opens, but only when actually visible
   useEffect(() => {
     if (isOpen) {
       refreshProjects();
@@ -58,10 +58,19 @@ export function CreateRoomModal({
   const isNextDisabled = currentStep === 1 && 
     (!selectedProjectId || isCreatingProject || waitingForProjectRefresh);
 
-  console.log("CreateRoomModal - selectedProjectId:", selectedProjectId);
-  console.log("CreateRoomModal - projectJustCreated:", projectJustCreated);
-  console.log("CreateRoomModal - waitingForProjectRefresh:", waitingForProjectRefresh);
-  console.log("CreateRoomModal - projects count:", projects?.length);
+  // Only log debug info when the modal is actually open to prevent unnecessary logs
+  useEffect(() => {
+    if (isOpen) {
+      console.log("CreateRoomModal - selectedProjectId:", selectedProjectId);
+      console.log("CreateRoomModal - projectJustCreated:", projectJustCreated);
+      console.log("CreateRoomModal - waitingForProjectRefresh:", waitingForProjectRefresh);
+      console.log("CreateRoomModal - projects count:", projects?.length);
+    }
+  }, [isOpen, selectedProjectId, projectJustCreated, waitingForProjectRefresh, projects?.length]);
+
+  if (!isOpen) {
+    return null; // Don't render anything when modal is closed
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => {
