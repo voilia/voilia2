@@ -1,6 +1,5 @@
 
 import { useCallback } from "react";
-import { submitSmartBarMessage } from "@/services/webhook/webhookService";
 import { addAiResponseToRoom } from "@/services/messages/roomMessages";
 import { RoomMessage } from "@/types/room-messages";
 import { toast } from "sonner";
@@ -16,10 +15,12 @@ export function useWebhookHandler(
     console.log("Received webhook response:", response);
     
     try {
-      if (response.message) {
-        const agentId = response.agent_id && 
-          /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(response.agent_id) 
-            ? response.agent_id 
+      // Extract the message from the response structure
+      const messageText = response.data?.response?.text;
+      if (messageText) {
+        const agentId = response.data?.agent?.id && 
+          /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(response.data.agent.id) 
+            ? response.data.agent.id 
             : null;
         
         // Create unique ID for the optimistic message
@@ -31,7 +32,7 @@ export function useWebhookHandler(
           room_id: roomId,
           user_id: null,
           agent_id: agentId,
-          message_text: response.message,
+          message_text: messageText,
           created_at: new Date().toISOString(),
           updated_at: null,
           messageType: 'agent',
@@ -47,7 +48,7 @@ export function useWebhookHandler(
         await addAiResponseToRoom(
           roomId, 
           agentId, 
-          response.message,
+          messageText,
           transactionId
         );
       } else if (response.error) {
