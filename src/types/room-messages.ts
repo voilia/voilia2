@@ -9,7 +9,7 @@ export interface RoomMessage {
   updated_at: string | null;
   isPending?: boolean;
   transaction_id: string;
-  messageType?: "user" | "agent";
+  messageType: "user" | "agent";
 }
 
 export interface MessageGroup {

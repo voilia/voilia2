@@ -4,7 +4,8 @@ import { ContentContainer } from "@/components/ui/ContentContainer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyMessagesState } from "@/components/rooms/EmptyMessagesState";
 import { MessageGroup } from "@/components/rooms/MessageGroup";
-import { RoomMessage } from "@/hooks/useRoomMessages";
+import { MessageErrorBoundary } from "@/components/rooms/MessageErrorBoundary";
+import { RoomMessage } from "@/types/room-messages";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { forwardRef } from "react";
 
@@ -29,15 +30,17 @@ export const RoomMessagesContainer = forwardRef<HTMLDivElement, RoomMessagesCont
               <Skeleton className="h-12 w-3/4" />
             </div>
           ) : messages.length > 0 ? (
-            <div className="space-y-4">
-              {messages.map((group, i) => (
-                <MessageGroup 
-                  key={`${group.userId}-${i}`} 
-                  messages={group.messages} 
-                  isUserGroup={group.userId === currentUserId}
-                />
-              ))}
-            </div>
+            <MessageErrorBoundary>
+              <div className="space-y-4">
+                {messages.map((group, i) => (
+                  <MessageGroup 
+                    key={`${group.userId}-${i}`} 
+                    messages={group.messages} 
+                    isUserGroup={group.userId === currentUserId}
+                  />
+                ))}
+              </div>
+            </MessageErrorBoundary>
           ) : (
             <EmptyMessagesState roomName={roomName} />
           )}

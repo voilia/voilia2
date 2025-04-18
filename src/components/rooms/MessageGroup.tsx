@@ -1,8 +1,8 @@
-
-import { RoomMessage } from "@/hooks/useRoomMessages";
+import { RoomMessage } from "@/types/room-messages";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 import { MessageStatus } from "@/components/rooms/MessageStatus";
+import { MessageErrorBoundary } from "./MessageErrorBoundary";
 
 interface MessageGroupProps {
   messages: RoomMessage[];
@@ -10,27 +10,30 @@ interface MessageGroupProps {
 }
 
 export function MessageGroup({ messages, isUserGroup }: MessageGroupProps) {
-  // Early exit for empty messages
   if (!messages.length) return null;
   
   return (
-    <div className={cn(
-      "flex flex-col gap-1 py-2",
-      isUserGroup ? "items-end" : "items-start"
-    )}>
+    <MessageErrorBoundary>
       <div className={cn(
-        "flex flex-col max-w-[80%] space-y-1",
+        "flex flex-col gap-1 py-2",
         isUserGroup ? "items-end" : "items-start"
       )}>
-        {messages.map((message) => (
-          <Message 
-            key={message.id} 
-            message={message} 
-            isUser={isUserGroup} 
-          />
-        ))}
+        <div className={cn(
+          "flex flex-col max-w-[80%] space-y-1",
+          isUserGroup ? "items-end" : "items-start"
+        )}>
+          {messages.map((message) => (
+            <MessageErrorBoundary key={message.id}>
+              <Message 
+                key={message.id} 
+                message={message} 
+                isUser={isUserGroup} 
+              />
+            </MessageErrorBoundary>
+          ))}
+        </div>
       </div>
-    </div>
+    </MessageErrorBoundary>
   );
 }
 
