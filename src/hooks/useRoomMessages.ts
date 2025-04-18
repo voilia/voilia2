@@ -24,7 +24,7 @@ export function useRoomMessages(roomId: string | undefined) {
         const updatedMessages = [...prev];
         updatedMessages[pendingIndex] = {
           ...message,
-          messageType: message.user_id === null ? 'agent' : 'user',
+          messageType: message.user_id === null ? 'agent' as const : 'user' as const,
           isPending: false
         };
         return updatedMessages;
@@ -41,7 +41,7 @@ export function useRoomMessages(roomId: string | undefined) {
       // Add the new message and sort by creation time
       return [...prev, {
         ...message,
-        messageType: message.user_id === null ? 'agent' : 'user'
+        messageType: message.user_id === null ? 'agent' as const : 'user' as const
       }].sort((a, b) => 
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       );
