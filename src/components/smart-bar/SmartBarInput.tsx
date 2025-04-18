@@ -1,15 +1,13 @@
 
-import { useRef, useEffect } from "react";
-import { cn } from "@/lib/utils";
-import { useSmartBar } from "./context/SmartBarContext";
 import TextareaAutosize from 'react-textarea-autosize';
+import { cn } from "@/lib/utils";
 
 interface SmartBarInputProps {
   value: string;
   onChange: (value: string) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   isDisabled?: boolean;
-  isSubmitting?: boolean;
+  placeholder?: string;
   id?: string;
   name?: string;
 }
@@ -19,30 +17,20 @@ export function SmartBarInput({
   onChange, 
   onKeyDown, 
   isDisabled = false,
-  isSubmitting = false,
+  placeholder = "Ask anything or use @ to mention a model...",
   id = "smart-bar-input",
   name = "message-input"
 }: SmartBarInputProps) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { uploadedFiles } = useSmartBar();
-  
-  useEffect(() => {
-    if (textareaRef.current && !isDisabled && !isSubmitting) {
-      textareaRef.current.focus();
-    }
-  }, [isDisabled, isSubmitting]);
-
   return (
-    <div className="relative w-full">
+    <div className="relative flex-1">
       <TextareaAutosize
-        ref={textareaRef}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={onKeyDown}
-        disabled={isDisabled || isSubmitting}
-        placeholder="Ask anything or use @ to mention a model..."
+        disabled={isDisabled}
+        placeholder={placeholder}
         className={cn(
-          "w-full px-4 py-3",
+          "w-full px-4 py-2",
           "resize-none outline-none border-0",
           "bg-transparent",
           "text-base text-foreground/90",

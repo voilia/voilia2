@@ -53,9 +53,11 @@ export function SmartBar({
       )}>
         <div className={cn(
           "relative w-full rounded-2xl overflow-hidden",
-          "bg-white/90 dark:bg-background/90",
-          "backdrop-blur-lg shadow-lg",
-          "border border-white/20 dark:border-slate-700/30"
+          "bg-white/95 dark:bg-background/95",
+          "backdrop-blur-lg",
+          "shadow-[0_8px_32px_rgba(0,0,0,0.08)]",
+          "border border-white/20 dark:border-slate-700/30",
+          "transition-all duration-300"
         )}>
           <ColoredModeIndicator 
             mode={mode} 
