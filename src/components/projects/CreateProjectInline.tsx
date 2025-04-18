@@ -62,7 +62,10 @@ export function CreateProjectInline({
       if (existingProjects && existingProjects.length > 0) {
         console.log("Project already exists, using it:", existingProjects[0].id);
         toast.info("A project with this name already exists");
+        
+        // Immediately call onProjectCreated with the ID of the existing project
         onProjectCreated(existingProjects[0].id);
+        
         if (andContinue && onContinueToRoom) {
           onContinueToRoom();
         }
@@ -91,7 +94,7 @@ export function CreateProjectInline({
       console.log("Project created successfully:", data);
       toast.success("Project created successfully");
       
-      // Call onProjectCreated with the new project ID immediately
+      // Immediately call onProjectCreated with the new project ID
       onProjectCreated(data as string);
       
       // If we're continuing to room creation, call the callback

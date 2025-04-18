@@ -9,6 +9,7 @@ interface CreateRoomFooterProps {
   onNext: () => void;
   onCancel: () => void;
   isLoading: boolean;
+  nextDisabled?: boolean;
 }
 
 export function CreateRoomFooter({
@@ -16,7 +17,8 @@ export function CreateRoomFooter({
   onBack,
   onNext,
   onCancel,
-  isLoading
+  isLoading,
+  nextDisabled = false
 }: CreateRoomFooterProps) {
   return (
     <div className="flex justify-between w-full">
@@ -35,7 +37,7 @@ export function CreateRoomFooter({
       <Button 
         onClick={onNext} 
         size="lg"
-        disabled={isLoading}
+        disabled={isLoading || nextDisabled}
       >
         {isLoading && <Loader size="sm" className="mr-2" />}
         {currentStep === 1 ? 'Next' : 'Create Room'}

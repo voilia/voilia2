@@ -44,8 +44,14 @@ export function CreateRoomModal({
     resetForm
   } = useCreateRoom(initialProjectId);
 
+  // Check if Next button should be disabled (Step 1, no project selected, creating project)
+  const isNextDisabled = currentStep === 1 && (!selectedProjectId || isCreatingProject);
+
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      if (!open) resetForm();
+      onOpenChange(open);
+    }}>
       <DialogContent className="sm:max-w-[500px] p-0 gap-0 overflow-hidden rounded-xl">
         <div className="border-b p-4 pb-3">
           <DialogHeader>
@@ -93,6 +99,7 @@ export function CreateRoomModal({
             onNext={() => currentStep === 1 ? setCurrentStep(2) : handleSubmit()}
             onCancel={() => onOpenChange(false)}
             isLoading={isLoading}
+            nextDisabled={isNextDisabled}
           />
         </div>
       </DialogContent>

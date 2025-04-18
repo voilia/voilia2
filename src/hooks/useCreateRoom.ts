@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { ProjectColor, projectColors } from "@/components/projects/types";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,7 +8,7 @@ import { useProjects } from "@/hooks/useProjects";
 
 export function useCreateRoom(initialProjectId?: string) {
   const navigate = useNavigate();
-  const { projects } = useProjects();
+  const { projects, refreshProjects } = useProjects();
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -49,8 +50,12 @@ export function useCreateRoom(initialProjectId?: string) {
   };
 
   const handleProjectCreated = (newProjectId: string) => {
+    // Set the selected project ID immediately
     setSelectedProjectId(newProjectId);
+    // Close the project creation form
     setIsCreatingProject(false);
+    // Refresh the projects list to include the new project
+    refreshProjects();
   };
   
   const toggleAgentSelection = (id: string) => {
