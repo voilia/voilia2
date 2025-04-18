@@ -35,7 +35,7 @@ export function useWebhookHandler(
           message_text: messageText,
           created_at: new Date().toISOString(),
           updated_at: null,
-          messageType: 'agent',
+          messageType: 'agent' as const,
           transaction_id: transactionId,
           isPending: true
         };

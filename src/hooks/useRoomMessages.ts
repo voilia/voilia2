@@ -138,7 +138,7 @@ export function useRoomMessages(roomId: string | undefined) {
       updated_at: null,
       isPending: true,
       transaction_id: optimisticId,
-      messageType: "user"
+      messageType: "user" as const
     };
 
     addLocalMessage(optimisticMessage);

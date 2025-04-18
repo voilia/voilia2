@@ -30,13 +30,31 @@ export const useRoomMessageSubscription = (
           filter: `room_id=eq.${roomId}`,
         },
         (payload) => {
-          console.log("New message from realtime:", payload.new);
+          console.log("New message from realtime subscription:", payload.new);
           const newMessage = {
             ...payload.new as RoomMessage,
             transaction_id: (payload.new as any).transaction_id || `rt-${(payload.new as any).id}`,
             messageType: (payload.new as any).user_id ? 'user' as const : 'agent' as const
           };
           onNewMessage(newMessage);
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "room_messages",
+          filter: `room_id=eq.${roomId}`,
+        },
+        (payload) => {
+          console.log("Updated message from realtime:", payload.new);
+          const updatedMessage = {
+            ...payload.new as RoomMessage,
+            transaction_id: (payload.new as any).transaction_id || `rt-${(payload.new as any).id}`,
+            messageType: (payload.new as any).user_id ? 'user' as const : 'agent' as const
+          };
+          onNewMessage(updatedMessage);
         }
       )
       .subscribe((status) => {

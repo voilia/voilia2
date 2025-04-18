@@ -31,7 +31,7 @@ export async function addAiResponseToRoom(
         message_text: message,
         created_at: new Date().toISOString(),
         updated_at: null,
-        messageType: 'agent',
+        messageType: 'agent' as const,
         transaction_id: msgTransactionId,
         isPending: true // Mark as pending since it's not in the database
       };
@@ -89,7 +89,7 @@ export async function addAiResponseToRoom(
     // Return the database record with added messageType
     return {
       ...data,
-      messageType: 'agent',
+      messageType: 'agent' as const,
       transaction_id: data.transaction_id || msgTransactionId,
       isPending: false
     };
@@ -118,7 +118,7 @@ export async function addAiResponseToRoom(
       message_text: message,
       created_at: new Date().toISOString(),
       updated_at: null,
-      messageType: 'agent',
+      messageType: 'agent' as const,
       transaction_id: msgTransactionId,
       isPending: true // Mark as pending since it's not confirmed in the database
     };
