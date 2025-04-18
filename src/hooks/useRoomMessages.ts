@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -105,9 +104,9 @@ export function useRoomMessages(roomId: string | undefined) {
 
     // Create optimistic message for immediate display
     const optimisticMessage: RoomMessage = {
-      id: uuidv4(), // Temporary ID
+      id: uuidv4(),
       room_id: roomId,
-      user_id: user.id, // Make sure this is set to the current user's ID
+      user_id: user.id,
       agent_id: null,
       message_text: text,
       created_at: new Date().toISOString(),
@@ -124,12 +123,9 @@ export function useRoomMessages(roomId: string | undefined) {
         .insert({
           room_id: roomId,
           message_text: text,
-          // user_id is automatically set by RLS
         });
 
       if (error) throw error;
-      
-      // No success toast needed since we're showing the message optimistically
     } catch (err) {
       console.error("Error sending message:", err);
       
@@ -147,6 +143,6 @@ export function useRoomMessages(roomId: string | undefined) {
     isLoading,
     error,
     sendMessage,
-    addLocalMessage, // New function to add messages locally
+    addLocalMessage,
   };
 }

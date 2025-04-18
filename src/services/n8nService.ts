@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { SmartBarMode, UploadedFile } from "@/components/smart-bar/types/smart-bar-types";
 import { toast } from "sonner";
@@ -69,13 +68,11 @@ export async function submitSmartBarMessage({
     }
 
     // Process uploaded files to create URLs
-    // In a real implementation, you'd upload these to storage and get permanent URLs
-    // This is a simplified mock implementation
     const processedFiles = uploadedFiles.map(file => ({
       name: file.name,
       type: file.type,
       size: file.size,
-      url: file.preview || 'mock-url-for-' + file.name // In real implementation: actual URL
+      url: file.preview || 'mock-url-for-' + file.name
     }));
 
     // Validate agent IDs to ensure they're valid UUIDs
@@ -83,7 +80,23 @@ export async function submitSmartBarMessage({
       ? agentIds.filter(id => id && typeof id === 'string' && isValidUUID(id))
       : [];
 
-    // Prepare payload
+    // Add user message to the room immediately for optimistic update
+    const userMessageResult = await supabase
+      .from('room_messages')
+      .insert({
+        room_id: roomId,
+        user_id: user.id,
+        message_text: message,
+      })
+      .select('*')
+      .single();
+
+    if (userMessageResult.error) {
+      console.error('Error adding user message:', userMessageResult.error);
+      throw userMessageResult.error;
+    }
+
+    // Prepare webhook payload
     const payload: WebhookPayload = {
       user_id: user.id,
       room_id: roomId,
@@ -113,10 +126,10 @@ export async function submitSmartBarMessage({
 
     const responseData = await response.json();
     
-    // Process the response
+    // Process the response and add AI message to the room
     if (onResponseReceived) {
       try {
-        onResponseReceived(responseData);
+        await onResponseReceived(responseData);
       } catch (responseErr) {
         console.error('Error in onResponseReceived callback:', responseErr);
       }
@@ -133,16 +146,10 @@ export async function submitSmartBarMessage({
     
     if (onError) onError(errorObj);
     
-    // Only show toast if no custom error handler
-    if (!onError) {
-      toast.error("Failed to process your message");
-    }
-    
     return { success: false, error: errorObj };
   }
 }
 
-// Helper function to add an AI response to the room
 export async function addAiResponseToRoom(
   roomId: string, 
   agentId: string | null, 
