@@ -1,10 +1,9 @@
-
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ContentContainer } from "@/components/ui/ContentContainer";
 import { MessageGroup } from "@/components/rooms/MessageGroup";
 import { EmptyMessagesState } from "@/components/rooms/EmptyMessagesState";
 import { Skeleton } from "@/components/ui/skeleton";
-import { RoomMessage } from "@/hooks/useRoomMessages";
+import { RoomMessage } from "@/types/room-messages";
 import { RefObject } from "react";
 
 interface SmartBarMessagesProps {
