@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { RoomMessage } from "@/types/room-messages";
@@ -21,6 +20,7 @@ export function useRoomMessages(roomId: string | undefined) {
       );
       
       if (pendingIndex >= 0) {
+        // Update existing message, preserving order
         const updatedMessages = [...prev];
         updatedMessages[pendingIndex] = {
           ...message,
@@ -38,7 +38,7 @@ export function useRoomMessages(roomId: string | undefined) {
       
       if (exists) return prev;
       
-      // Add the new message and sort by creation time
+      // Add new message and maintain chronological order
       return [...prev, {
         ...message,
         messageType: message.user_id === null ? 'agent' as const : 'user' as const
@@ -52,12 +52,12 @@ export function useRoomMessages(roomId: string | undefined) {
 
   const addLocalMessage = useCallback((message: RoomMessage) => {
     console.log("Adding local message:", message);
-    const messageWithTransaction = {
-      ...message,
-      transaction_id: message.transaction_id || `local-${message.id}`
-    };
-    
     setMessages(prev => {
+      const messageWithTransaction = {
+        ...message,
+        transaction_id: message.transaction_id || `local-${message.id}`
+      };
+      
       const exists = prev.some(m => 
         m.id === messageWithTransaction.id || 
         m.transaction_id === messageWithTransaction.transaction_id

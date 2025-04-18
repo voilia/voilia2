@@ -40,17 +40,22 @@ export function useWebhookHandler(
           isPending: true
         };
         
-        // Add AI response immediately with pending state
+        // Add AI response immediately to local state
         console.log("Adding optimistic AI response:", optimisticAiMessage);
         addLocalMessage(optimisticAiMessage);
         
-        // Save the response to the database
-        await addAiResponseToRoom(
-          roomId, 
-          agentId, 
-          messageText,
-          transactionId
-        );
+        try {
+          // Save the response to the database asynchronously
+          await addAiResponseToRoom(
+            roomId, 
+            agentId, 
+            messageText,
+            transactionId
+          );
+        } catch (dbError) {
+          console.error("Error saving AI response to database:", dbError);
+          toast.error("Failed to save AI response");
+        }
       } else if (response.error) {
         console.error("Error in webhook response:", response.error);
         throw new Error(response.error);
