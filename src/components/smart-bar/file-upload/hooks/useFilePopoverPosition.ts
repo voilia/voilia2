@@ -16,8 +16,11 @@ export function useFilePopoverPosition(showPopover: boolean) {
     const updateSmartBarDimensions = () => {
       if (typeof window === 'undefined') return;
       
-      // Find the SmartBar container
-      const smartBarContainer = document.querySelector('.SmartBar');
+      // Find the SmartBar container - use multiple selectors to ensure we find it
+      const smartBarContainer = document.querySelector('.SmartBar') || 
+                                document.querySelector('form.rounded-xl') || 
+                                document.querySelector('.relative.max-w-3xl.mx-auto.w-full');
+                                
       if (smartBarContainer) {
         const rect = smartBarContainer.getBoundingClientRect();
         
@@ -32,8 +35,11 @@ export function useFilePopoverPosition(showPopover: boolean) {
     };
     
     if (showPopover) {
+      // Initial update
+      updateSmartBarDimensions();
+      
       // Small timeout to ensure DOM is ready
-      setTimeout(updateSmartBarDimensions, 0);
+      const initialTimer = setTimeout(updateSmartBarDimensions, 50);
       
       // Update on resize and scroll
       window.addEventListener('resize', updateSmartBarDimensions);
@@ -48,6 +54,7 @@ export function useFilePopoverPosition(showPopover: boolean) {
       }
       
       return () => {
+        clearTimeout(initialTimer);
         window.removeEventListener('resize', updateSmartBarDimensions);
         window.removeEventListener('scroll', updateSmartBarDimensions);
       };

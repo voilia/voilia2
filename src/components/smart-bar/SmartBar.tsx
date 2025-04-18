@@ -50,7 +50,7 @@ export function SmartBar({
       <div className={cn(
         "relative max-w-3xl mx-auto w-full",
         "flex flex-col gap-2",
-        "SmartBar"
+        "SmartBar" // This class name is important for positioning
       )}>
         <div className={cn(
           "relative w-full rounded-xl overflow-hidden",

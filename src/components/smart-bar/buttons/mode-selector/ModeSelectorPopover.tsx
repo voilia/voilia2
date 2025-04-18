@@ -1,5 +1,5 @@
 
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect } from "react";
 import { 
   Popover,
   PopoverContent,
@@ -13,17 +13,23 @@ import { useFilePopoverPosition } from "../../file-upload/hooks/useFilePopoverPo
 interface ModeSelectorPopoverProps {
   children: ReactNode;
   disabled?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export function ModeSelectorPopover({ children, disabled }: ModeSelectorPopoverProps) {
+export function ModeSelectorPopover({ 
+  children, 
+  disabled, 
+  open, 
+  onOpenChange 
+}: ModeSelectorPopoverProps) {
   const { mode, setMode } = useSmartBar();
-  const [open, setOpen] = useState(false);
-  const { popoverWidth, popoverPosition } = useFilePopoverPosition(open);
+  const { popoverWidth, popoverPosition } = useFilePopoverPosition(open || false);
   
   const handleModeSelect = (newMode: "chat" | "visual" | "assist" | "vault") => {
     if (disabled) return;
     setMode(newMode);
-    setOpen(false);
+    if (onOpenChange) onOpenChange(false);
   };
   
   // Force recalculation of position when open state changes
@@ -38,7 +44,7 @@ export function ModeSelectorPopover({ children, disabled }: ModeSelectorPopoverP
   }, [open]);
   
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild disabled={disabled}>
         {children}
       </PopoverTrigger>

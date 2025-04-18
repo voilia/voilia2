@@ -4,6 +4,7 @@ import { useSmartBarColors } from "./hooks/useSmartBarColors"
 import { useSmartBar } from "./context/SmartBarContext"
 import { cn } from "@/lib/utils"
 import { ModeSelectorPopover } from "./buttons/mode-selector/ModeSelectorPopover"
+import { useState } from "react"
 
 interface SmartBarModeSelectorProps {
   className?: string;
@@ -14,9 +15,10 @@ export function SmartBarModeSelector({ className, disabled }: SmartBarModeSelect
   const { mode } = useSmartBar()
   const { getColors } = useSmartBarColors()
   const colorValue = getColors(mode)
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <ModeSelectorPopover disabled={disabled}>
+    <ModeSelectorPopover open={isOpen} onOpenChange={setIsOpen} disabled={disabled}>
       <button 
         className={cn(
           "flex items-center justify-center h-8 w-8 rounded-md transition-colors",

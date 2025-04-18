@@ -13,7 +13,7 @@ interface SmartBarActionsProps {
 export function SmartBarActions({ className, disabled = false }: SmartBarActionsProps) {
   return (
     <div className={cn("flex items-center gap-3", className)}>
-      <SmartBarModeSelector />
+      <SmartBarModeSelector disabled={disabled} />
       <SmartBarAgentButton disabled={disabled} />
       <SmartBarFileButton disabled={disabled} />
       <SmartBarVoiceButton disabled={disabled} />
