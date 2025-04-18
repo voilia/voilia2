@@ -4,6 +4,7 @@ import { SmartBarButton } from "../SmartBarButton";
 import { cn } from "@/lib/utils";
 import { useSmartBar } from "../context/SmartBarContext";
 import { useVoiceRecording } from "../voice-input/hooks/useVoiceRecording";
+import { VoiceRecordingPopover } from "../voice-input/VoiceRecordingPopover";
 import { toast } from "sonner";
 
 interface SmartBarVoiceButtonProps {
