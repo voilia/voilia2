@@ -4,6 +4,8 @@ import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 import { MessageStatus } from "@/components/rooms/MessageStatus";
 import { MessageErrorBoundary } from "./MessageErrorBoundary";
+import { MessageContentRenderer } from "./message-content/MessageContent";
+import { enhanceRoomMessage } from "@/services/messages/messageContentParser";
 
 interface MessageGroupProps {
   messages: RoomMessage[];
@@ -46,6 +48,9 @@ interface MessageProps {
 function Message({ message, isUser }: MessageProps) {
   const time = formatDistanceToNow(new Date(message.created_at), { addSuffix: true });
   
+  // Enhance regular message to include content blocks
+  const enhancedMessage = enhanceRoomMessage(message);
+  
   return (
     <div className="group w-full">
       <div className={cn(
@@ -55,7 +60,19 @@ function Message({ message, isUser }: MessageProps) {
           : "bg-muted text-foreground mr-auto rounded-tl-none",
         message.isPending && "opacity-70"
       )}>
-        {message.message_text}
+        {enhancedMessage.contents.length > 0 ? (
+          <div className="space-y-2">
+            {enhancedMessage.contents.map((content) => (
+              <MessageContentRenderer 
+                key={content.id} 
+                content={content} 
+              />
+            ))}
+          </div>
+        ) : (
+          // Fallback to original message text
+          message.message_text
+        )}
       </div>
       <MessageStatus 
         time={time}
