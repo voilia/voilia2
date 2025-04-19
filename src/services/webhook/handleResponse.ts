@@ -10,11 +10,29 @@ export async function handleWebhookResponse(
   if (response.type === "opaque" as any) {
     console.log("Received opaque response from webhook (expected with no-cors)");
     
-    // Instead of creating a placeholder, just silently return success
-    // The real response will come through the real-time subscription
+    // Instead of creating a placeholder, just silently wait for real-time update
+    // This avoids any race conditions or duplicate messages
     
     if (options.onComplete) {
       options.onComplete();
+    }
+
+    // Still trigger onResponseReceived with a minimal message
+    // to ensure we have a backup mechanism if real-time fails
+    if (options.onResponseReceived) {
+      // Delay to allow real-time to come in first, if available
+      setTimeout(() => {
+        const fallbackResponse = {
+          success: true,
+          data: {
+            text: "Your message is being processed..."
+          },
+          internal: false, // Allow this to display as a fallback
+          transactionId
+        };
+        
+        options.onResponseReceived?.(fallbackResponse, transactionId);
+      }, 2000); // Wait 2 seconds for real-time before showing fallback
     }
 
     return { 
@@ -22,7 +40,7 @@ export async function handleWebhookResponse(
       data: {
         success: true,
         status: "processing",
-        internal: true // Mark as internal so it won't display
+        internal: true
       },
       transactionId 
     };
@@ -48,14 +66,11 @@ export async function handleWebhookResponse(
       };
     }
     
-    // Process response immediately without delay
+    // Process response immediately for instant display
     if (options.onResponseReceived) {
       try {
         console.log("Calling onResponseReceived with data:", responseData);
-        // Use requestAnimationFrame for more reliable UI updates
-        requestAnimationFrame(() => {
-          options.onResponseReceived?.(responseData, transactionId);
-        });
+        options.onResponseReceived?.(responseData, transactionId);
       } catch (responseErr) {
         console.error('Error in onResponseReceived callback:', responseErr);
       }
