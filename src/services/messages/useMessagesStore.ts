@@ -6,6 +6,7 @@ export function useMessagesStore() {
   const [messages, setMessages] = useState<RoomMessage[]>([]);
   const [lastAddedMessage, setLastAddedMessage] = useState<string | null>(null);
   const timer = useRef<NodeJS.Timeout | null>(null);
+  const processingRef = useRef<Set<string>>(new Set());
 
   // Debug current messages in state
   useEffect(() => {
@@ -30,6 +31,22 @@ export function useMessagesStore() {
     if (lastAddedMessage === message.id) {
       console.log("Duplicate message addition attempt prevented:", message.id);
       return;
+    }
+    
+    // Check if this message is already being processed
+    const processingKey = message.id || message.transaction_id;
+    if (processingKey && processingRef.current.has(processingKey)) {
+      console.log("Message already being processed:", processingKey);
+      return;
+    }
+    
+    // Mark as being processed
+    if (processingKey) {
+      processingRef.current.add(processingKey);
+      // Auto-cleanup after 2 seconds
+      setTimeout(() => {
+        processingRef.current.delete(processingKey);
+      }, 2000);
     }
     
     setLastAddedMessage(message.id);
@@ -85,6 +102,22 @@ export function useMessagesStore() {
     
     console.log("Trying to update message:", message);
     
+    // Check if this message is already being processed
+    const processingKey = message.id || message.transaction_id;
+    if (processingKey && processingRef.current.has(processingKey)) {
+      console.log("Update already being processed:", processingKey);
+      return;
+    }
+    
+    // Mark as being processed
+    if (processingKey) {
+      processingRef.current.add(processingKey);
+      // Auto-cleanup after 2 seconds
+      setTimeout(() => {
+        processingRef.current.delete(processingKey);
+      }, 2000);
+    }
+    
     setMessages(prev => {
       // First check if we have this exact message by ID
       const exactMatch = prev.find(msg => msg.id === message.id);
@@ -127,12 +160,18 @@ export function useMessagesStore() {
     ));
   }, []);
 
+  // Force clear any processing messages
+  const forceClearProcessingState = useCallback(() => {
+    processingRef.current.clear();
+  }, []);
+
   return {
     messages,
     setMessages,
     addMessage,
     updateMessage,
     removeMessage,
-    clearPlaceholderMessages
+    clearPlaceholderMessages,
+    forceClearProcessingState
   };
 }
