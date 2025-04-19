@@ -1,6 +1,6 @@
 
 import { useParams, useNavigate } from "react-router-dom";
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 import { useRoom } from "@/hooks/useRoom";
 import { MainLayout } from "@/app/layout/MainLayout";
 import { SmartBar } from "@/components/smart-bar/SmartBar";
@@ -19,6 +19,7 @@ export default function RoomDetail() {
   const { user, loading: authLoading } = useAuth();
   const { data: room, isLoading: isRoomLoading } = useRoom(id);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const [prevMessageCount, setPrevMessageCount] = useState<number>(0);
   
   const {
     messageGroups,
@@ -40,10 +41,25 @@ export default function RoomDetail() {
   // Throttled scroll for performance during rapid updates
   const throttledScrollToBottom = useThrottle(scrollToBottom, 50);
 
-  // Scroll to bottom on initial load and when messageGroups changes
+  // Scroll to bottom when new messages arrive
   useEffect(() => {
-    throttledScrollToBottom();
-  }, [messageGroups, throttledScrollToBottom]);
+    // Calculate total messages across all groups
+    const currentMessageCount = messageGroups.reduce(
+      (sum, group) => sum + group.messages.length, 
+      0
+    );
+    
+    // Only scroll if count has increased (new messages)
+    if (currentMessageCount > prevMessageCount) {
+      console.log("New messages detected, scrolling to bottom");
+      throttledScrollToBottom();
+      // Force another scroll after a slight delay to ensure all content is rendered
+      setTimeout(scrollToBottom, 100);
+    }
+    
+    // Update previous count
+    setPrevMessageCount(currentMessageCount);
+  }, [messageGroups, prevMessageCount, throttledScrollToBottom, scrollToBottom]);
 
   // Additional effect to ensure scroll happens after render
   useEffect(() => {
