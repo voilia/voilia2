@@ -16,6 +16,16 @@ export function useMessagesStore() {
   }, [messages]);
 
   const addMessage = useCallback((message: RoomMessage) => {
+    // Skip placeholder messages entirely
+    if (message.message_text && (
+        message.message_text.includes("processing your request") ||
+        message.message_text.includes("is being processed") ||
+        message.message_text.includes("awaiting response")
+    )) {
+      console.log("Skipping placeholder message:", message.message_text);
+      return;
+    }
+  
     // Prevent duplicate additions within 100ms
     if (lastAddedMessage === message.id) {
       console.log("Duplicate message addition attempt prevented:", message.id);
@@ -44,30 +54,12 @@ export function useMessagesStore() {
         );
         
         if (transactionMatch) {
-          console.log("Transaction ID match found, not adding duplicate:", message.transaction_id);
+          console.log("Transaction ID match found, updating existing:", message.transaction_id);
           return prev.map(msg => 
-            msg.transaction_id === message.transaction_id 
+            msg.transaction_id === message.transaction_id && msg.messageType === message.messageType
               ? { ...message, isPending: false } 
               : msg
           );
-        }
-      }
-      
-      // Avoid adding "waiting for response" placeholders if we already have responses
-      if (message.message_text && 
-          (message.message_text.includes("waiting for") || 
-           message.message_text.includes("processing") || 
-           message.message_text.includes("being processed"))) {
-        
-        // Count recent agent messages in the last 5 seconds
-        const recentAgentMessages = prev.filter(msg => 
-          msg.messageType === 'agent' && 
-          new Date().getTime() - new Date(msg.created_at).getTime() < 5000
-        );
-        
-        if (recentAgentMessages.length > 0) {
-          console.log("Skipping placeholder message since we already have recent agent messages");
-          return prev;
         }
       }
       
@@ -81,6 +73,16 @@ export function useMessagesStore() {
   }, [lastAddedMessage]);
 
   const updateMessage = useCallback((message: RoomMessage) => {
+    // Skip placeholder messages entirely
+    if (message.message_text && (
+        message.message_text.includes("processing your request") ||
+        message.message_text.includes("is being processed") ||
+        message.message_text.includes("awaiting response")
+    )) {
+      console.log("Skipping placeholder message update:", message.message_text);
+      return;
+    }
+    
     console.log("Trying to update message:", message);
     
     setMessages(prev => {
@@ -105,28 +107,7 @@ export function useMessagesStore() {
         );
       }
       
-      // If the incoming message is a placeholder and we already have other agent messages,
-      // don't add it as new
-      if (message.message_text && 
-         (message.message_text.includes("waiting for") || 
-          message.message_text.includes("processing") || 
-          message.message_text.includes("being processed"))) {
-        
-        const existingAgentMessages = prev.filter(msg => 
-          msg.messageType === 'agent' && 
-          !msg.message_text.includes("waiting for") &&
-          !msg.message_text.includes("processing") &&
-          !msg.message_text.includes("being processed")
-        );
-        
-        if (existingAgentMessages.length > 0) {
-          console.log("Not adding placeholder message as we already have agent messages");
-          return prev;
-        }
-      }
-      
-      // If we get here, this is a completely new message from the real-time subscription
-      // We should add it to the list rather than ignoring it
+      // If it's a completely new message from the real-time subscription, add it
       console.log("No matching message found, adding as new from real-time:", message);
       return [...prev, { ...message, isPending: false }].sort((a, b) => 
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
@@ -138,11 +119,20 @@ export function useMessagesStore() {
     setMessages(prev => prev.filter(msg => msg.id !== messageId));
   }, []);
 
+  const clearPlaceholderMessages = useCallback(() => {
+    setMessages(prev => prev.filter(msg => 
+      !msg.message_text.includes("processing your request") &&
+      !msg.message_text.includes("is being processed") &&
+      !msg.message_text.includes("awaiting response")
+    ));
+  }, []);
+
   return {
     messages,
     setMessages,
     addMessage,
     updateMessage,
-    removeMessage
+    removeMessage,
+    clearPlaceholderMessages
   };
 }
