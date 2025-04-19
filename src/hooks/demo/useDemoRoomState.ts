@@ -4,7 +4,7 @@ import { RoomMessage } from "@/types/room-messages";
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useMessageGroups } from "@/hooks/messages/useMessageGroups";
-import { DEMO_ROOM_ID } from "@/config/demo-constants";
+import { DEMO_ROOM_ID, DEMO_AGENT_ID } from "@/config/demo-constants";
 import { toast } from "sonner";
 import { useWelcomeMessage } from "./useWelcomeMessage";
 import { useRealtimeMessages } from "./useRealtimeMessages";

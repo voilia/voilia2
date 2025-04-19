@@ -29,7 +29,11 @@ export function useWelcomeMessage(setMessages: (messages: RoomMessage[]) => void
     };
     
     const timer = setTimeout(() => {
-      setMessages(prev => [...prev, welcomeMessage]);
+      // Fix: Create a new array with the previous messages and the welcome message
+      setMessages((prev) => {
+        const updatedMessages = [...prev, welcomeMessage];
+        return updatedMessages;
+      });
       setIsLoading(false);
       console.log("Welcome message added");
     }, 1000);

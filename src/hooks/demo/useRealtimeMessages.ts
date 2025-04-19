@@ -26,7 +26,11 @@ export function useRealtimeMessages(setMessages: (messages: RoomMessage[]) => vo
             isPending: false
           };
           
-          setMessages(prev => [...prev, newMessage]);
+          // Fix: Create a new array with the previous messages and the new message
+          setMessages((prev) => {
+            const updatedMessages = [...prev, newMessage];
+            return updatedMessages;
+          });
         }
       })
       .subscribe((status) => {
