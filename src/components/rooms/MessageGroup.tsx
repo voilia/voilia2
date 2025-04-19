@@ -4,6 +4,7 @@ import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 import { MessageStatus } from "@/components/rooms/MessageStatus";
 import { MessageErrorBoundary } from "./MessageErrorBoundary";
+import { useEffect, useState } from "react";
 
 interface MessageGroupProps {
   messages: RoomMessage[];
@@ -44,7 +45,22 @@ interface MessageProps {
 }
 
 function Message({ message, isUser }: MessageProps) {
-  const time = formatDistanceToNow(new Date(message.created_at), { addSuffix: true });
+  const [showPlaceholder, setShowPlaceholder] = useState(message.isPending && message.message_text.includes("Waiting for response"));
+  const formattedTime = formatDistanceToNow(new Date(message.created_at), { addSuffix: true });
+  
+  // Remove "Waiting for response" placeholder messages after 5 seconds if they're still pending
+  useEffect(() => {
+    if (showPlaceholder) {
+      const timer = setTimeout(() => {
+        setShowPlaceholder(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [showPlaceholder]);
+  
+  // Don't render placeholder messages after timeout expires
+  if (showPlaceholder && !message.isPending) return null;
+  if (showPlaceholder && message.message_text.includes("Waiting for response")) return null;
   
   return (
     <div className="group w-full">
@@ -58,7 +74,8 @@ function Message({ message, isUser }: MessageProps) {
         {message.message_text}
       </div>
       <MessageStatus 
-        time={time}
+        time={formattedTime}
+        timestamp={message.created_at}
         isPending={message.isPending}
         align={isUser ? "right" : "left"}
       />
