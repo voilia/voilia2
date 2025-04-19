@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { WebhookResponse, MessageSubmitOptions } from "./types";
 import { v4 as uuidv4 } from 'uuid';
@@ -8,6 +7,13 @@ import { toast } from "sonner";
 
 export async function submitSmartBarMessage(options: MessageSubmitOptions): Promise<WebhookResponse> {
   try {
+    // Sanitize logging to protect user privacy
+    console.log("Sending webhook request", {
+      mode: options.mode,
+      fileCount: options.uploadedFiles?.length || 0,
+      messageLength: options.message ? options.message.length : 0
+    });
+
     if (options.onStart) options.onStart();
 
     // Get current user session with improved error handling
