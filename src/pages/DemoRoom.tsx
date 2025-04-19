@@ -11,8 +11,10 @@ import { DemoRoomHeader } from "@/components/rooms/demo/DemoRoomHeader";
 import { DemoRoomContent } from "@/components/rooms/demo/DemoRoomContent";
 import { DemoSmartBar } from "@/components/rooms/demo/DemoSmartBar";
 import { useDemoRoomState } from "@/hooks/demo/useDemoRoomState";
-import { DEMO_AGENT_ID, DEMO_ROOM_ID } from "@/config/demo-constants";
+import { DEMO_AGENT_CONFIG } from "@/config/demo-constants";
+import { cn } from "@/lib/utils";
 
+// Add hideSidebar prop to force sidebar closed in demo room
 export default function DemoRoom() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
@@ -93,9 +95,12 @@ export default function DemoRoom() {
   }
 
   return (
-    <MainLayout>
+    <MainLayout hideSidebar>
       <SmartBarProvider>
-        <div className="flex flex-col h-full w-full overflow-hidden max-w-full relative">
+        <div className={cn(
+          "flex flex-col h-full w-full overflow-hidden max-w-full relative",
+          "bg-gradient-to-b from-background to-background/80"
+        )}>
           <DemoRoomHeader 
             onBackClick={() => navigate(-1)} 
           />

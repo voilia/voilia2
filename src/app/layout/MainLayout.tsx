@@ -1,4 +1,3 @@
-
 import { ReactNode, useState, useCallback, useEffect } from "react";
 import { Sidebar } from "@/app/navigation/Sidebar";
 import { Header } from "@/app/navigation/Header";
@@ -9,46 +8,46 @@ import { cn } from "@/lib/utils";
 
 interface MainLayoutProps {
   children: ReactNode;
+  hideSidebar?: boolean;
 }
 
-export function MainLayout({ children }: MainLayoutProps) {
+export function MainLayout({ children, hideSidebar = false }: MainLayoutProps) {
   const isMobile = useIsMobile();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(hideSidebar);
   const location = useLocation();
   
   // Determine if we're on a room page
   const isRoomPage = location.pathname.includes('/rooms/') && location.pathname.split('/').length > 2;
   
   const toggleSidebar = useCallback(() => {
-    setIsCollapsed(!isCollapsed);
-  }, [isCollapsed]);
+    if (!hideSidebar) {
+      setIsCollapsed(!isCollapsed);
+    }
+  }, [isCollapsed, hideSidebar]);
   
   // Auto-collapse sidebar on mobile when entering a room page
   useEffect(() => {
-    if (isMobile && isRoomPage) {
+    if (isMobile && isRoomPage || hideSidebar) {
       setIsCollapsed(true);
     }
-  }, [isMobile, isRoomPage, location.pathname]);
-  
-  // Calculate sidebar width based on device and collapsed state
-  const sidebarWidth = isMobile 
-    ? "0px" 
-    : (isCollapsed ? "0px" : "240px");
-  
+  }, [isMobile, isRoomPage, hideSidebar, location.pathname]);
+
   return (
     <div 
       className="min-h-screen flex bg-background text-foreground overflow-hidden"
       style={{ 
-        "--sidebar-width": sidebarWidth
+        "--sidebar-width": hideSidebar ? "0px" : (isCollapsed ? "0px" : "240px")
       } as React.CSSProperties}
     >
-      <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
+      {!hideSidebar && (
+        <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
+      )}
       
-      {!isMobile && (
+      {!isMobile && !hideSidebar && (
         <Header toggleSidebar={toggleSidebar} isCollapsed={isCollapsed} />
       )}
       
-      {isMobile && (
+      {isMobile && !hideSidebar && (
         <MobileHeader 
           onToggleSidebar={toggleSidebar} 
           isSidebarOpen={!isCollapsed}
@@ -61,9 +60,9 @@ export function MainLayout({ children }: MainLayoutProps) {
           isRoomPage && isMobile ? "overflow-hidden h-[100dvh] w-screen" : "overflow-x-hidden"
         )}
         style={{ 
-          marginLeft: isMobile ? '0' : (isCollapsed ? '0' : '240px'),
-          paddingTop: isMobile ? '56px' : '2rem',
-          width: isMobile ? '100%' : `calc(100% - ${isCollapsed ? '0px' : '240px'})`
+          marginLeft: '0',
+          width: '100%',
+          paddingTop: isMobile ? '56px' : '0'
         }}
       >
         <div className={cn(
