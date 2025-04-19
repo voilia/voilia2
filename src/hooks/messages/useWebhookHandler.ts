@@ -14,19 +14,9 @@ export function useWebhookHandler(
     
     console.log("Received webhook response:", response);
     
-    // Skip internal messages explicitly marked for no display
-    if (response.internal === true && !response.message) {
-      console.log("Skipping internal placeholder message");
-      return;
-    }
-    
-    // Skip processing placeholder messages
-    if (response.message && (
-        response.message.includes("awaiting response") ||
-        response.message.includes("being processed") ||
-        response.message.includes("processing your request")
-    )) {
-      console.log("Skipping placeholder message:", response.message);
+    // Skip internal messages marked for no display
+    if (response.internal === true) {
+      console.log("Skipping internal placeholder message, waiting for real-time update");
       return;
     }
     
@@ -47,11 +37,14 @@ export function useWebhookHandler(
           agentId = response.data.agent.id;
         }
       } 
-      // For no-cors initial response (a real message, not just a placeholder)
-      else if (response.status && response.message && 
-               !response.message.includes("processing") && 
-               !response.message.includes("awaiting")) {
-        console.log("Processing message from no-cors response:", response.message);
+      // For no-cors initial response (just a placeholder)
+      else if (response.status === "processing" && response.message) {
+        console.log("Processing initial no-cors response. This will be replaced by real-time updates.");
+        // Skip empty messages or placeholders
+        if (!response.message || response.message.includes("awaiting response")) {
+          console.log("Skipping empty or placeholder message");
+          return;
+        }
         messageText = response.message;
       }
       // Alternative response format with nested data
@@ -72,15 +65,12 @@ export function useWebhookHandler(
                     response.data?.text ||
                     response.response?.text ||
                     (typeof response === 'string' ? response : null);
-      }
-      
-      // Skip empty messages or placeholders
-      if (!messageText || 
-          messageText.includes("processing your request") ||
-          messageText.includes("being processed") ||
-          messageText.includes("awaiting response")) {
-        console.log("Skipping empty or placeholder message");
-        return;
+                    
+        // Skip empty messages or messages that are just waiting for response
+        if (!messageText || messageText.includes("awaiting response")) {
+          console.log("Skipping empty or placeholder message");
+          return;
+        }
       }
       
       // Try to extract agent ID if available
@@ -91,8 +81,14 @@ export function useWebhookHandler(
         }
       }
       
+      // Skip if no message text was extracted
+      if (!messageText) {
+        console.warn("No message text found in response:", response);
+        return;
+      }
+      
       // Create unique ID for the message if none provided
-      const localMessageId = messageId || `webhook-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      const localMessageId = messageId || `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
       
       // Create AI message for immediate display
       const aiMessage: RoomMessage = {
@@ -105,17 +101,16 @@ export function useWebhookHandler(
         updated_at: null,
         messageType: 'agent' as const,
         transaction_id: transactionId || uuidv4(),
-        isPending: false // No more pending messages
+        isPending: true
       };
       
-      console.log("Adding AI response via webhook to chat:", aiMessage);
-      
-      // Process without any delay for immediate display
+      // Add AI response immediately to local state
+      console.log("Adding AI response to chat:", aiMessage);
       addLocalMessage(aiMessage);
       
     } catch (error) {
       console.error("Error processing webhook response:", error);
-      // Silent error handling - rely on real-time subscription as backup
+      toast.error("Failed to process AI response");
     }
   }, [roomId, addLocalMessage]);
 

@@ -6,42 +6,38 @@ export async function handleWebhookResponse(
   options: MessageSubmitOptions,
   transactionId: string
 ): Promise<WebhookResponse> {
-  // For no-cors responses, we cannot read the response body directly
+  // For no-cors responses, we cannot read the response body
   if (response.type === "opaque" as any) {
     console.log("Received opaque response from webhook (expected with no-cors)");
     
-    // Instead of creating a placeholder, just silently wait for real-time update
-    // This avoids any race conditions or duplicate messages
+    // Create a response object for internal handling - don't display to user
+    const initialResponse = {
+      success: true,
+      status: "processing",
+      message: "", // Empty message to avoid showing placeholder text
+      internal: true // Mark this as internal to avoid displaying to user
+    };
+
+    // Call the onResponseReceived callback with this initial response
+    if (options.onResponseReceived) {
+      try {
+        console.log("Calling onResponseReceived with empty initial response while waiting for real-time update");
+        await options.onResponseReceived(initialResponse, transactionId);
+      } catch (responseErr) {
+        console.error('Error in onResponseReceived callback:', responseErr);
+      }
+    }
+
+    // For no-cors mode, we rely on real-time subscriptions for the actual response
+    // The actual AI response will be received via the Supabase real-time subscription
     
     if (options.onComplete) {
       options.onComplete();
     }
 
-    // Still trigger onResponseReceived with a minimal message
-    // to ensure we have a backup mechanism if real-time fails
-    if (options.onResponseReceived) {
-      // Delay to allow real-time to come in first, if available
-      setTimeout(() => {
-        const fallbackResponse = {
-          success: true,
-          data: {
-            text: "Your message is being processed..."
-          },
-          internal: false, // Allow this to display as a fallback
-          transactionId
-        };
-        
-        options.onResponseReceived?.(fallbackResponse, transactionId);
-      }, 2000); // Wait 2 seconds for real-time before showing fallback
-    }
-
     return { 
       success: true, 
-      data: {
-        success: true,
-        status: "processing",
-        internal: true
-      },
+      data: initialResponse,
       transactionId 
     };
   }
@@ -66,11 +62,10 @@ export async function handleWebhookResponse(
       };
     }
     
-    // Process response immediately for instant display
     if (options.onResponseReceived) {
       try {
         console.log("Calling onResponseReceived with data:", responseData);
-        options.onResponseReceived?.(responseData, transactionId);
+        await options.onResponseReceived(responseData, transactionId);
       } catch (responseErr) {
         console.error('Error in onResponseReceived callback:', responseErr);
       }

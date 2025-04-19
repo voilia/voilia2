@@ -1,61 +1,19 @@
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { RoomMessage } from "@/types/room-messages";
 
 export function useMessagesStore() {
   const [messages, setMessages] = useState<RoomMessage[]>([]);
-  const [lastAddedMessage, setLastAddedMessage] = useState<string | null>(null);
-  const timer = useRef<NodeJS.Timeout | null>(null);
-  const processingRef = useRef<Set<string>>(new Set());
 
   // Debug current messages in state
   useEffect(() => {
     console.log("Current messages in store:", messages.length);
-    return () => {
-      if (timer.current) clearTimeout(timer.current);
-    };
   }, [messages]);
 
   const addMessage = useCallback((message: RoomMessage) => {
-    // Skip placeholder messages entirely
-    if (message.message_text && (
-        message.message_text.includes("processing your request") ||
-        message.message_text.includes("is being processed") ||
-        message.message_text.includes("awaiting response")
-    )) {
-      console.log("Skipping placeholder message:", message.message_text);
-      return;
-    }
-  
-    // Prevent duplicate additions within 100ms
-    if (lastAddedMessage === message.id) {
-      console.log("Duplicate message addition attempt prevented:", message.id);
-      return;
-    }
-    
-    // Check if this message is already being processed
-    const processingKey = message.id || message.transaction_id;
-    if (processingKey && processingRef.current.has(processingKey)) {
-      console.log("Message already being processed:", processingKey);
-      return;
-    }
-    
-    // Mark as being processed
-    if (processingKey) {
-      processingRef.current.add(processingKey);
-      // Auto-cleanup after 2 seconds
-      setTimeout(() => {
-        processingRef.current.delete(processingKey);
-      }, 2000);
-    }
-    
-    setLastAddedMessage(message.id);
-    // Clear the lastAddedMessage after a short time
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => setLastAddedMessage(null), 100);
-    
     setMessages(prev => {
-      // Check for exact ID match
+      // Only check for exact ID match, not transaction_id
+      // This allows messages with the same transaction_id but different IDs to be added
       const exactIdMatch = prev.some(msg => msg.id === message.id);
       
       if (exactIdMatch) {
@@ -63,60 +21,15 @@ export function useMessagesStore() {
         return prev;
       }
       
-      // Check for transaction ID match to avoid duplicates
-      if (message.transaction_id) {
-        const transactionMatch = prev.some(msg => 
-          msg.transaction_id === message.transaction_id && 
-          msg.messageType === message.messageType
-        );
-        
-        if (transactionMatch) {
-          console.log("Transaction ID match found, updating existing:", message.transaction_id);
-          return prev.map(msg => 
-            msg.transaction_id === message.transaction_id && msg.messageType === message.messageType
-              ? { ...message, isPending: false } 
-              : msg
-          );
-        }
-      }
-      
       console.log("Adding new message to store:", message);
-      
-      // Add the message and ensure it's properly sorted by timestamp
       return [...prev, message].sort((a, b) => 
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       );
     });
-  }, [lastAddedMessage]);
+  }, []);
 
   const updateMessage = useCallback((message: RoomMessage) => {
-    // Skip placeholder messages entirely
-    if (message.message_text && (
-        message.message_text.includes("processing your request") ||
-        message.message_text.includes("is being processed") ||
-        message.message_text.includes("awaiting response")
-    )) {
-      console.log("Skipping placeholder message update:", message.message_text);
-      return;
-    }
-    
     console.log("Trying to update message:", message);
-    
-    // Check if this message is already being processed
-    const processingKey = message.id || message.transaction_id;
-    if (processingKey && processingRef.current.has(processingKey)) {
-      console.log("Update already being processed:", processingKey);
-      return;
-    }
-    
-    // Mark as being processed
-    if (processingKey) {
-      processingRef.current.add(processingKey);
-      // Auto-cleanup after 2 seconds
-      setTimeout(() => {
-        processingRef.current.delete(processingKey);
-      }, 2000);
-    }
     
     setMessages(prev => {
       // First check if we have this exact message by ID
@@ -140,9 +53,10 @@ export function useMessagesStore() {
         );
       }
       
-      // If it's a completely new message from the real-time subscription, add it
+      // If we get here, this is a completely new message from the real-time subscription
+      // We should add it to the list rather than ignoring it
       console.log("No matching message found, adding as new from real-time:", message);
-      return [...prev, { ...message, isPending: false }].sort((a, b) => 
+      return [...prev, message].sort((a, b) => 
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       );
     });
@@ -152,26 +66,11 @@ export function useMessagesStore() {
     setMessages(prev => prev.filter(msg => msg.id !== messageId));
   }, []);
 
-  const clearPlaceholderMessages = useCallback(() => {
-    setMessages(prev => prev.filter(msg => 
-      !msg.message_text.includes("processing your request") &&
-      !msg.message_text.includes("is being processed") &&
-      !msg.message_text.includes("awaiting response")
-    ));
-  }, []);
-
-  // Force clear any processing messages
-  const forceClearProcessingState = useCallback(() => {
-    processingRef.current.clear();
-  }, []);
-
   return {
     messages,
     setMessages,
     addMessage,
     updateMessage,
-    removeMessage,
-    clearPlaceholderMessages,
-    forceClearProcessingState
+    removeMessage
   };
 }
