@@ -5,7 +5,7 @@ import { RoomMessage } from "@/types/room-messages";
 import { DEMO_ROOM_ID, DEMO_AGENT_ID } from "@/config/demo-constants";
 import { v4 as uuidv4 } from 'uuid';
 
-export function useRealtimeMessages(setMessages: (messages: RoomMessage[]) => void) {
+export function useRealtimeMessages(setMessages: React.Dispatch<React.SetStateAction<RoomMessage[]>>) {
   useEffect(() => {
     console.log("Setting up real-time message subscription");
     
@@ -26,8 +26,8 @@ export function useRealtimeMessages(setMessages: (messages: RoomMessage[]) => vo
             isPending: false
           };
           
-          // Fix: Create a new array with the previous messages and the new message
-          setMessages((prev) => {
+          // Create a new array with the previous messages and the new message
+          setMessages((prev: RoomMessage[]) => {
             const updatedMessages = [...prev, newMessage];
             return updatedMessages;
           });

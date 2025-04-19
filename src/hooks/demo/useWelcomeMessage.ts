@@ -9,7 +9,7 @@ const WELCOME_MESSAGES = [
   "Hello! This is the new VOILIA experience. Feel free to send me messages, upload files, or ask questions about how VOILIA can enhance your workflow."
 ];
 
-export function useWelcomeMessage(setMessages: (messages: RoomMessage[]) => void) {
+export function useWelcomeMessage(setMessages: React.Dispatch<React.SetStateAction<RoomMessage[]>>) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -29,8 +29,8 @@ export function useWelcomeMessage(setMessages: (messages: RoomMessage[]) => void
     };
     
     const timer = setTimeout(() => {
-      // Fix: Create a new array with the previous messages and the welcome message
-      setMessages((prev) => {
+      // Create a new array with the previous messages and the welcome message
+      setMessages((prev: RoomMessage[]) => {
         const updatedMessages = [...prev, welcomeMessage];
         return updatedMessages;
       });
