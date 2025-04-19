@@ -1,19 +1,34 @@
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { RoomMessage } from "@/types/room-messages";
 
 export function useMessagesStore() {
   const [messages, setMessages] = useState<RoomMessage[]>([]);
+  const [lastAddedMessage, setLastAddedMessage] = useState<string | null>(null);
+  const timer = useRef<NodeJS.Timeout | null>(null);
 
   // Debug current messages in state
   useEffect(() => {
     console.log("Current messages in store:", messages.length);
+    return () => {
+      if (timer.current) clearTimeout(timer.current);
+    };
   }, [messages]);
 
   const addMessage = useCallback((message: RoomMessage) => {
+    // Prevent duplicate additions within 100ms
+    if (lastAddedMessage === message.id) {
+      console.log("Duplicate message addition attempt prevented:", message.id);
+      return;
+    }
+    
+    setLastAddedMessage(message.id);
+    // Clear the lastAddedMessage after a short time
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => setLastAddedMessage(null), 100);
+    
     setMessages(prev => {
-      // Only check for exact ID match, not transaction_id
-      // This allows messages with the same transaction_id but different IDs to be added
+      // Check for exact ID match
       const exactIdMatch = prev.some(msg => msg.id === message.id);
       
       if (exactIdMatch) {
@@ -21,7 +36,7 @@ export function useMessagesStore() {
         return prev;
       }
       
-      // Also check for transaction ID match that would cause duplicates
+      // Check for transaction ID match to avoid duplicates
       if (message.transaction_id) {
         const transactionMatch = prev.some(msg => 
           msg.transaction_id === message.transaction_id && 
@@ -30,16 +45,40 @@ export function useMessagesStore() {
         
         if (transactionMatch) {
           console.log("Transaction ID match found, not adding duplicate:", message.transaction_id);
+          return prev.map(msg => 
+            msg.transaction_id === message.transaction_id 
+              ? { ...message, isPending: false } 
+              : msg
+          );
+        }
+      }
+      
+      // Avoid adding "waiting for response" placeholders if we already have responses
+      if (message.message_text && 
+          (message.message_text.includes("waiting for") || 
+           message.message_text.includes("processing") || 
+           message.message_text.includes("being processed"))) {
+        
+        // Count recent agent messages in the last 5 seconds
+        const recentAgentMessages = prev.filter(msg => 
+          msg.messageType === 'agent' && 
+          new Date().getTime() - new Date(msg.created_at).getTime() < 5000
+        );
+        
+        if (recentAgentMessages.length > 0) {
+          console.log("Skipping placeholder message since we already have recent agent messages");
           return prev;
         }
       }
       
       console.log("Adding new message to store:", message);
+      
+      // Add the message and ensure it's properly sorted by timestamp
       return [...prev, message].sort((a, b) => 
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       );
     });
-  }, []);
+  }, [lastAddedMessage]);
 
   const updateMessage = useCallback((message: RoomMessage) => {
     console.log("Trying to update message:", message);
@@ -64,6 +103,26 @@ export function useMessagesStore() {
             ? { ...message, isPending: false } 
             : msg
         );
+      }
+      
+      // If the incoming message is a placeholder and we already have other agent messages,
+      // don't add it as new
+      if (message.message_text && 
+         (message.message_text.includes("waiting for") || 
+          message.message_text.includes("processing") || 
+          message.message_text.includes("being processed"))) {
+        
+        const existingAgentMessages = prev.filter(msg => 
+          msg.messageType === 'agent' && 
+          !msg.message_text.includes("waiting for") &&
+          !msg.message_text.includes("processing") &&
+          !msg.message_text.includes("being processed")
+        );
+        
+        if (existingAgentMessages.length > 0) {
+          console.log("Not adding placeholder message as we already have agent messages");
+          return prev;
+        }
       }
       
       // If we get here, this is a completely new message from the real-time subscription
