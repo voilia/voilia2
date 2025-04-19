@@ -14,9 +14,9 @@ export function useWebhookHandler(
     
     console.log("Received webhook response:", response);
     
-    // Skip internal messages marked for no display
-    if (response.internal === true) {
-      console.log("Skipping internal placeholder message, waiting for real-time update");
+    // Skip internal messages explicitly marked for no display
+    if (response.internal === true && !response.message) {
+      console.log("Skipping internal placeholder message with no content");
       return;
     }
     
@@ -25,6 +25,7 @@ export function useWebhookHandler(
       let messageText = null;
       let messageId = null;
       let agentId = null;
+      let isPending = false;
       
       // For standard response format from n8n webhook
       if (response.success === true && response.response && response.response.text) {
@@ -37,15 +38,17 @@ export function useWebhookHandler(
           agentId = response.data.agent.id;
         }
       } 
-      // For no-cors initial response (just a placeholder)
+      // For no-cors initial response (a placeholder)
       else if (response.status === "processing" && response.message) {
-        console.log("Processing initial no-cors response. This will be replaced by real-time updates.");
-        // Skip empty messages or placeholders
-        if (!response.message || response.message.includes("awaiting response")) {
-          console.log("Skipping empty or placeholder message");
-          return;
-        }
+        console.log("Processing initial no-cors response:", response.message);
         messageText = response.message;
+        isPending = true;
+      }
+      // For awaiting response follow-up
+      else if (response.status === "awaiting" && response.message) {
+        console.log("Processing awaiting follow-up:", response.message);
+        messageText = response.message;
+        isPending = true;
       }
       // Alternative response format with nested data
       else if (response.data?.response) {
@@ -66,10 +69,15 @@ export function useWebhookHandler(
                     response.response?.text ||
                     (typeof response === 'string' ? response : null);
                     
-        // Skip empty messages or messages that are just waiting for response
-        if (!messageText || messageText.includes("awaiting response")) {
-          console.log("Skipping empty or placeholder message");
+        // Skip empty messages
+        if (!messageText) {
+          console.log("Skipping empty message");
           return;
+        }
+        
+        // Check if this is a placeholder message
+        if (messageText.includes("processing") || messageText.includes("awaiting response")) {
+          isPending = true;
         }
       }
       
@@ -87,6 +95,9 @@ export function useWebhookHandler(
         return;
       }
       
+      // Use isPending from the response if it exists, otherwise use our determination
+      isPending = response.isPending !== undefined ? response.isPending : isPending;
+      
       // Create unique ID for the message if none provided
       const localMessageId = messageId || `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
       
@@ -101,14 +112,13 @@ export function useWebhookHandler(
         updated_at: null,
         messageType: 'agent' as const,
         transaction_id: transactionId || uuidv4(),
-        isPending: false // Change this to false to force display immediately
+        isPending: isPending
       };
       
-      // Add AI response immediately to local state
+      // Add AI response immediately to local state with a small delay
+      // to ensure React state updates happen in sequence
       console.log("Adding AI response to chat:", aiMessage);
       
-      // Add the message with a slight delay to ensure UI update
-      // This is necessary because React's state updates are batched
       setTimeout(() => {
         addLocalMessage(aiMessage);
       }, 10);
