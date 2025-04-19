@@ -96,13 +96,10 @@ const App = () => {
                     </ProtectedRoute>
                   }
                 />
+                {/* Make demoroom route accessible without ProtectedRoute wrapper */}
                 <Route
                   path="/rooms/demoroom1"
-                  element={
-                    <ProtectedRoute>
-                      <DemoRoom />
-                    </ProtectedRoute>
-                  }
+                  element={<DemoRoom />}
                 />
                 <Route
                   path="/agents"

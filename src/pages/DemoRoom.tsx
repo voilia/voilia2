@@ -1,17 +1,15 @@
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { MainLayout } from "@/app/layout/MainLayout";
 import { SmartBarProvider } from "@/components/smart-bar/context/SmartBarContext";
 import { FileDropZone } from "@/components/smart-bar/file-upload/FileDropZone";
-import { v4 as uuidv4 } from 'uuid';
 import { useAuth } from "@/components/auth/AuthProvider";
 import { toast } from "sonner";
 import { DemoRoomHeader } from "@/components/rooms/demo/DemoRoomHeader";
 import { DemoRoomContent } from "@/components/rooms/demo/DemoRoomContent";
 import { DemoSmartBar } from "@/components/rooms/demo/DemoSmartBar";
 import { useDemoRoomState } from "@/hooks/demo/useDemoRoomState";
-import { DEMO_AGENT_CONFIG } from "@/config/demo-constants";
 import { cn } from "@/lib/utils";
 
 // Add hideSidebar prop to force sidebar closed in demo room
@@ -48,16 +46,6 @@ export default function DemoRoom() {
     return () => clearTimeout(timeoutId);
   }, [messageGroups, scrollToBottom, isTyping]);
 
-  // Check for authentication
-  useEffect(() => {
-    if (!authLoading && !user) {
-      toast.error("Authentication required", {
-        description: "Please log in to access the demo room"
-      });
-      navigate('/auth', { replace: true });
-    }
-  }, [user, authLoading, navigate]);
-
   // Handle the WebSocket message sending with optimistic UI updates
   const handleSendMessage = async (message: string, files?: File[]) => {
     try {
@@ -79,19 +67,15 @@ export default function DemoRoom() {
     }
   };
 
-  // Don't render content if not authenticated
+  // Simpler loading state - don't block the whole page
   if (authLoading) {
     return (
-      <MainLayout>
+      <MainLayout hideSidebar>
         <div className="flex items-center justify-center h-full">
           <div className="animate-pulse">Loading demo room...</div>
         </div>
       </MainLayout>
     );
-  }
-
-  if (!user) {
-    return null; // Will redirect due to the useEffect above
   }
 
   return (
