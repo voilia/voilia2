@@ -1,8 +1,10 @@
 
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MessageContentRenderer } from '../MessageContent';
 import { MessageContent, ErrorBlock } from '@/types/message-content';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom'; // This import is crucial
+import '@testing-library/jest-dom/extend-expect'; // Add this line to extend Jest matchers
 
 describe('MessageContentRenderer', () => {
   it('renders text content correctly', () => {
@@ -68,3 +70,4 @@ describe('MessageContentRenderer', () => {
     expect(screen.getByText('Unknown content type')).toBeInTheDocument();
   });
 });
+
