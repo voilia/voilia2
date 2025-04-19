@@ -101,12 +101,17 @@ export function useWebhookHandler(
         updated_at: null,
         messageType: 'agent' as const,
         transaction_id: transactionId || uuidv4(),
-        isPending: true
+        isPending: false // Change this to false to force display immediately
       };
       
       // Add AI response immediately to local state
       console.log("Adding AI response to chat:", aiMessage);
-      addLocalMessage(aiMessage);
+      
+      // Add the message with a slight delay to ensure UI update
+      // This is necessary because React's state updates are batched
+      setTimeout(() => {
+        addLocalMessage(aiMessage);
+      }, 10);
       
     } catch (error) {
       console.error("Error processing webhook response:", error);
