@@ -2,13 +2,22 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MessageContentRenderer } from '../MessageContent';
-import { MessageContent, ErrorBlock } from '@/types/message-content';
+import { MessageContent, ErrorBlock, TextBlock, CodeBlock, MarkdownBlock } from '@/types/message-content';
 import '@testing-library/jest-dom';
 import '@testing-library/jest-dom/extend-expect';
 
+// Set up TypeScript React Test Library properly
+declare global {
+  namespace jest {
+    interface Matchers<R> {
+      toBeInTheDocument(): R;
+    }
+  }
+}
+
 describe('MessageContentRenderer', () => {
   it('renders text content correctly', () => {
-    const content: MessageContent = {
+    const content: TextBlock = {
       id: '1',
       type: 'text',
       text: 'Hello world',
@@ -21,7 +30,7 @@ describe('MessageContentRenderer', () => {
   });
 
   it('renders markdown content correctly', () => {
-    const content: MessageContent = {
+    const content: MarkdownBlock = {
       id: '2',
       type: 'markdown',
       content: '**Bold text**',
@@ -33,7 +42,7 @@ describe('MessageContentRenderer', () => {
   });
 
   it('renders code content correctly', () => {
-    const content: MessageContent = {
+    const content: CodeBlock = {
       id: '3',
       type: 'code',
       code: 'console.log("test")',
@@ -46,7 +55,7 @@ describe('MessageContentRenderer', () => {
   });
 
   it('renders error content correctly', () => {
-    const content: MessageContent = {
+    const content: ErrorBlock = {
       id: '4',
       type: 'error',
       message: 'Error occurred',
@@ -69,4 +78,3 @@ describe('MessageContentRenderer', () => {
     expect(screen.getByText('Unknown content type')).toBeInTheDocument();
   });
 });
-

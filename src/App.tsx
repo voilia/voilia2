@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
 import RoomDetail from "./pages/RoomDetail";
+import DemoRoom from "./pages/DemoRoom";
 import Agents from "./pages/Agents";
 import AgentDetail from "./pages/AgentDetail";
 import Rooms from "./pages/Rooms";
@@ -92,6 +93,14 @@ const App = () => {
                   element={
                     <ProtectedRoute>
                       <RoomDetail />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/rooms/demoroom1"
+                  element={
+                    <ProtectedRoute>
+                      <DemoRoom />
                     </ProtectedRoute>
                   }
                 />
