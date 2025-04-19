@@ -9,7 +9,7 @@ import { FileDropZone } from "@/components/smart-bar/file-upload/FileDropZone";
 import { useThrottle } from "@/components/smart-bar/buttons/mode-selector/hooks/useThrottle";
 import { useRoomDetailMessages } from "@/hooks/useRoomDetailMessages";
 import { RoomDetailHeader } from "@/components/rooms/detail/RoomDetailHeader";
-import { RoomMessagesContainer } from "@/components/rooms/detail/RoomMessagesContainer";
+import { RoomMessagesContainer } from "@/components/rooms/RoomMessagesContainer";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { toast } from "sonner";
 
@@ -24,6 +24,7 @@ export default function RoomDetail() {
   const {
     messageGroups,
     isLoading: isMessagesLoading,
+    isProcessing,
     handleSendMessage,
     addLocalMessage
   } = useRoomDetailMessages(id, room?.project_id || null);
@@ -119,6 +120,7 @@ export default function RoomDetail() {
               <RoomMessagesContainer
                 ref={scrollAreaRef}
                 isLoading={isLoading}
+                isProcessing={isProcessing}
                 messages={messageGroups}
                 roomName={room?.name}
                 currentUserId={user?.id}
