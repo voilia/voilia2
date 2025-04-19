@@ -14,7 +14,7 @@ export function useWebhookHandler(
     
     console.log("Received webhook response:", response);
     
-    // Skip explicitly internal messages with no content
+    // Skip internal messages explicitly marked for no display
     if (response.internal === true && !response.message) {
       console.log("Skipping internal placeholder message");
       return;
@@ -110,14 +110,15 @@ export function useWebhookHandler(
       
       console.log("Adding AI response to chat:", aiMessage);
       
-      // Use requestAnimationFrame for smoother updates
+      // Force immediate UI update with requestAnimationFrame
       requestAnimationFrame(() => {
         addLocalMessage(aiMessage);
       });
       
     } catch (error) {
       console.error("Error processing webhook response:", error);
-      toast.error("Failed to process AI response");
+      // Quieter error handling - don't disturb the user unless critical
+      console.warn("Failed to process AI response, trying real-time subscription as fallback");
     }
   }, [roomId, addLocalMessage]);
 
