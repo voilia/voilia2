@@ -14,9 +14,19 @@ export function useWebhookHandler(
     
     console.log("Received webhook response:", response);
     
-    // Skip internal messages explicitly marked for no display
+    // Skip explicitly internal messages with no content
     if (response.internal === true && !response.message) {
-      console.log("Skipping internal placeholder message with no content");
+      console.log("Skipping internal placeholder message");
+      return;
+    }
+    
+    // Skip processing placeholder messages
+    if (response.message && (
+        response.message.includes("awaiting response") ||
+        response.message.includes("being processed") ||
+        response.message.includes("processing your request")
+    )) {
+      console.log("Skipping placeholder message:", response.message);
       return;
     }
     
@@ -25,7 +35,6 @@ export function useWebhookHandler(
       let messageText = null;
       let messageId = null;
       let agentId = null;
-      let isPending = false;
       
       // For standard response format from n8n webhook
       if (response.success === true && response.response && response.response.text) {
@@ -38,17 +47,12 @@ export function useWebhookHandler(
           agentId = response.data.agent.id;
         }
       } 
-      // For no-cors initial response (a placeholder)
-      else if (response.status === "processing" && response.message) {
-        console.log("Processing initial no-cors response:", response.message);
+      // For no-cors initial response (a real message, not just a placeholder)
+      else if (response.status && response.message && 
+               !response.message.includes("processing") && 
+               !response.message.includes("awaiting")) {
+        console.log("Processing message from no-cors response:", response.message);
         messageText = response.message;
-        isPending = true;
-      }
-      // For awaiting response follow-up
-      else if (response.status === "awaiting" && response.message) {
-        console.log("Processing awaiting follow-up:", response.message);
-        messageText = response.message;
-        isPending = true;
       }
       // Alternative response format with nested data
       else if (response.data?.response) {
@@ -68,17 +72,15 @@ export function useWebhookHandler(
                     response.data?.text ||
                     response.response?.text ||
                     (typeof response === 'string' ? response : null);
-                    
-        // Skip empty messages
-        if (!messageText) {
-          console.log("Skipping empty message");
-          return;
-        }
-        
-        // Check if this is a placeholder message
-        if (messageText.includes("processing") || messageText.includes("awaiting response")) {
-          isPending = true;
-        }
+      }
+      
+      // Skip empty messages or placeholders
+      if (!messageText || 
+          messageText.includes("processing your request") ||
+          messageText.includes("being processed") ||
+          messageText.includes("awaiting response")) {
+        console.log("Skipping empty or placeholder message");
+        return;
       }
       
       // Try to extract agent ID if available
@@ -89,17 +91,8 @@ export function useWebhookHandler(
         }
       }
       
-      // Skip if no message text was extracted
-      if (!messageText) {
-        console.warn("No message text found in response:", response);
-        return;
-      }
-      
-      // Use isPending from the response if it exists, otherwise use our determination
-      isPending = response.isPending !== undefined ? response.isPending : isPending;
-      
       // Create unique ID for the message if none provided
-      const localMessageId = messageId || `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      const localMessageId = messageId || `webhook-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
       
       // Create AI message for immediate display
       const aiMessage: RoomMessage = {
@@ -112,16 +105,15 @@ export function useWebhookHandler(
         updated_at: null,
         messageType: 'agent' as const,
         transaction_id: transactionId || uuidv4(),
-        isPending: isPending
+        isPending: false // No more pending messages
       };
       
-      // Add AI response immediately to local state with a small delay
-      // to ensure React state updates happen in sequence
       console.log("Adding AI response to chat:", aiMessage);
       
-      setTimeout(() => {
+      // Use requestAnimationFrame for smoother updates
+      requestAnimationFrame(() => {
         addLocalMessage(aiMessage);
-      }, 10);
+      });
       
     } catch (error) {
       console.error("Error processing webhook response:", error);
