@@ -12,6 +12,7 @@ export const useRoomMessageSubscription = (
   const reconnectAttempts = useRef<number>(0);
   const maxReconnectAttempts = 5;
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const messageCache = useRef<Set<string>>(new Set());
 
   // Clean up function for subscription
   const cleanupSubscription = useCallback(() => {
@@ -31,7 +32,50 @@ export const useRoomMessageSubscription = (
     }
   }, [roomId]);
 
-  // Setup subscription function
+  // Process an incoming message with deduplication
+  const processMessage = useCallback((payload: any, isNewMessage: boolean) => {
+    const messageId = payload.new.id;
+    const cacheKey = `${messageId}-${isNewMessage ? 'new' : 'update'}`;
+    
+    // Skip if we've already processed this exact message recently
+    if (messageCache.current.has(cacheKey)) {
+      console.log("Skipping duplicate message:", cacheKey);
+      return;
+    }
+    
+    // Add to cache to prevent duplicates
+    messageCache.current.add(cacheKey);
+    
+    // Clear from cache after a while to prevent memory leaks
+    setTimeout(() => {
+      messageCache.current.delete(cacheKey);
+    }, 10000);
+    
+    console.log(`${isNewMessage ? "New" : "Updated"} message from realtime:`, payload.new);
+    
+    // Check if this is an AI message
+    const isAiMessage = !payload.new.user_id && payload.new.agent_id;
+    
+    const newMessage: RoomMessage = {
+      ...payload.new as any,
+      transaction_id: (payload.new as any).transaction_id || `rt-${(payload.new as any).id}`,
+      messageType: isAiMessage ? 'agent' as const : 'user' as const,
+      isPending: false
+    };
+    
+    console.log(`Processing ${isNewMessage ? "new" : "updated"} message:`, {
+      isAiMessage,
+      transactionId: newMessage.transaction_id,
+      messageType: newMessage.messageType
+    });
+    
+    // Use requestAnimationFrame to ensure smooth UI updates
+    requestAnimationFrame(() => {
+      onNewMessage(newMessage);
+    });
+  }, [onNewMessage]);
+
+  // Setup subscription function with better handling
   const setupSubscription = useCallback(() => {
     if (!roomId) return;
     
@@ -45,8 +89,8 @@ export const useRoomMessageSubscription = (
           config: {
             presence: { key: Date.now().toString() },
             broadcast: { self: true },
-            retryIntervalMs: 3000,
-            retryBackoffMs: 5000
+            retryIntervalMs: 1000,
+            retryBackoffMs: 1000
           }
         })
         .on(
@@ -57,27 +101,7 @@ export const useRoomMessageSubscription = (
             table: "room_messages",
             filter: `room_id=eq.${roomId}`,
           },
-          (payload) => {
-            console.log("New message from realtime subscription:", payload.new);
-            // Check if this is an AI message (null user_id and has agent_id)
-            const isAiMessage = !payload.new.user_id && payload.new.agent_id;
-            
-            const newMessage: RoomMessage = {
-              ...payload.new as any,
-              transaction_id: (payload.new as any).transaction_id || `rt-${(payload.new as any).id}`,
-              messageType: isAiMessage ? 'agent' as const : 'user' as const,
-              isPending: false
-            };
-            
-            console.log("Processing realtime message:", {
-              isAiMessage,
-              transactionId: newMessage.transaction_id,
-              messageType: newMessage.messageType
-            });
-            
-            // Process immediately without delay
-            onNewMessage(newMessage);
-          }
+          (payload) => processMessage(payload, true)
         )
         .on(
           "postgres_changes",
@@ -87,26 +111,7 @@ export const useRoomMessageSubscription = (
             table: "room_messages",
             filter: `room_id=eq.${roomId}`,
           },
-          (payload) => {
-            console.log("Updated message from realtime:", payload.new);
-            const isAiMessage = !payload.new.user_id && payload.new.agent_id;
-            
-            const updatedMessage: RoomMessage = {
-              ...payload.new as any,
-              transaction_id: (payload.new as any).transaction_id || `rt-${(payload.new as any).id}`,
-              messageType: isAiMessage ? 'agent' as const : 'user' as const,
-              isPending: false
-            };
-            
-            console.log("Processing updated message:", {
-              isAiMessage,
-              transactionId: updatedMessage.transaction_id,
-              messageType: updatedMessage.messageType
-            });
-            
-            // Process immediately without delay
-            onNewMessage(updatedMessage);
-          }
+          (payload) => processMessage(payload, false)
         )
         .on('error', (error) => {
           console.error('Supabase realtime error:', error);
@@ -130,17 +135,18 @@ export const useRoomMessageSubscription = (
               } else {
                 clearInterval(pingInterval);
               }
-            }, 30000); // Every 30 seconds
+            }, 25000); // Every 25 seconds
             
-            // Clear interval on cleanup
+            // Ensure ping interval is cleared on cleanup
             return () => clearInterval(pingInterval);
           } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
             console.error('Subscription error or closed:', status);
             
-            // Attempt to reconnect if we haven't exceeded max attempts
+            // Attempt to reconnect immediately for faster recovery
             if (reconnectAttempts.current < maxReconnectAttempts) {
               reconnectAttempts.current += 1;
-              const delay = Math.min(1000 * Math.pow(2, reconnectAttempts.current), 30000); // Exponential backoff
+              // Use shorter delays for faster reconnection
+              const delay = Math.min(500 * Math.pow(1.5, reconnectAttempts.current), 10000);
               
               console.log(`Attempting to reconnect (${reconnectAttempts.current}/${maxReconnectAttempts}) in ${delay}ms`);
               
@@ -155,10 +161,22 @@ export const useRoomMessageSubscription = (
                 setupSubscription();
               }, delay);
             } else {
-              // We've exceeded max reconnect attempts, show error to user
-              toast.error("Lost connection to message updates. Please refresh.", {
-                id: "subscription-error"
+              // Show error but keep trying in background
+              toast.error("Connection issues detected. Messages may be delayed.", {
+                id: "subscription-error",
+                duration: 3000
               });
+              
+              // Still try to reconnect after a longer delay
+              if (reconnectTimeoutRef.current) {
+                clearTimeout(reconnectTimeoutRef.current);
+              }
+              
+              reconnectTimeoutRef.current = setTimeout(() => {
+                console.log("Final reconnection attempt...");
+                reconnectAttempts.current = 0;
+                setupSubscription();
+              }, 5000);
             }
           }
         });
@@ -166,23 +184,34 @@ export const useRoomMessageSubscription = (
       channelRef.current = channel;
     } catch (error) {
       console.error("Error setting up realtime subscription:", error);
-      toast.error("Failed to connect to message updates", {
-        id: "subscription-error"
-      });
+      // Silent error handling to avoid disrupting the user experience
+      // Try again after a short delay
+      setTimeout(() => {
+        setupSubscription();
+      }, 2000);
     }
-  }, [roomId, onNewMessage, cleanupSubscription]);
+  }, [roomId, onNewMessage, cleanupSubscription, processMessage]);
 
-  // Initial setup
+  // Initial setup with immediate connection retry on failure
   useEffect(() => {
     if (!roomId) return;
 
     setupSubscription();
+    
+    // Add a backup timer to check connection status
+    const checkConnectionTimer = setInterval(() => {
+      if (!channelRef.current || channelRef.current.state === 'CLOSED') {
+        console.log('Connection check failed, reconnecting...');
+        setupSubscription();
+      }
+    }, 10000); // Check every 10 seconds
 
     // Cleanup on unmount
     return () => {
+      clearInterval(checkConnectionTimer);
       cleanupSubscription();
     };
-  }, [roomId, onNewMessage, setupSubscription, cleanupSubscription]);
+  }, [roomId, setupSubscription, cleanupSubscription]);
 
   // Add window focus/blur event listeners to handle reconnection
   useEffect(() => {
