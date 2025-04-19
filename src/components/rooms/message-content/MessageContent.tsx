@@ -4,14 +4,47 @@ import { MessageContent } from "@/types/message-content";
 import { TextContent } from "./TextContent";
 import { CodeContent } from "./CodeContent";
 import { ImageContent } from "./ImageContent";
-import { VideoContent } from "./VideoContent";
-import { FileContent } from "./FileContent";
-import { FormContent } from "./FormContent";
-import { ToolContent } from "./ToolContent";
-import { EmbedContent } from "./EmbedContent";
 import { MarkdownContent } from "./MarkdownContent";
-import { AgentContent } from "./AgentContent";
-import { ErrorContent } from "./ErrorContent";
+
+// Placeholder components for types we haven't implemented yet
+const PlaceholderContent = ({ type, className }: { type: string, className?: string }) => (
+  <div className={className}>
+    <div className="p-2 rounded bg-muted/50 text-center text-sm text-muted-foreground">
+      {type} content (not implemented yet)
+    </div>
+  </div>
+);
+
+// Use placeholders for components we haven't created yet
+const VideoContent = ({ content, className }: any) => (
+  <PlaceholderContent type="Video" className={className} />
+);
+
+const FileContent = ({ content, className }: any) => (
+  <PlaceholderContent type="File" className={className} />
+);
+
+const FormContent = ({ content, className }: any) => (
+  <PlaceholderContent type="Form" className={className} />
+);
+
+const ToolContent = ({ content, className }: any) => (
+  <PlaceholderContent type="Tool" className={className} />
+);
+
+const EmbedContent = ({ content, className }: any) => (
+  <PlaceholderContent type="Embed" className={className} />
+);
+
+const AgentContent = ({ content, className }: any) => (
+  <PlaceholderContent type="Agent" className={className} />
+);
+
+const ErrorContent = ({ content, className }: any) => (
+  <div className={`p-2 rounded bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 ${className}`}>
+    {content.message || "Error occurred"}
+  </div>
+);
 
 interface MessageContentRendererProps {
   content: MessageContent;

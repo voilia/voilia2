@@ -1,5 +1,6 @@
 
 import { LucideIcon } from "lucide-react";
+import { RoomMessage } from "@/types/room-messages";
 
 /**
  * Base type for all message content blocks
@@ -179,7 +180,7 @@ export type MessageContent =
 /**
  * Extended room message with content blocks
  */
-export interface EnhancedRoomMessage extends Omit<RoomMessage, 'message_text'> {
+export interface EnhancedRoomMessage {
   contents: MessageContent[];
   rawText?: string; // Original message text for fallback
 }

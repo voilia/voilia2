@@ -1,154 +1,133 @@
 
 import { v4 as uuidv4 } from 'uuid';
-import {
-  MessageContent,
-  TextBlock,
+import { 
+  MessageContent, 
+  TextBlock, 
+  MarkdownBlock, 
   CodeBlock,
-  ImageBlock,
-  MarkdownBlock
 } from '@/types/message-content';
+import { RoomMessage } from '@/types/room-messages';
 
 /**
- * Parse raw message text to identify different content blocks
+ * Parses a room message into structured message content blocks
  */
-export function parseMessageContent(message: string): MessageContent[] {
-  if (!message) {
-    return [];
-  }
-
+export function parseRoomMessage(message: RoomMessage): MessageContent[] {
   const contents: MessageContent[] = [];
+  const text = message.message_text || '';
   
-  // Check if the message contains code blocks
-  const codeBlockRegex = /```([a-zA-Z]*)\n([\s\S]*?)\n```/g;
-  const imageRegex = /!\[(.*?)\]\((.*?)\)/g;
-  const markdownRegex = /(?:\*\*.*?\*\*|__.*?__|_.*?_|\*.*?\*|~~.*?~~|`.*?`|\[.*?\]\(.*?\))/g;
+  // Simple detection of content types based on patterns
   
+  // Check for code blocks with markdown-style backticks
+  const codeBlockRegex = /```([a-zA-Z]*)\n([\s\S]*?)```/g;
+  let codeMatch;
   let lastIndex = 0;
-  let match;
   
-  // First, extract code blocks
-  while ((match = codeBlockRegex.exec(message)) !== null) {
-    // Add text before code block
-    if (match.index > lastIndex) {
-      const textBefore = message.substring(lastIndex, match.index);
-      if (textBefore.trim()) {
+  while ((codeMatch = codeBlockRegex.exec(text)) !== null) {
+    // Add any text before this code block
+    if (codeMatch.index > lastIndex) {
+      const textBefore = text.substring(lastIndex, codeMatch.index).trim();
+      if (textBefore) {
         contents.push(createTextBlock(textBefore));
       }
     }
     
-    // Add code block
-    contents.push({
-      id: uuidv4(),
-      type: "code",
-      language: match[1] || "plaintext",
-      code: match[2],
-      createdAt: new Date().toISOString()
-    } as CodeBlock);
+    // Add the code block
+    const language = codeMatch[1] || '';
+    const code = codeMatch[2];
+    contents.push(createCodeBlock(code, language));
     
-    lastIndex = match.index + match[0].length;
+    lastIndex = codeMatch.index + codeMatch[0].length;
   }
   
-  // Process remaining text or entire message if no code blocks
-  if (lastIndex < message.length) {
-    const remainingText = message.substring(lastIndex);
-    
-    // Look for images in the remaining text
-    lastIndex = 0;
-    while ((match = imageRegex.exec(remainingText)) !== null) {
-      // Add text before image
-      if (match.index > lastIndex) {
-        const textBefore = remainingText.substring(lastIndex, match.index);
-        if (textBefore.trim()) {
-          contents.push(createTextBlock(textBefore));
-        }
-      }
-      
-      // Add image block
-      contents.push({
-        id: uuidv4(),
-        type: "image",
-        url: match[2],
-        alt: match[1] || "",
-        createdAt: new Date().toISOString()
-      } as ImageBlock);
-      
-      lastIndex = match.index + match[0].length;
-    }
-    
-    // Process final text segment or the whole remaining text if no images
-    if (lastIndex < remainingText.length) {
-      const finalText = remainingText.substring(lastIndex);
-      
-      // Check if text has markdown formatting
-      if (markdownRegex.test(finalText)) {
-        contents.push({
-          id: uuidv4(),
-          type: "markdown",
-          content: finalText,
-          createdAt: new Date().toISOString()
-        } as MarkdownBlock);
+  // Add remaining text after the last code block
+  if (lastIndex < text.length) {
+    const remainingText = text.substring(lastIndex).trim();
+    if (remainingText) {
+      // Check if the text appears to be markdown
+      if (isMarkdown(remainingText)) {
+        contents.push(createMarkdownBlock(remainingText));
       } else {
-        contents.push(createTextBlock(finalText));
+        contents.push(createTextBlock(remainingText));
       }
     }
+  }
+  
+  // If no content was detected, treat the entire message as text
+  if (contents.length === 0 && text) {
+    contents.push(createTextBlock(text));
   }
   
   return contents;
 }
 
+/**
+ * Creates a simple text block
+ */
 function createTextBlock(text: string): TextBlock {
-  // Determine if text has emojis or other rich content
-  const hasEmojis = /[\p{Emoji}]/u.test(text);
-  
   return {
     id: uuidv4(),
-    type: "text",
-    text: text,
-    format: hasEmojis ? "rich" : "plain",
+    type: 'text',
+    text,
+    format: 'plain',
     createdAt: new Date().toISOString()
   };
 }
 
 /**
- * Convert rich message contents back to text representation
+ * Creates a markdown block
  */
-export function contentsToText(contents: MessageContent[]): string {
-  return contents.map(content => {
-    switch (content.type) {
-      case "text":
-        return (content as TextBlock).text;
-      case "code":
-        const codeBlock = content as CodeBlock;
-        return `\`\`\`${codeBlock.language || ""}\n${codeBlock.code}\n\`\`\``;
-      case "markdown":
-        return (content as MarkdownBlock).content;
-      case "image":
-        const imgBlock = content as ImageBlock;
-        return `![${imgBlock.alt || ""}](${imgBlock.url})`;
-      // Add other cases as needed
-      default:
-        return "";
-    }
-  }).join("\n\n");
+function createMarkdownBlock(content: string): MarkdownBlock {
+  return {
+    id: uuidv4(),
+    type: 'markdown',
+    content,
+    createdAt: new Date().toISOString()
+  };
 }
 
 /**
- * Enhance a room message with parsed content blocks
+ * Creates a code block
  */
-export function enhanceRoomMessage(message: RoomMessage): EnhancedRoomMessage {
-  if (!message.message_text) {
-    return {
-      ...message,
-      contents: [],
-      rawText: ""
-    };
-  }
-
-  const contents = parseMessageContent(message.message_text);
-  
+function createCodeBlock(code: string, language: string = ''): CodeBlock {
   return {
-    ...message,
-    contents,
+    id: uuidv4(),
+    type: 'code',
+    code,
+    language,
+    createdAt: new Date().toISOString()
+  };
+}
+
+/**
+ * Check if text appears to be markdown
+ */
+function isMarkdown(text: string): boolean {
+  // Basic heuristic to detect markdown syntax
+  const markdownPatterns = [
+    /^#+ /, // Headers
+    /\*\*.+\*\*/, // Bold
+    /\*.+\*/, // Italic
+    /\[.+\]\(.+\)/, // Links
+    /^\s*[-*+] /, // Lists
+    /^\s*\d+\. /, // Numbered lists
+    /^>.+$/, // Blockquotes
+    /!\[.+\]\(.+\)/, // Images
+    /~~.+~~/, // Strikethrough
+    /\|.+\|.+\|/ // Tables
+  ];
+  
+  return markdownPatterns.some(pattern => pattern.test(text));
+}
+
+/**
+ * Convert a RoomMessage to an EnhancedRoomMessage with content blocks
+ */
+export function enhanceRoomMessage(message: RoomMessage): {
+  contents: MessageContent[];
+  rawText?: string;
+} {
+  return {
+    contents: parseRoomMessage(message),
     rawText: message.message_text
   };
 }
