@@ -347,6 +347,106 @@ export type Database = {
         }
         Relationships: []
       }
+      agent_prompt_feedback: {
+        Row: {
+          created_at: string | null
+          id: string
+          prompt_version_id: string | null
+          user_id: string | null
+          vote_type: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          prompt_version_id?: string | null
+          user_id?: string | null
+          vote_type?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          prompt_version_id?: string | null
+          user_id?: string | null
+          vote_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_prompt_feedback_prompt_version_id_fkey"
+            columns: ["prompt_version_id"]
+            isOneToOne: false
+            referencedRelation: "agent_prompt_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_prompt_versions: {
+        Row: {
+          agent_id: string | null
+          changelog: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          language: string | null
+          llm_target: string | null
+          system_prompt: string
+          tool_target: string | null
+          version: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          changelog?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          language?: string | null
+          llm_target?: string | null
+          system_prompt: string
+          tool_target?: string | null
+          version?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          changelog?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          language?: string | null
+          llm_target?: string | null
+          system_prompt?: string
+          tool_target?: string | null
+          version?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_prompt_versions_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_prompt_versions_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "public_agents_with_meta"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_prompt_versions_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "public_agents_with_tags"
+            referencedColumns: ["agent_id"]
+          },
+          {
+            foreignKeyName: "agent_prompt_versions_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "room_agents_with_metadata"
+            referencedColumns: ["agent_id"]
+          },
+        ]
+      }
       agent_prompts: {
         Row: {
           agent_id: string | null
