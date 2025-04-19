@@ -1,5 +1,5 @@
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { submitSmartBarMessage } from "@/services/webhook/webhookService";
 import { RoomMessage } from "@/types/room-messages";
@@ -15,6 +15,7 @@ export function useMessageSender(
 ) {
   const { user } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
+  const thinkingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleSendMessage = useCallback(async (text: string, files?: File[]) => {
     if (!roomId || !text.trim()) return;
@@ -25,7 +26,7 @@ export function useMessageSender(
     
     // Create and display optimistic user message immediately
     const optimisticUserMessage: RoomMessage = {
-      id: `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+      id: `user-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
       room_id: roomId,
       user_id: user?.id || null,
       agent_id: null,
@@ -34,7 +35,7 @@ export function useMessageSender(
       updated_at: null,
       messageType: 'user',
       transaction_id: transactionId,
-      isPending: true
+      isPending: false // Set to false to ensure it appears immediately
     };
     
     // Add user message immediately to UI
@@ -42,7 +43,7 @@ export function useMessageSender(
     addLocalMessage(optimisticUserMessage);
     
     try {
-      // Persist the user message to the database FIRST, before webhook call
+      // Persist the user message to the database
       const { error: dbError } = await supabase
         .from("room_messages")
         .insert({
@@ -65,6 +66,7 @@ export function useMessageSender(
       
       console.log("Submitting message to webhook:", finalText);
       
+      // Send the message to the webhook
       const result = await submitSmartBarMessage({
         message: finalText,
         roomId,
@@ -78,7 +80,10 @@ export function useMessageSender(
           size: file.size,
           preview: URL.createObjectURL(file)
         })) || [],
-        onResponseReceived: handleWebhookResponse,
+        onResponseReceived: (response, tid) => {
+          // Process webhook response
+          handleWebhookResponse(response, tid);
+        },
         transactionId
       });
       
@@ -91,6 +96,12 @@ export function useMessageSender(
         description: error instanceof Error ? error.message : "An unexpected error occurred"
       });
     } finally {
+      // Clear any pending timers
+      if (thinkingTimerRef.current) {
+        clearTimeout(thinkingTimerRef.current);
+        thinkingTimerRef.current = null;
+      }
+      
       setIsProcessing(false);
     }
   }, [roomId, projectId, user, addLocalMessage, handleWebhookResponse]);

@@ -76,6 +76,13 @@ export type Database = {
             foreignKeyName: "agent_capabilities_agent_id_fkey"
             columns: ["agent_id"]
             isOneToOne: false
+            referencedRelation: "public_agents_with_meta"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_capabilities_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
             referencedRelation: "public_agents_with_tags"
             referencedColumns: ["agent_id"]
           },
@@ -122,6 +129,13 @@ export type Database = {
             columns: ["agent_id"]
             isOneToOne: false
             referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_chain_steps_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "public_agents_with_meta"
             referencedColumns: ["id"]
           },
           {
@@ -196,6 +210,13 @@ export type Database = {
             foreignKeyName: "agent_feedback_agent_id_fkey"
             columns: ["agent_id"]
             isOneToOne: false
+            referencedRelation: "public_agents_with_meta"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_feedback_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
             referencedRelation: "public_agents_with_tags"
             referencedColumns: ["agent_id"]
           },
@@ -246,6 +267,13 @@ export type Database = {
             foreignKeyName: "agent_pairings_agent_id_fkey"
             columns: ["agent_id"]
             isOneToOne: false
+            referencedRelation: "public_agents_with_meta"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_pairings_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
             referencedRelation: "public_agents_with_tags"
             referencedColumns: ["agent_id"]
           },
@@ -261,6 +289,13 @@ export type Database = {
             columns: ["paired_agent_id"]
             isOneToOne: false
             referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_pairings_paired_agent_id_fkey"
+            columns: ["paired_agent_id"]
+            isOneToOne: false
+            referencedRelation: "public_agents_with_meta"
             referencedColumns: ["id"]
           },
           {
@@ -340,6 +375,13 @@ export type Database = {
             foreignKeyName: "agent_prompts_agent_id_fkey"
             columns: ["agent_id"]
             isOneToOne: true
+            referencedRelation: "public_agents_with_meta"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_prompts_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: true
             referencedRelation: "public_agents_with_tags"
             referencedColumns: ["agent_id"]
           },
@@ -374,6 +416,13 @@ export type Database = {
             columns: ["agent_id"]
             isOneToOne: false
             referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_tag_links_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "public_agents_with_meta"
             referencedColumns: ["id"]
           },
           {
@@ -466,6 +515,13 @@ export type Database = {
             foreignKeyName: "agent_usage_instructions_agent_id_fkey"
             columns: ["agent_id"]
             isOneToOne: false
+            referencedRelation: "public_agents_with_meta"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_usage_instructions_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
             referencedRelation: "public_agents_with_tags"
             referencedColumns: ["agent_id"]
           },
@@ -515,6 +571,13 @@ export type Database = {
             columns: ["agent_id"]
             isOneToOne: false
             referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_versions_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "public_agents_with_meta"
             referencedColumns: ["id"]
           },
           {
@@ -630,6 +693,13 @@ export type Database = {
             foreignKeyName: "model_responses_agent_id_fkey"
             columns: ["agent_id"]
             isOneToOne: false
+            referencedRelation: "public_agents_with_meta"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "model_responses_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
             referencedRelation: "public_agents_with_tags"
             referencedColumns: ["agent_id"]
           },
@@ -683,6 +753,13 @@ export type Database = {
             columns: ["agent_id"]
             isOneToOne: false
             referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "preview_blocks_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "public_agents_with_meta"
             referencedColumns: ["id"]
           },
           {
@@ -916,6 +993,13 @@ export type Database = {
             foreignKeyName: "prompt_execution_agents_agent_id_fkey"
             columns: ["agent_id"]
             isOneToOne: false
+            referencedRelation: "public_agents_with_meta"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prompt_execution_agents_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
             referencedRelation: "public_agents_with_tags"
             referencedColumns: ["agent_id"]
           },
@@ -1013,6 +1097,13 @@ export type Database = {
             foreignKeyName: "room_agent_personas_agent_id_fkey"
             columns: ["agent_id"]
             isOneToOne: false
+            referencedRelation: "public_agents_with_meta"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "room_agent_personas_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
             referencedRelation: "public_agents_with_tags"
             referencedColumns: ["agent_id"]
           },
@@ -1076,6 +1167,13 @@ export type Database = {
             foreignKeyName: "room_agents_agent_id_fkey"
             columns: ["agent_id"]
             isOneToOne: false
+            referencedRelation: "public_agents_with_meta"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "room_agents_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
             referencedRelation: "public_agents_with_tags"
             referencedColumns: ["agent_id"]
           },
@@ -1132,6 +1230,13 @@ export type Database = {
             columns: ["agent_id"]
             isOneToOne: false
             referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "room_messages_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "public_agents_with_meta"
             referencedColumns: ["id"]
           },
           {
@@ -1389,6 +1494,13 @@ export type Database = {
             foreignKeyName: "usage_log_agent_id_fkey"
             columns: ["agent_id"]
             isOneToOne: false
+            referencedRelation: "public_agents_with_meta"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "usage_log_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
             referencedRelation: "public_agents_with_tags"
             referencedColumns: ["agent_id"]
           },
@@ -1412,6 +1524,59 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "projects"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_example_prompts: {
+        Row: {
+          agent_id: string | null
+          created_at: string | null
+          id: string
+          language: string | null
+          prompt: string
+        }
+        Insert: {
+          agent_id?: string | null
+          created_at?: string | null
+          id?: string
+          language?: string | null
+          prompt: string
+        }
+        Update: {
+          agent_id?: string | null
+          created_at?: string | null
+          id?: string
+          language?: string | null
+          prompt?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_example_prompts_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_example_prompts_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "public_agents_with_meta"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_example_prompts_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "public_agents_with_tags"
+            referencedColumns: ["agent_id"]
+          },
+          {
+            foreignKeyName: "user_example_prompts_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "room_agents_with_metadata"
+            referencedColumns: ["agent_id"]
           },
         ]
       }
@@ -1593,6 +1758,13 @@ export type Database = {
             foreignKeyName: "agent_versions_agent_id_fkey"
             columns: ["agent_id"]
             isOneToOne: false
+            referencedRelation: "public_agents_with_meta"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_versions_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
             referencedRelation: "public_agents_with_tags"
             referencedColumns: ["agent_id"]
           },
@@ -1604,6 +1776,22 @@ export type Database = {
             referencedColumns: ["agent_id"]
           },
         ]
+      }
+      public_agents_with_meta: {
+        Row: {
+          agent_type: string | null
+          capabilities: Json[] | null
+          changelog: string | null
+          color: string | null
+          description: string | null
+          icon: string | null
+          id: string | null
+          name: string | null
+          system_prompt: string | null
+          tags: string[] | null
+          version: string | null
+        }
+        Relationships: []
       }
       public_agents_with_tags: {
         Row: {

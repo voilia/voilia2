@@ -37,7 +37,7 @@ describe('useMessageSender', () => {
     expect(mockAddLocalMessage).toHaveBeenCalledWith(
       expect.objectContaining({
         message_text: mockText,
-        isPending: true
+        isPending: false
       })
     );
     expect(submitSmartBarMessage).toHaveBeenCalled();
