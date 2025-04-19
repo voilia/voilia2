@@ -75,6 +75,11 @@
   }
 }
 
+/* Properly preserve whitespace in messages while allowing wrapping */
+.whitespace-pre-wrap {
+  white-space: pre-wrap;
+}
+
 /* Typing cursor animation - subtle pulsing vertical line */
 .typing-cursor {
   display: inline-block;
