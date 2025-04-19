@@ -16,4 +16,6 @@ export interface Agent {
   isPublic?: boolean;
   supported_languages?: string[];
   uses_tools?: boolean;
+  system_prompt?: string;
+  capabilities?: string[];
 }
