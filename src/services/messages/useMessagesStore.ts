@@ -21,6 +21,19 @@ export function useMessagesStore() {
         return prev;
       }
       
+      // Also check for transaction ID match that would cause duplicates
+      if (message.transaction_id) {
+        const transactionMatch = prev.some(msg => 
+          msg.transaction_id === message.transaction_id && 
+          msg.messageType === message.messageType
+        );
+        
+        if (transactionMatch) {
+          console.log("Transaction ID match found, not adding duplicate:", message.transaction_id);
+          return prev;
+        }
+      }
+      
       console.log("Adding new message to store:", message);
       return [...prev, message].sort((a, b) => 
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
@@ -56,7 +69,7 @@ export function useMessagesStore() {
       // If we get here, this is a completely new message from the real-time subscription
       // We should add it to the list rather than ignoring it
       console.log("No matching message found, adding as new from real-time:", message);
-      return [...prev, message].sort((a, b) => 
+      return [...prev, { ...message, isPending: false }].sort((a, b) => 
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       );
     });
