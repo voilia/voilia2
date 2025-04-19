@@ -108,17 +108,14 @@ export function useWebhookHandler(
         isPending: false // No more pending messages
       };
       
-      console.log("Adding AI response to chat:", aiMessage);
+      console.log("Adding AI response via webhook to chat:", aiMessage);
       
-      // Force immediate UI update with requestAnimationFrame
-      requestAnimationFrame(() => {
-        addLocalMessage(aiMessage);
-      });
+      // Process without any delay for immediate display
+      addLocalMessage(aiMessage);
       
     } catch (error) {
       console.error("Error processing webhook response:", error);
-      // Quieter error handling - don't disturb the user unless critical
-      console.warn("Failed to process AI response, trying real-time subscription as fallback");
+      // Silent error handling - rely on real-time subscription as backup
     }
   }, [roomId, addLocalMessage]);
 
