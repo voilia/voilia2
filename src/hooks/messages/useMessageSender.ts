@@ -34,7 +34,7 @@ export function useMessageSender(
       updated_at: null,
       messageType: 'user',
       transaction_id: transactionId,
-      isPending: true
+      isPending: false // Set to false to ensure it appears immediately
     };
     
     // Add user message immediately to UI
@@ -65,6 +65,27 @@ export function useMessageSender(
       
       console.log("Submitting message to webhook:", finalText);
       
+      // Add a small loading message that will be replaced by the actual response
+      const placeholderMessage: RoomMessage = {
+        id: `placeholder-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+        room_id: roomId,
+        user_id: null,
+        agent_id: null,
+        message_text: "Waiting for response...",
+        created_at: new Date().toISOString(),
+        updated_at: null,
+        messageType: 'agent',
+        transaction_id: `${transactionId}-placeholder`,
+        isPending: true
+      };
+      
+      // Show placeholder while waiting
+      setTimeout(() => {
+        if (isProcessing) {
+          addLocalMessage(placeholderMessage);
+        }
+      }, 500);
+      
       const result = await submitSmartBarMessage({
         message: finalText,
         roomId,
@@ -78,7 +99,13 @@ export function useMessageSender(
           size: file.size,
           preview: URL.createObjectURL(file)
         })) || [],
-        onResponseReceived: handleWebhookResponse,
+        onResponseReceived: (response, tid) => {
+          // Remove placeholder before showing real response
+          setIsProcessing(false);
+          
+          // Process webhook response
+          handleWebhookResponse(response, tid);
+        },
         transactionId
       });
       
@@ -90,10 +117,9 @@ export function useMessageSender(
       toast.error("Failed to send message", {
         description: error instanceof Error ? error.message : "An unexpected error occurred"
       });
-    } finally {
       setIsProcessing(false);
     }
-  }, [roomId, projectId, user, addLocalMessage, handleWebhookResponse]);
+  }, [roomId, projectId, user, addLocalMessage, handleWebhookResponse, isProcessing]);
 
   return {
     handleSendMessage,
