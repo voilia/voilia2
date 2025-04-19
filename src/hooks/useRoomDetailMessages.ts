@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import { useRoomMessages } from "@/hooks/useRoomMessages";
@@ -11,6 +11,7 @@ import { toast } from "sonner";
 export function useRoomDetailMessages(roomId: string | undefined, projectId: string | null) {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const [isProcessing, setIsProcessing] = useState(false);
   
   const { 
     messages, 
@@ -21,12 +22,33 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
 
   const messageGroups = useMessageGroups(messages, user?.id);
   const handleWebhookResponse = useWebhookHandler(roomId, projectId, addLocalMessage);
-  const { handleSendMessage, isProcessing } = useMessageSender(
+  
+  // Message sender with processing state update
+  const { 
+    handleSendMessage: innerHandleSendMessage, 
+    isProcessing: senderProcessing 
+  } = useMessageSender(
     roomId,
     projectId,
     addLocalMessage,
     handleWebhookResponse
   );
+
+  // Update processing state from message sender
+  useEffect(() => {
+    setIsProcessing(senderProcessing);
+  }, [senderProcessing]);
+
+  // Custom send message handler that tracks processing state
+  const handleSendMessage = async (text: string, files?: File[]) => {
+    setIsProcessing(true);
+    try {
+      await innerHandleSendMessage(text, files);
+    } finally {
+      // Don't set processing to false here - let the message sender handle it
+      // when it actually receives the response
+    }
+  };
 
   // Check authentication
   useEffect(() => {
@@ -40,7 +62,8 @@ export function useRoomDetailMessages(roomId: string | undefined, projectId: str
 
   return {
     messageGroups,
-    isLoading: messagesLoading || isProcessing || authLoading,
+    isLoading: messagesLoading || authLoading,
+    isProcessing,
     handleSendMessage,
     addLocalMessage
   };
