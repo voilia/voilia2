@@ -87,11 +87,11 @@ export function useAgentData() {
       badges: mapStringArrayToBadges(agent.tags),
       isPublic: true,
       system_prompt: agent.system_prompt,
-      capabilities: agent.capabilities ? 
-        (Array.isArray(agent.capabilities) ? 
-          agent.capabilities.map(cap => typeof cap === 'string' ? cap : JSON.stringify(cap)) : 
-          []
-        ) : []
+      capabilities: agent.capabilities && Array.isArray(agent.capabilities) 
+        ? agent.capabilities.map(cap => 
+            typeof cap === 'string' ? cap : JSON.stringify(cap)
+          )
+        : []
     } as Agent;
   }, []);
 
