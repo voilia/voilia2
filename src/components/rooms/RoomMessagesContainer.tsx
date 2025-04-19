@@ -8,7 +8,7 @@ import { MessageErrorBoundary } from "@/components/rooms/MessageErrorBoundary";
 import { ThinkingIndicator } from "@/components/rooms/ThinkingIndicator";
 import { RoomMessage } from "@/types/room-messages";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { forwardRef, useState, useEffect } from "react";
+import { forwardRef, useState, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
 
 interface RoomMessagesContainerProps {
@@ -23,6 +23,28 @@ export const RoomMessagesContainer = forwardRef<HTMLDivElement, RoomMessagesCont
   ({ isLoading, messages, roomName, currentUserId, isProcessing }, ref) => {
     const isMobile = useIsMobile();
     const [showThinking, setShowThinking] = useState(false);
+    
+    // Find the latest message group and its index
+    const latestGroupIndex = useMemo(() => {
+      if (!messages.length) return -1;
+      
+      // Find the group with the latest timestamp
+      let latestIndex = 0;
+      let latestTime = 0;
+      
+      messages.forEach((group, index) => {
+        if (group.messages.length > 0) {
+          const groupLatestMessage = group.messages[group.messages.length - 1];
+          const timestamp = new Date(groupLatestMessage.created_at).getTime();
+          if (timestamp > latestTime) {
+            latestTime = timestamp;
+            latestIndex = index;
+          }
+        }
+      });
+      
+      return latestIndex;
+    }, [messages]);
     
     // Show thinking indicator when messages are processing
     useEffect(() => {
@@ -67,11 +89,12 @@ export const RoomMessagesContainer = forwardRef<HTMLDivElement, RoomMessagesCont
                     key={`${group.userId}-${i}`} 
                     messages={group.messages} 
                     isUserGroup={group.userId === currentUserId}
+                    isLatestGroup={i === latestGroupIndex}
                   />
                 ))}
                 
                 {/* Show thinking indicator at the end */}
-                {showThinking && (
+                {showThinking && !messages[latestGroupIndex]?.userId && (
                   <ThinkingIndicator align="left" />
                 )}
               </div>
