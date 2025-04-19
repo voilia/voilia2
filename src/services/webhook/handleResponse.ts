@@ -6,48 +6,12 @@ export async function handleWebhookResponse(
   options: MessageSubmitOptions,
   transactionId: string
 ): Promise<WebhookResponse> {
-  // For no-cors responses, we cannot read the response body
+  // For no-cors responses, we cannot read the response body directly
   if (response.type === "opaque" as any) {
     console.log("Received opaque response from webhook (expected with no-cors)");
     
-    // Create a response object for handling no-cors response
-    const placeholderResponse = {
-      success: true,
-      status: "processing",
-      message: "AI is processing your request...", // Use a helpful message
-      internal: false, // Don't mark as internal so it shows up
-      transactionId
-    };
-
-    // Call the onResponseReceived callback with the placeholder response
-    if (options.onResponseReceived) {
-      try {
-        console.log("Calling onResponseReceived with temporary placeholder response");
-        // Add a small delay to ensure state updates happen
-        setTimeout(async () => {
-          await options.onResponseReceived?.(placeholderResponse, transactionId);
-          
-          // After a few seconds, if there's been no real-time update,
-          // send a follow-up message to inform the user
-          setTimeout(async () => {
-            // This will only display if no other message has replaced it
-            const followupResponse = {
-              success: true,
-              status: "awaiting",
-              message: "Your response is being processed. It will appear shortly.",
-              transactionId: `${transactionId}-followup`,
-              isPending: true
-            };
-            await options.onResponseReceived?.(followupResponse, `${transactionId}-followup`);
-          }, 3000);
-        }, 10);
-      } catch (responseErr) {
-        console.error('Error in onResponseReceived callback:', responseErr);
-      }
-    }
-
-    // For no-cors mode, we rely on real-time subscriptions for the actual response
-    // The actual AI response will be received via the Supabase real-time subscription
+    // Instead of creating a placeholder, just silently return success
+    // The real response will come through the real-time subscription
     
     if (options.onComplete) {
       options.onComplete();
@@ -55,7 +19,11 @@ export async function handleWebhookResponse(
 
     return { 
       success: true, 
-      data: placeholderResponse,
+      data: {
+        success: true,
+        status: "processing",
+        internal: true // Mark as internal so it won't display
+      },
       transactionId 
     };
   }
@@ -80,14 +48,14 @@ export async function handleWebhookResponse(
       };
     }
     
-    // Add a small delay to ensure state updates happen in sequence
+    // Process response immediately without delay
     if (options.onResponseReceived) {
       try {
         console.log("Calling onResponseReceived with data:", responseData);
-        // Only 10ms delay to ensure UI has a chance to update
-        setTimeout(async () => {
-          await options.onResponseReceived?.(responseData, transactionId);
-        }, 10);
+        // Use requestAnimationFrame for more reliable UI updates
+        requestAnimationFrame(() => {
+          options.onResponseReceived?.(responseData, transactionId);
+        });
       } catch (responseErr) {
         console.error('Error in onResponseReceived callback:', responseErr);
       }
