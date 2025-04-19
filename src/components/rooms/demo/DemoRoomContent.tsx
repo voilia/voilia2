@@ -21,6 +21,8 @@ interface DemoRoomContentProps {
 export const DemoRoomContent = forwardRef<HTMLDivElement, DemoRoomContentProps>(
   ({ isLoading, messages, currentUserId, isTyping = false }, ref) => {
     const isMobile = useIsMobile();
+    
+    console.log("DemoRoomContent rendering with messages:", messages?.length || 0);
 
     return (
       <ScrollArea 

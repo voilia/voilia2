@@ -1,3 +1,4 @@
+
 import { useSmartBar } from "../context/SmartBarContext";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
@@ -18,9 +19,9 @@ export function FileUploadPopover() {
   // Debug log to help identify issues
   useEffect(() => {
     if (showPopover) {
-      console.info(`FileUploadPopover should show with ${uploadedFiles.length} files`);
+      console.info(`FileUploadPopover should show with ${uploadedFiles.length} files at position:`, popoverPosition);
     }
-  }, [showPopover, uploadedFiles.length]);
+  }, [showPopover, uploadedFiles.length, popoverPosition]);
 
   // Don't render anything until we have files and document is available
   if (!showPopover || typeof document === 'undefined') return null;
@@ -32,7 +33,7 @@ export function FileUploadPopover() {
         "shadow-lg transition-all duration-200 rounded-xl p-3",
         isDark 
           ? "bg-black/60 border-white/10" 
-          : "bg-white/60 border-foreground/10",
+          : "bg-white/70 border-foreground/10",
         "backdrop-blur-lg border"
       )}
       style={{

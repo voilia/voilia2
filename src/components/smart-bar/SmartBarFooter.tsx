@@ -13,7 +13,9 @@ export function SmartBarFooter({ enterSends, onToggleEnterSends, className }: Sm
   const isMobile = useIsMobile();
   const location = useLocation();
   const isDemoRoom = location.pathname === "/rooms/demoroom1";
-  const showVerificationText = !isDemoRoom || !isMobile;
+  
+  // Don't show verification text on mobile in demo room
+  const showVerificationText = !(isDemoRoom && isMobile);
 
   return (
     <div className={cn(

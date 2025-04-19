@@ -28,6 +28,8 @@ export default function DemoRoom() {
     isTyping
   } = useDemoRoomState();
 
+  console.log("DemoRoom rendering with messages:", messageGroups?.length || 0);
+
   // Enhanced scroll to bottom function
   const scrollToBottom = useCallback(() => {
     if (scrollAreaRef.current) {

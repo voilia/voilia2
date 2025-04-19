@@ -24,34 +24,34 @@ export function useDemoRoomState() {
 
   // Initialize the chat with a welcome message
   useEffect(() => {
-    if (user) {
-      const welcomeMessageIndex = Math.floor(Math.random() * WELCOME_MESSAGES.length);
-      const welcomeMessage: RoomMessage = {
-        id: `welcome-${Date.now()}`,
-        room_id: DEMO_ROOM_ID,
-        user_id: null,
-        agent_id: DEMO_AGENT_ID,
-        message_text: WELCOME_MESSAGES[welcomeMessageIndex],
-        created_at: new Date().toISOString(),
-        updated_at: null,
-        transaction_id: `welcome-${uuidv4()}`,
-        messageType: 'agent',
-        isPending: false
-      };
-      
-      // Add welcome message with a short delay to simulate agent response
-      const timer = setTimeout(() => {
-        setMessages(prev => [...prev, welcomeMessage]);
-        setIsLoading(false);
-      }, 1000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [user]);
+    console.log("Initializing demo room with welcome message");
+    const welcomeMessageIndex = Math.floor(Math.random() * WELCOME_MESSAGES.length);
+    const welcomeMessage: RoomMessage = {
+      id: `welcome-${Date.now()}`,
+      room_id: DEMO_ROOM_ID,
+      user_id: null,
+      agent_id: DEMO_AGENT_ID,
+      message_text: WELCOME_MESSAGES[welcomeMessageIndex],
+      created_at: new Date().toISOString(),
+      updated_at: null,
+      transaction_id: `welcome-${uuidv4()}`,
+      messageType: 'agent',
+      isPending: false
+    };
+    
+    // Add welcome message with a short delay to simulate agent response
+    const timer = setTimeout(() => {
+      setMessages(prev => [...prev, welcomeMessage]);
+      setIsLoading(false);
+      console.log("Welcome message added");
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   // Set up real-time message subscription for the demo room
   useEffect(() => {
-    if (!user) return;
+    console.log("Setting up real-time message subscription");
     
     const channel = supabase
       .channel(`demo_room_${DEMO_ROOM_ID}`)
@@ -73,15 +73,18 @@ export function useDemoRoomState() {
           setMessages(prev => [...prev, newMessage]);
         }
       })
-      .subscribe();
+      .subscribe((status) => {
+        console.log("Supabase channel subscription status:", status);
+      });
     
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user]);
+  }, []);
 
   // Add a local message from the user
   const addLocalMessage = useCallback((message: RoomMessage) => {
+    console.log("Adding local message to demo room:", message.message_text);
     setMessages(prev => [...prev, message]);
   }, []);
 
@@ -100,12 +103,13 @@ export function useDemoRoomState() {
     if (!text.trim() && (!files || files.length === 0)) return;
     
     const transactionId = uuidv4();
+    console.log("Sending message in demo room:", text);
     
     // Create optimistic user message
     const userMessage: RoomMessage = {
       id: `user-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
       room_id: DEMO_ROOM_ID,
-      user_id: user?.id || null,
+      user_id: user?.id || 'demo-user',
       agent_id: null,
       message_text: text,
       created_at: new Date().toISOString(),

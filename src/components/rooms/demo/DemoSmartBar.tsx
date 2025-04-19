@@ -25,6 +25,8 @@ export function DemoSmartBar({
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
+  console.log("DemoSmartBar rendering with files:", uploadedFiles.length);
+
   return (
     <div 
       className={cn(
@@ -50,7 +52,7 @@ export function DemoSmartBar({
           "relative w-full rounded-xl overflow-hidden",
           isDark 
             ? "bg-black/60 border-white/10" 
-            : "bg-white/60 border-foreground/10",
+            : "bg-white/70 border-foreground/10",
           "backdrop-blur-lg border",
           "shadow-lg transition-all duration-300"
         )}>
