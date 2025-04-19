@@ -1,11 +1,20 @@
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { submitSmartBarMessage } from "@/services/webhook/webhookService";
 import { RoomMessage } from "@/types/room-messages";
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+
+// Element to show when AI is "thinking"
+const ThinkingIndicator = () => (
+  <div className="thinking-indicator">
+    <span className="dot"></span>
+    <span className="dot"></span>
+    <span className="dot"></span>
+  </div>
+);
 
 export function useMessageSender(
   roomId: string | undefined,
@@ -15,6 +24,7 @@ export function useMessageSender(
 ) {
   const { user } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
+  const thinkingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleSendMessage = useCallback(async (text: string, files?: File[]) => {
     if (!roomId || !text.trim()) return;
@@ -25,7 +35,7 @@ export function useMessageSender(
     
     // Create and display optimistic user message immediately
     const optimisticUserMessage: RoomMessage = {
-      id: `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+      id: `user-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
       room_id: roomId,
       user_id: user?.id || null,
       agent_id: null,
@@ -42,7 +52,7 @@ export function useMessageSender(
     addLocalMessage(optimisticUserMessage);
     
     try {
-      // Persist the user message to the database FIRST, before webhook call
+      // Persist the user message to the database
       const { error: dbError } = await supabase
         .from("room_messages")
         .insert({
@@ -65,27 +75,7 @@ export function useMessageSender(
       
       console.log("Submitting message to webhook:", finalText);
       
-      // Add a small loading message that will be replaced by the actual response
-      const placeholderMessage: RoomMessage = {
-        id: `placeholder-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-        room_id: roomId,
-        user_id: null,
-        agent_id: null,
-        message_text: "Waiting for response...",
-        created_at: new Date().toISOString(),
-        updated_at: null,
-        messageType: 'agent',
-        transaction_id: `${transactionId}-placeholder`,
-        isPending: true
-      };
-      
-      // Show placeholder while waiting
-      setTimeout(() => {
-        if (isProcessing) {
-          addLocalMessage(placeholderMessage);
-        }
-      }, 500);
-      
+      // Send the message to the webhook
       const result = await submitSmartBarMessage({
         message: finalText,
         roomId,
@@ -100,9 +90,6 @@ export function useMessageSender(
           preview: URL.createObjectURL(file)
         })) || [],
         onResponseReceived: (response, tid) => {
-          // Remove placeholder before showing real response
-          setIsProcessing(false);
-          
           // Process webhook response
           handleWebhookResponse(response, tid);
         },
@@ -117,9 +104,16 @@ export function useMessageSender(
       toast.error("Failed to send message", {
         description: error instanceof Error ? error.message : "An unexpected error occurred"
       });
+    } finally {
+      // Clear any pending timers
+      if (thinkingTimerRef.current) {
+        clearTimeout(thinkingTimerRef.current);
+        thinkingTimerRef.current = null;
+      }
+      
       setIsProcessing(false);
     }
-  }, [roomId, projectId, user, addLocalMessage, handleWebhookResponse, isProcessing]);
+  }, [roomId, projectId, user, addLocalMessage, handleWebhookResponse]);
 
   return {
     handleSendMessage,
