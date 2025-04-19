@@ -14,6 +14,12 @@ interface MessageGroupProps {
 export function MessageGroup({ messages, isUserGroup }: MessageGroupProps) {
   if (!messages.length) return null;
   
+  // Get the last message to determine if this group contains the latest message
+  const latestMessage = messages[messages.length - 1];
+  const isLatestGroup = latestMessage.created_at === Math.max(
+    ...messages.map(m => new Date(m.created_at).getTime())
+  ).toString();
+  
   return (
     <MessageErrorBoundary>
       <div className={cn(
@@ -24,12 +30,14 @@ export function MessageGroup({ messages, isUserGroup }: MessageGroupProps) {
           "flex flex-col max-w-[85%] space-y-1",
           isUserGroup ? "items-end" : "items-start"
         )}>
-          {messages.map((message) => (
+          {messages.map((message, index) => (
             <MessageErrorBoundary key={message.id}>
               <Message 
                 key={message.id} 
                 message={message} 
-                isUser={isUserGroup} 
+                isUser={isUserGroup}
+                isLatestInGroup={index === messages.length - 1}
+                isLatestOverall={index === messages.length - 1 && message.messageType === 'agent' && !isUserGroup}
               />
             </MessageErrorBoundary>
           ))}
@@ -42,11 +50,13 @@ export function MessageGroup({ messages, isUserGroup }: MessageGroupProps) {
 interface MessageProps {
   message: RoomMessage;
   isUser: boolean;
+  isLatestInGroup: boolean;
+  isLatestOverall: boolean;
 }
 
-function Message({ message, isUser }: MessageProps) {
-  const [showMessage, setShowMessage] = useState(false);
-  const [currentText, setCurrentText] = useState('');
+function Message({ message, isUser, isLatestInGroup, isLatestOverall }: MessageProps) {
+  const [showMessage, setShowMessage] = useState(!isLatestOverall);
+  const [currentText, setCurrentText] = useState(isLatestOverall ? '' : message.message_text);
   const [isTyping, setIsTyping] = useState(false);
   const messageRef = useRef<HTMLDivElement>(null);
   const formattedTime = formatDistanceToNow(new Date(message.created_at), { addSuffix: true });
@@ -64,40 +74,50 @@ function Message({ message, isUser }: MessageProps) {
       return;
     }
     
-    // Show message immediately if it's a user message
-    if (isUser) {
+    // Show message immediately if it's a user message or not the latest
+    if (isUser || !isLatestOverall) {
       setShowMessage(true);
       setCurrentText(message.message_text);
       return;
     }
     
-    // For AI messages, trigger typing animation
-    setShowMessage(true);
-    
-    // If it's an AI response, animate it like typing
-    if (!isUser && !isPlaceholder) {
+    // Only animate the latest AI message
+    if (isLatestOverall) {
       const fullText = message.message_text;
+      setShowMessage(true);
       setCurrentText('');
       setIsTyping(true);
       
-      // Simulate typing
+      // Simulate typing with a more natural speed
       let i = 0;
-      const typingInterval = setInterval(() => {
+      const typeNextCharacter = () => {
         if (i < fullText.length) {
           setCurrentText(prev => prev + fullText.charAt(i));
           i++;
+          
+          // Variable delay based on character type for more natural feeling
+          const delay = fullText.charAt(i) === '.' || fullText.charAt(i) === '!' || fullText.charAt(i) === '?' 
+            ? 150  // Pause longer at punctuation
+            : fullText.charAt(i) === ',' || fullText.charAt(i) === ';' 
+              ? 100 // Medium pause at commas
+              : Math.random() * 15 + 25; // Random delay between 25-40ms for normal characters
+              
+          setTimeout(typeNextCharacter, delay);
         } else {
-          clearInterval(typingInterval);
           setIsTyping(false);
         }
-      }, 15); // Adjust speed as needed
+      };
+      
+      // Start typing with a small initial delay
+      setTimeout(typeNextCharacter, 100);
       
       return () => {
-        clearInterval(typingInterval);
+        // If unmounting during animation, show the full text
+        setCurrentText(fullText);
         setIsTyping(false);
       };
     }
-  }, [message.id, message.message_text, isUser, isPlaceholder]);
+  }, [message.id, message.message_text, isUser, isPlaceholder, isLatestOverall]);
   
   // Don't render anything for placeholder messages
   if (isPlaceholder || !showMessage) return null;
@@ -115,8 +135,8 @@ function Message({ message, isUser }: MessageProps) {
         )}
       >
         {currentText}
-        {isTyping && !isUser && (
-          <span className="inline-block w-2 h-4 ml-1 bg-current animate-pulse"></span>
+        {isTyping && isLatestOverall && (
+          <span className="typing-cursor"></span>
         )}
       </div>
       <MessageStatus 
