@@ -24,13 +24,13 @@ export function DemoSmartBar({
   const isMobile = useIsMobile();
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  
+
   return (
     <div 
       className={cn(
-        "fixed bottom-6 bg-transparent",
+        "fixed bg-transparent",
         "w-full transition-all duration-300 ease-out z-50",
-        isMobile ? "px-3" : "px-4"
+        isMobile ? "bottom-0 px-0 inset-x-0" : "bottom-6 px-4"
       )}
       style={{
         left: isMobile ? '0' : 'var(--sidebar-width, 0px)',
@@ -41,16 +41,16 @@ export function DemoSmartBar({
       <div className={cn(
         "relative max-w-3xl mx-auto w-full",
         "flex flex-col gap-2",
+        isMobile && "px-3 pb-3",
         "DemoSmartBar"
       )}>
-        {/* The FileUploadPopover must be included here outside other elements */}
         <FileUploadPopover />
         
         <div className={cn(
           "relative w-full rounded-xl overflow-hidden",
           isDark 
-            ? "bg-black/40 border-white/10" 
-            : "bg-foreground/10 border-foreground/10",
+            ? "bg-black/60 border-white/10" 
+            : "bg-white/60 border-foreground/10",
           "backdrop-blur-lg border",
           "shadow-lg transition-all duration-300"
         )}>

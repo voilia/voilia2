@@ -1,4 +1,3 @@
-
 import { useSmartBar } from "../context/SmartBarContext";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
@@ -30,10 +29,10 @@ export function FileUploadPopover() {
     <div 
       className={cn(
         "file-upload-popover fixed z-[999]",
-        "shadow-lg transition-all duration-200 rounded-2xl p-3",
+        "shadow-lg transition-all duration-200 rounded-xl p-3",
         isDark 
-          ? "bg-black/95 border-white/10" 
-          : "bg-white/95 border-foreground/10",
+          ? "bg-black/60 border-white/10" 
+          : "bg-white/60 border-foreground/10",
         "backdrop-blur-lg border"
       )}
       style={{

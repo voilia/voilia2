@@ -1,6 +1,7 @@
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { useLocation } from "react-router-dom";
 
 interface SmartBarFooterProps {
   enterSends: boolean;
@@ -10,6 +11,9 @@ interface SmartBarFooterProps {
 
 export function SmartBarFooter({ enterSends, onToggleEnterSends, className }: SmartBarFooterProps) {
   const isMobile = useIsMobile();
+  const location = useLocation();
+  const isDemoRoom = location.pathname === "/rooms/demoroom1";
+  const showVerificationText = !isDemoRoom || !isMobile;
 
   return (
     <div className={cn(
@@ -21,9 +25,11 @@ export function SmartBarFooter({ enterSends, onToggleEnterSends, className }: Sm
       isMobile ? "justify-center" : "justify-between",
       className
     )}>
-      <span className="text-muted-foreground/60 dark:text-muted-foreground/50">
-        AI can make mistakes. Verify important information.
-      </span>
+      {showVerificationText && (
+        <span className="text-muted-foreground/60 dark:text-muted-foreground/50">
+          AI can make mistakes. Verify important information.
+        </span>
+      )}
       {!isMobile && (
         <button 
           type="button"

@@ -1,4 +1,3 @@
-
 import { ReactNode } from "react";
 import { 
   Popover,
@@ -45,8 +44,8 @@ export function ModeSelectorPopover({
           "fixed z-[100] overflow-hidden",
           "rounded-xl border",
           isDark 
-            ? "bg-black/80 border-white/10" 
-            : "bg-white/95 border-black/10",
+            ? "bg-black/60 border-white/10" 
+            : "bg-white/60 border-foreground/10",
           "backdrop-blur-lg shadow-lg"
         )}
         style={{
