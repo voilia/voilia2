@@ -10,19 +10,37 @@ export async function handleWebhookResponse(
   if (response.type === "opaque" as any) {
     console.log("Received opaque response from webhook (expected with no-cors)");
     
-    // Create a response object for internal handling - don't display to user
-    const initialResponse = {
+    // Create a response object for handling no-cors response
+    const placeholderResponse = {
       success: true,
       status: "processing",
-      message: "", // Empty message to avoid showing placeholder text
-      internal: true // Mark this as internal to avoid displaying to user
+      message: "AI is processing your request...", // Use a helpful message
+      internal: false, // Don't mark as internal so it shows up
+      transactionId
     };
 
-    // Call the onResponseReceived callback with this initial response
+    // Call the onResponseReceived callback with the placeholder response
     if (options.onResponseReceived) {
       try {
-        console.log("Calling onResponseReceived with empty initial response while waiting for real-time update");
-        await options.onResponseReceived(initialResponse, transactionId);
+        console.log("Calling onResponseReceived with temporary placeholder response");
+        // Add a small delay to ensure state updates happen
+        setTimeout(async () => {
+          await options.onResponseReceived?.(placeholderResponse, transactionId);
+          
+          // After a few seconds, if there's been no real-time update,
+          // send a follow-up message to inform the user
+          setTimeout(async () => {
+            // This will only display if no other message has replaced it
+            const followupResponse = {
+              success: true,
+              status: "awaiting",
+              message: "Your response is being processed. It will appear shortly.",
+              transactionId: `${transactionId}-followup`,
+              isPending: true
+            };
+            await options.onResponseReceived?.(followupResponse, `${transactionId}-followup`);
+          }, 3000);
+        }, 10);
       } catch (responseErr) {
         console.error('Error in onResponseReceived callback:', responseErr);
       }
@@ -37,7 +55,7 @@ export async function handleWebhookResponse(
 
     return { 
       success: true, 
-      data: initialResponse,
+      data: placeholderResponse,
       transactionId 
     };
   }
@@ -62,10 +80,14 @@ export async function handleWebhookResponse(
       };
     }
     
+    // Add a small delay to ensure state updates happen in sequence
     if (options.onResponseReceived) {
       try {
         console.log("Calling onResponseReceived with data:", responseData);
-        await options.onResponseReceived(responseData, transactionId);
+        // Only 10ms delay to ensure UI has a chance to update
+        setTimeout(async () => {
+          await options.onResponseReceived?.(responseData, transactionId);
+        }, 10);
       } catch (responseErr) {
         console.error('Error in onResponseReceived callback:', responseErr);
       }
