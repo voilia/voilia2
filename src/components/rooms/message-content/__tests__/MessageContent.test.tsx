@@ -3,8 +3,8 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MessageContentRenderer } from '../MessageContent';
 import { MessageContent, ErrorBlock } from '@/types/message-content';
-import '@testing-library/jest-dom'; // This import is crucial
-import '@testing-library/jest-dom/extend-expect'; // Add this line to extend Jest matchers
+import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/extend-expect';
 
 describe('MessageContentRenderer', () => {
   it('renders text content correctly', () => {
@@ -58,7 +58,6 @@ describe('MessageContentRenderer', () => {
   });
 
   it('renders unknown content type with error message', () => {
-    // Create a valid ErrorBlock for unknown type content
     const content: ErrorBlock = {
       id: '5',
       type: 'error',
