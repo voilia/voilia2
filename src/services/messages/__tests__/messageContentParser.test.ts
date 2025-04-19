@@ -1,6 +1,7 @@
 
 import { parseRoomMessage } from '../messageContentParser';
 import { RoomMessage } from '@/types/room-messages';
+import { TextBlock, CodeBlock, MarkdownBlock } from '@/types/message-content';
 
 describe('messageContentParser', () => {
   it('parses plain text message correctly', () => {
@@ -20,7 +21,8 @@ describe('messageContentParser', () => {
     const result = parseRoomMessage(message);
     expect(result).toHaveLength(1);
     expect(result[0].type).toBe('text');
-    expect(result[0].text).toBe('Hello world');
+    // Type assertion to access the text property safely
+    expect((result[0] as TextBlock).text).toBe('Hello world');
   });
 
   it('parses code blocks correctly', () => {
@@ -41,8 +43,10 @@ describe('messageContentParser', () => {
     expect(result).toHaveLength(2);
     expect(result[0].type).toBe('text');
     expect(result[1].type).toBe('code');
-    expect((result[1] as any).language).toBe('javascript');
-    expect((result[1] as any).code).toBe('console.log("test")');
+    // Type assertion to access code-specific properties safely
+    const codeBlock = result[1] as CodeBlock;
+    expect(codeBlock.language).toBe('javascript');
+    expect(codeBlock.code).toBe('console.log("test")');
   });
 
   it('parses markdown content correctly', () => {
@@ -62,7 +66,9 @@ describe('messageContentParser', () => {
     const result = parseRoomMessage(message);
     expect(result).toHaveLength(1);
     expect(result[0].type).toBe('markdown');
-    expect((result[0] as any).content).toContain('# Title');
+    // Type assertion to access markdown-specific properties safely
+    const markdownBlock = result[0] as MarkdownBlock;
+    expect(markdownBlock.content).toContain('# Title');
   });
 
   it('handles empty messages', () => {

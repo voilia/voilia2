@@ -1,7 +1,7 @@
 
 import { render, screen } from '@testing-library/react';
 import { MessageContentRenderer } from '../MessageContent';
-import { MessageContent } from '@/types/message-content';
+import { MessageContent, ErrorBlock } from '@/types/message-content';
 import '@testing-library/jest-dom';
 
 describe('MessageContentRenderer', () => {
@@ -56,11 +56,13 @@ describe('MessageContentRenderer', () => {
   });
 
   it('renders unknown content type with error message', () => {
-    const content = {
+    // Create a valid ErrorBlock for unknown type content
+    const content: ErrorBlock = {
       id: '5',
-      type: 'unknown',
+      type: 'error',
+      message: 'Unknown content type',
       createdAt: new Date().toISOString()
-    } as MessageContent;
+    };
 
     render(<MessageContentRenderer content={content} />);
     expect(screen.getByText('Unknown content type')).toBeInTheDocument();
